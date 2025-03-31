@@ -31,9 +31,6 @@ import AssignmentLanding from './components/Assignment/AssignmentLanding.jsx';
 import AssignmentList from './components/Assignment/AssignmentList.jsx';
 import AssignmentDetail from './components/Assignment/AssignmentDetails.jsx';
 import LoginPage from './components/LoginPage/Login.jsx';
-import DropCourse from './components/dropCourse/drop.jsx';
-import CourseAnnouncements from './components/Announcements/CourseAnnouncements.jsx';
-import MyCourses from './components/mycourses/myCourse.jsx';
 
 
 const queryClient = new QueryClient()
@@ -112,18 +109,6 @@ function App() {
                 {
                     path:"/attendancelanding",
                     element: <AttendanceLandingPage/>
-                },
-                {
-                    path:"/dropcourse",
-                    element: <DropCourse/>
-                },
-                {
-                    path:"/course/:courseId/announcements",
-                    element: <CourseAnnouncements/>
-                },
-                {
-                    path:"/myCourses",
-                    element: <MyCourses/>
                 },
                 {
                     path:"/course/:id",

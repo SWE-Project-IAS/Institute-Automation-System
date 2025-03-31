@@ -1,0 +1,203 @@
+.subscription-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+  background-color: #f5f7fa;
+  padding: 32px 20px;
+}
+
+.subscription-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 500px;
+  padding: 40px;
+  animation: slideUp 0.4s ease-out;
+}
+
+.subscription-form h2 {
+  text-align: center;
+  color: #1e40af;
+  margin-bottom: 32px;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 16px;
+}
+
+.subscription-form h2:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(to right, #2563eb, #3b82f6);
+  border-radius: 2px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  color: #4b5563;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f9fafb;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.plan-options {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.plan-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  margin: 0 8px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  flex-direction: column;
+}
+
+.plan-option:hover {
+  border-color: #93c5fd;
+  background-color: #f0f9ff;
+}
+
+.plan-option.selected {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.plan-radio {
+  display: none;
+}
+
+.plan-option span {
+  margin-top: 8px;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.plan-price {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(37, 99, 235, 0.25);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.submit-btn:disabled {
+  background: linear-gradient(135deg, #9ca3af, #6b7280);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.error-message {
+  color: #ef4444;
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  padding: 14px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  text-align: center;
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Form validation styles */
+.form-group.error input {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.form-group.error label {
+  color: #ef4444;
+}
+
+.validation-message {
+  font-size: 0.85rem;
+  margin-top: 6px;
+  color: #ef4444;
+}
+
+/* Animations */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+@media (max-width: 768px) {
+  .subscription-card {
+    padding: 24px;
+  }
+  
+  .plan-options {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .plan-option {
+    margin: 0;
+  }
+}
