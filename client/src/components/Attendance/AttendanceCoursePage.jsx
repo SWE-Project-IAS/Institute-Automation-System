@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { CourseStats } from "./attendanceComponents/CourseStats";
 import "./AttendanceCoursePage.css";
 
 function AttendanceCoursePage() {
-    
     return(
         <div className="course-page">
             <div className="div">
-                <CourseStats />
+                {<CourseStats />}
             </div>
         </div>
     );

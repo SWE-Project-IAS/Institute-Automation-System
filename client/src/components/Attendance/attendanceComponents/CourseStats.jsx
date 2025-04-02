@@ -1,6 +1,8 @@
 import MyCalendar from "./Calendar";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { RoleContext } from "../../../context/Rolecontext";
 
 const dummyCourses = [
   {
@@ -53,7 +55,41 @@ const dummyCourses = [
   },
 ];
 
+const studentList = [
+  { rollNumber: "S101", name: "Alice Johnson" },
+  { rollNumber: "S102", name: "Bob Smith" },
+  { rollNumber: "S103", name: "Charlie Brown" },
+  { rollNumber: "S104", name: "Diana Prince" },
+  { rollNumber: "S105", name: "Ethan Hunt" },
+  { rollNumber: "S106", name: "Fiona Gallagher" },
+  { rollNumber: "S107", name: "George Miller" },
+  { rollNumber: "S108", name: "Hannah Davis" },
+  { rollNumber: "S109", name: "Ian Wright" },
+  { rollNumber: "S110", name: "Julia Roberts" },
+];
+
+// Create dummy attendance data for each student
+const generateStudentAttendanceData = () => {
+  const studentAttendanceData = {};
+  
+  studentList.forEach(student => {
+    studentAttendanceData[student.rollNumber] = {
+      classesMissed: Math.floor(Math.random() * 10),
+      classesAttended: Math.floor(Math.random() * 15) + 5,
+      reqClasses: 20
+    };
+    // Calculate percentage
+    studentAttendanceData[student.rollNumber].percentage = Math.round(
+      (studentAttendanceData[student.rollNumber].classesAttended / 
+       studentAttendanceData[student.rollNumber].reqClasses) * 100
+    );
+  });
+  
+  return studentAttendanceData;
+};
+
 export const CourseStats = () => {
+  const { role } = useContext(RoleContext);  
   const navigateTo = useNavigate();
   const { id } = useParams();
   const course = dummyCourses.find((c) => c.id === id) || dummyCourses[0];
@@ -62,10 +98,39 @@ export const CourseStats = () => {
   const [courseId, setCourseId] = useState(course.courseId);
   const [semester, setSemester] = useState(course.semester);
   const [attendanceAll, setAttendanceAll] = useState(course.attendanceAll);
+  
+  // Student selection and stats
+  const [selectedStudent, setSelectedStudent] = useState("");
+  const [showStats, setShowStats] = useState(false);
+  const [studentAttendanceData, setStudentAttendanceData] = useState({});
+  
   const [classesMissed, setClassesMissed] = useState(course.stats.classesMissed);
   const [classesAttended, setClassesAttended] = useState(course.stats.classesAttended);
   const [classesRequired, setClassesRequired] = useState(course.stats.reqClasses);
   const [percentage, setPercentage] = useState(course.stats.percentage);
+
+  // Generate dummy attendance data for students on component mount
+  useEffect(() => {
+    setStudentAttendanceData(generateStudentAttendanceData());
+  }, []);
+
+  // Handle student selection
+  const handleStudentChange = (e) => {
+    const rollNumber = e.target.value;
+    setSelectedStudent(rollNumber);
+    
+    if (rollNumber) {
+      setShowStats(true);
+      // Update stats based on selected student
+      const studentData = studentAttendanceData[rollNumber];
+      setClassesMissed(studentData.classesMissed);
+      setClassesAttended(studentData.classesAttended);
+      setClassesRequired(studentData.reqClasses);
+      setPercentage(studentData.percentage);
+    } else {
+      setShowStats(false);
+    }
+  };
 
   const deleteCourse = () => {
     alert("Course deleted successfully!");
@@ -81,55 +146,77 @@ export const CourseStats = () => {
         </div>
         <div className="text-wrapper-2">{semester} Semester</div>
       </div>
-      <div className="calendar">
-        <MyCalendar />
-      </div>
-      <div className="stats">
-        <div className="frame-2">
-          <div className="overlap">
-            <div className="text-wrapper-3">Your Attendance</div>
-            <div className="pie-chart">
-              <div className="overlap-group-2">
-                <div className="ellipse" />
-                <div className="text-wrapper-4-attendance">{percentage}%</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="frame-2">
-          <div className="overlap">
-            <div className="text-wrapper-3">Classes Missed</div>
-            <div className="pie-chart">
-              <div className="overlap-group-2">
-                <div className="ellipse" />
-                <div className="text-wrapper-4">{classesMissed}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="frame-2">
-          <div className="overlap">
-            <div className="text-wrapper-3">Classes Attended</div>
-            <div className="pie-chart">
-              <div className="overlap-group-2">
-                <div className="ellipse" />
-                <div className="text-wrapper-4">{classesAttended}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="frame-2">
-          <div className="overlap">
-            <div className="text-wrapper-3">Required Classes</div>
-            <div className="pie-chart">
-              <div className="overlap-group-2">
-                <div className="ellipse" />
-                <div className="text-wrapper-4">{classesRequired}</div>
-              </div>
-            </div>
-          </div>
+      <div className="course-dropdown">
+        <div className="student-selector">
+          <label htmlFor="student-select">Select Student: </label>
+          <select 
+            id="student-select" 
+            value={selectedStudent} 
+            onChange={handleStudentChange}
+            className="student-dropdown"
+          >
+            <option value="">-- Select Student --</option>
+            {studentList.map((student) => (
+              <option key={student.rollNumber} value={student.rollNumber}>
+                {student.rollNumber} - {student.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
+      {showStats && (
+        <div>
+        <div className="calendar">
+         <MyCalendar />
+        </div>
+        <div className="stats">
+          <div className="frame-2">
+            <div className="overlap">
+              <div className="text-wrapper-3">Attendance</div>
+              <div className="pie-chart">
+                <div className="overlap-group-2">
+                  <div className="ellipse" />
+                  <div className="text-wrapper-4-attendance">{percentage}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="frame-2">
+            <div className="overlap">
+              <div className="text-wrapper-3">Classes Missed</div>
+              <div className="pie-chart">
+                <div className="overlap-group-2">
+                  <div className="ellipse" />
+                  <div className="text-wrapper-4">{classesMissed}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="frame-2">
+            <div className="overlap">
+              <div className="text-wrapper-3">Classes Attended</div>
+              <div className="pie-chart">
+                <div className="overlap-group-2">
+                  <div className="ellipse" />
+                  <div className="text-wrapper-4">{classesAttended}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="frame-2">
+            <div className="overlap">
+              <div className="text-wrapper-3">Required Classes</div>
+              <div className="pie-chart">
+                <div className="overlap-group-2">
+                  <div className="ellipse" />
+                  <div className="text-wrapper-4">{classesRequired}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      )}
     </div>
   );
 };
