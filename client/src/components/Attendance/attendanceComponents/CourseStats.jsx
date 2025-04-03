@@ -1,8 +1,11 @@
 import MyCalendar from "./Calendar";
+import AddOrUpdate from "./AddOrUpdate";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { RoleContext } from "../../../context/Rolecontext";
+import React, { useRef } from 'react';
+
 
 const dummyCourses = [
   {
@@ -54,7 +57,7 @@ const dummyCourses = [
     stats: { classesMissed: 6, classesAttended: 14, reqClasses: 20, percentage: 70 },
   },
 ];
-
+ 
 const studentList = [
   { rollNumber: "S101", name: "Alice Johnson" },
   { rollNumber: "S102", name: "Bob Smith" },
@@ -146,7 +149,60 @@ export const CourseStats = () => {
         </div>
         <div className="text-wrapper-2">{semester} Semester</div>
       </div>
-      <div className="course-dropdown">
+      {role === "student" &&
+        <div>
+          <div className="calendar">
+            <MyCalendar />
+          </div>
+          <div className="stats">
+            <div className="frame-2">
+                <div className="overlap">
+                <div className="text-wrapper-3">Your Attendance</div>
+                <div className="pie-chart">
+                    <div className="overlap-group-2">
+                        <div className="ellipse" />
+                        <div className="text-wrapper-4-attendance">{percentage}%</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div className="frame-2">
+                <div className="overlap">
+                <div className="text-wrapper-3">Classes Missed</div>
+                <div className="pie-chart">
+                    <div className="overlap-group-2">
+                        <div className="ellipse" />
+                        <div className="text-wrapper-4">{classesMissed}</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div className="frame-2">
+                <div className="overlap">
+                <div className="text-wrapper-3">Classes Attended</div>
+                <div className="pie-chart">
+                    <div className="overlap-group-2">
+                        <div className="ellipse" />
+                        <div className="text-wrapper-4">{classesAttended}</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div className="frame-2">
+                <div className="overlap">
+                <div className="text-wrapper-3">Required Classes</div>
+                <div className="pie-chart">
+                    <div className="overlap-group-2">
+                        <div className="ellipse" />
+                        <div className="text-wrapper-4">{classesRequired}</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      }
+      {role === "faculty" && <div className="course-dropdown">
         <div className="student-selector">
           <label htmlFor="student-select">Select Student: </label>
           <select 
@@ -163,58 +219,61 @@ export const CourseStats = () => {
             ))}
           </select>
         </div>
-      </div>
-      {showStats && (
-        <div>
-        <div className="calendar">
-         <MyCalendar />
-        </div>
-        <div className="stats">
-          <div className="frame-2">
-            <div className="overlap">
-              <div className="text-wrapper-3">Attendance</div>
-              <div className="pie-chart">
-                <div className="overlap-group-2">
-                  <div className="ellipse" />
-                  <div className="text-wrapper-4-attendance">{percentage}%</div>
+      </div>}
+      {role === "faculty" && showStats && (
+        <div className="student-stats">
+          <div className="calendar">
+            <MyCalendar />
+          </div>
+          <div className="stats">
+            <div className="frame-2">
+              <div className="overlap">
+                <div className="text-wrapper-3">Attendance</div>
+                <div className="pie-chart">
+                  <div className="overlap-group-2">
+                    <div className="ellipse" />
+                    <div className="text-wrapper-4-attendance">{percentage}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="frame-2">
+              <div className="overlap">
+                <div className="text-wrapper-3">Classes Missed</div>
+                <div className="pie-chart">
+                  <div className="overlap-group-2">
+                    <div className="ellipse" />
+                    <div className="text-wrapper-4">{classesMissed}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="frame-2">
+              <div className="overlap">
+                <div className="text-wrapper-3">Classes Attended</div>
+                <div className="pie-chart">
+                  <div className="overlap-group-2">
+                    <div className="ellipse" />
+                    <div className="text-wrapper-4">{classesAttended}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="frame-2">
+              <div className="overlap">
+                <div className="text-wrapper-3">Required Classes</div>
+                <div className="pie-chart">
+                  <div className="overlap-group-2">
+                    <div className="ellipse" />
+                    <div className="text-wrapper-4">{classesRequired}</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="frame-2">
-            <div className="overlap">
-              <div className="text-wrapper-3">Classes Missed</div>
-              <div className="pie-chart">
-                <div className="overlap-group-2">
-                  <div className="ellipse" />
-                  <div className="text-wrapper-4">{classesMissed}</div>
-                </div>
-              </div>
-            </div>
+          <div className="add-or-update">
+            <AddOrUpdate/>
           </div>
-          <div className="frame-2">
-            <div className="overlap">
-              <div className="text-wrapper-3">Classes Attended</div>
-              <div className="pie-chart">
-                <div className="overlap-group-2">
-                  <div className="ellipse" />
-                  <div className="text-wrapper-4">{classesAttended}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="frame-2">
-            <div className="overlap">
-              <div className="text-wrapper-3">Required Classes</div>
-              <div className="pie-chart">
-                <div className="overlap-group-2">
-                  <div className="ellipse" />
-                  <div className="text-wrapper-4">{classesRequired}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         </div>
       )}
     </div>

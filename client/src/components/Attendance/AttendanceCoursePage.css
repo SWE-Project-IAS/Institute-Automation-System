@@ -323,7 +323,7 @@ html {
   }
   
   .course-page .course-stats .frame {
-    background-color: #fb02e214;
+    background-color: #2491ff80;
     border-radius: 8px;
     height: 69px;
     margin: 10px 10px;
@@ -457,7 +457,7 @@ html {
 
   .course-page .course-stats .frame-2 {
     align-content: center;
-    background-color: #fb02e214;
+    background-color: #2491ff80;
     border-radius: 8px;
     height: 189px;
     margin: 10px 10px;
@@ -581,6 +581,11 @@ html {
     width: 137px;
   }
 
+  .course-page .course-stats .student-stats .add-or-update {
+    float: left;
+    width: 100%;
+  }
+
   .course-page .AddAttendance{
     top: auto;
     position: relative;
@@ -612,7 +617,7 @@ html {
   }
 
   .course-page .AddButton{
-    margin: 40px 40px 40px 0px;
+    margin: 20px 25vw;
     align-items: center;
     width: fit-content;
     background-color: #164488;
@@ -624,7 +629,7 @@ html {
   }
 
   .course-page .UpdateButton{
-    margin: 40px 0px;
+    margin: 20px 25vw;
     align-items: center;
     width: fit-content;
     background-color: #164488;

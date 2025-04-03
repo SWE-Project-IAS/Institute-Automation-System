@@ -3,12 +3,15 @@ import moment from 'moment'
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useEffect,useState } from 'react';
 import { useParams } from "react-router-dom";
+import { Views } from 'react-big-calendar';
 
 const localizer = momentLocalizer(moment)
 
 function MyCalendar() {
     const {id} = useParams();
     const [myEventsList, setMyEventsList] = useState([]);
+    const [view, setView] = useState(Views.WEEK);
+    const [date, setDate] = useState(new Date());
 
 
     useEffect(() => {
@@ -33,9 +36,16 @@ function MyCalendar() {
     return (
         <div className='calendar-box'>
             <Calendar
-            views={['month']}
+            views={[Views.MONTH, Views.WEEK, Views.DAY]}
+            defaultView={view}
+            view={view} // Include the view prop
+            date={date} // Include the date prop
+            onView={(view) => setView(view)}
+            onNavigate={(date) => {
+                setDate(new Date(date));
+            }}
             localizer={localizer}
-              events={myEventsList}
+            events={myEventsList}
             startAccessor="start"
             endAccessor="end"
             style={{ height: 350 }}
