@@ -51,6 +51,11 @@ const Student = () => {
                                     </Link>
                                     </li>
                                     <li>
+                                    <Link to="/timetable" className="text-gray-700 hover:text-gray-900">
+                                        Time Table
+                                    </Link>
+                                    </li>
+                                    <li>
                                         <Link to="/dropcourse" className="text-gray-700 hover:text-gray-900">
                                             Drop Course
                                         </Link>
