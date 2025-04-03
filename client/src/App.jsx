@@ -39,6 +39,7 @@ import MyCourses from './components/mycourses/myCourse.jsx';
 
 import { RoleProvider } from './context/Rolecontext.jsx';
 import StudentProfile from './pages/ProfilePage.jsx';
+import TimeTable from './components/TimeTable/timetable.jsx';
 
 
 const queryClient = new QueryClient()
@@ -135,7 +136,7 @@ function App() {
                     element: <MyCourses/>
                 },
                 {
-                    path:"/course/:id",
+                    path:"/attendance/:id",
                     element: <AttendanceCoursePage/>
                 },
                   {
@@ -187,6 +188,10 @@ function App() {
                 {
                     path: "/profile",
                     element: <StudentProfile/>
+                },
+                {
+                    path: "/timetable",
+                    element: <TimeTable/>
                 },
             ],
         },
