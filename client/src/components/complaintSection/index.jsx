@@ -1,20 +1,25 @@
-import React, { useContext, useEffect,useState } from "react";
-import NewComplaintForm from "./newComplaintForm.jsx"; // Import the NewComplaintForm component
-import ComplaintDetails from "./ComplaintDetails"; // Import the updated ComplaintDetails component
-import complaintHistory from "./complaintHistory.json"; // Import the complaint history data
+import React, { useContext, useEffect, useState } from "react";
+import NewComplaintForm from "./newComplaintForm.jsx";
+import ComplaintDetails from "./ComplaintDetails";
+import complaintHistory from "./complaintHistory.json";
 import { RoleContext } from "../../context/Rolecontext.jsx";
 
 const ComplaintSection = () => {
-  const {role}=useContext(RoleContext); // State to track the role of the user
-//   const [role,setRole]=useState("student");
+  const { role } = useContext(RoleContext);
   const [department, setDepartment] = useState("Computer & Comm. Centre");
   const [category, setCategory] = useState("");
-  const [activePage, setActivePage] = useState(role==='NonAcadAdmin'?"Pending":"My Complaints");
+  const [showNewComplaintForm, setShowNewComplaintForm] = useState(false);
+  const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showNewComplaintForm, setShowNewComplaintForm] = useState(false); // State to control NewComplaintForm visibility
-  const [selectedComplaint, setSelectedComplaint] = useState(null); // State to track the selected complaint for details
 
+  // Determine if the user is a student or faculty (similar UI)
+  const isStudentOrFaculty = role === "student" || role === "faculty";
+  
+  // Default active page based on role
+  const defaultActivePage = isStudentOrFaculty ? "My Complaints" : "Pending";
+  const [activePage, setActivePage] = useState(defaultActivePage);
 
+  // Categories for complaints
   const categories = {
     "Computer & Comm. Centre": [
       "Automation",
@@ -26,7 +31,6 @@ const ComplaintSection = () => {
       "Turnitin",
       "Web Services",
       "Other"
-
     ],
     "Hostel/Resident Complaints": [
       "Plumbing",
@@ -46,10 +50,11 @@ const ComplaintSection = () => {
       "Other"
     ],
   };
-  // Filter complaints based on search query
+
+  // Filter complaints based on search query and active page
   const filteredComplaints = complaintHistory.filter((complaint) =>
-    complaint.title.toLowerCase().includes(searchQuery.toLowerCase()) 
-  && (activePage === "My Complaints" || complaint.status === activePage)
+    complaint.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (isStudentOrFaculty && activePage === "My Complaints" || complaint.status === activePage)
   );
 
   // Handle GO button click to show the NewComplaintForm
@@ -71,10 +76,17 @@ const ComplaintSection = () => {
   const handleBackFromDetails = () => {
     setSelectedComplaint(null);
   };
+
   useEffect(() => {
     // Reset the selected complaint when the active page changes
     setSelectedComplaint(null);
   }, [activePage]);
+
+  // If the role is Academic Admin, don't show the complaint section
+  if (role === "acadAdmin") {
+    return null;
+  }
+
   return (
     <div className="flex flex-col h-[100%] border-1 w-[98%] m-2">
       {/* Permanent Navbar */}
@@ -83,27 +95,27 @@ const ComplaintSection = () => {
           <ul className="flex justify-start space-x-8">
             <li
               className={`text-white px-4 py-2 rounded-md p-2 cursor-pointer ${
-                activePage === "My Complaints" ? "bg-gray-800" : "bg-gray-600"
+                activePage === (isStudentOrFaculty ? "My Complaints" : "Pending") ? "bg-gray-800" : "bg-gray-600"
               }`}
-              onClick={(event) => setActivePage(event.target.innerText)}
+              onClick={() => setActivePage(isStudentOrFaculty ? "My Complaints" : "Pending")}
             >
-              {role==="student" ? ("My Complaints"):"Pending"}
+              {isStudentOrFaculty ? "My Complaints" : "Pending"}
             </li>
             <li
               className={`text-white px-4 py-2 rounded-md p-2 cursor-pointer ${
-                activePage === "New Complaint" ? "bg-gray-800" : "bg-gray-600"
+                activePage === (isStudentOrFaculty ? "New Complaint" : "In Progress") ? "bg-gray-800" : "bg-gray-600"
               }`}
-              onClick={(event) => setActivePage(event.target.innerText)}
+              onClick={() => setActivePage(isStudentOrFaculty ? "New Complaint" : "In Progress")}
             >
-              {role==="student" ? ("New Complaint"):"In Progress"}
+              {isStudentOrFaculty ? "New Complaint" : "In Progress"}
             </li>
             <li
               className={`text-white px-4 py-2 rounded-md p-2 cursor-pointer ${
-                activePage === "Delete Complaint" ? "bg-gray-800" : "bg-gray-600"
+                activePage === (isStudentOrFaculty ? "Delete Complaint" : "Resolved") ? "bg-gray-800" : "bg-gray-600"
               }`}
-              onClick={(event) => setActivePage(event.target.innerText)}
+              onClick={() => setActivePage(isStudentOrFaculty ? "Delete Complaint" : "Resolved")}
             >
-              {role==="student" ? ("Delete Complaint"):"Resolved"}
+              {isStudentOrFaculty ? "Delete Complaint" : "Resolved"}
             </li>
           </ul>
         </nav>
@@ -111,7 +123,8 @@ const ComplaintSection = () => {
 
       {/* Main Content */}
       <div className="bg-gray-50 p-6 rounded-lg drop-shadow-md w-[98%] min-h-full mb-4 m-auto">
-        {(activePage === "New Complaint" && !showNewComplaintForm) ? (
+        {/* New Complaint Form Selection (only for students/faculty) */}
+        {isStudentOrFaculty && activePage === "New Complaint" && !showNewComplaintForm && (
           <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
             <label className="block font-semibold mb-2">Register to:</label>
             <select
@@ -148,9 +161,10 @@ const ComplaintSection = () => {
               GO
             </button>
           </div>
-        ):""}
+        )}
 
-        {(activePage === "New Complaint" && showNewComplaintForm) ? (
+        {/* New Complaint Form (only for students/faculty) */}
+        {isStudentOrFaculty && activePage === "New Complaint" && showNewComplaintForm && (
           <div className="relative">
             {/* Back Button */}
             <button
@@ -162,14 +176,13 @@ const ComplaintSection = () => {
             {/* Render the NewComplaintForm */}
             <NewComplaintForm />
           </div>
-        ):""}
+        )}
 
-        { (((activePage === "My Complaints")
-         |(activePage === "Pending")
-         |(activePage === "In Progress")
-         |(activePage === "Resolved")
-         |(activePage === "Delete Complaint"))
-          && !selectedComplaint) ? (
+        {/* Complaint List View */}
+        {((isStudentOrFaculty && activePage === "My Complaints") ||
+          (!isStudentOrFaculty && (activePage === "Pending" || activePage === "In Progress" || activePage === "Resolved")) ||
+          (isStudentOrFaculty && activePage === "Delete Complaint")) && 
+          !selectedComplaint && (
           <div className="max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-4">
               <input
@@ -205,20 +218,18 @@ const ComplaintSection = () => {
               <p className="text-gray-600">No complaints found.</p>
             )}
           </div>
-        ):""}
+        )}
 
         {/* Show Complaint Details if a complaint is selected */}
-        {(((activePage === "My Complaints")
-         |(activePage === "Pending")
-         |(activePage === "In Progress")
-         |(activePage === "Resolved")
-         |(activePage === "Delete Complaint")) && selectedComplaint) ?(
+        {((isStudentOrFaculty && (activePage === "My Complaints" || activePage === "Delete Complaint")) ||
+          (!isStudentOrFaculty && (activePage === "Pending" || activePage === "In Progress" || activePage === "Resolved"))) && 
+          selectedComplaint && (
           <ComplaintDetails
             complaint={selectedComplaint}
             onBack={handleBackFromDetails}
             role={role}
           />
-        ):""}
+        )}
       </div>
     </div>
   );

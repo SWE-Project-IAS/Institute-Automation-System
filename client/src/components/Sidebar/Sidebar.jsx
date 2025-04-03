@@ -29,8 +29,8 @@ const Sidebar = () => {
                         </button>
                     {role === "student" && <Student/>}
                     {role === "faculty" && <Faculty/>}
-                    {role === "academic-admin" && <AcadAdmin/>}
-                    {role === "hostel-admin" && <HostelAdmin/>}
+                    {role === "acadAdmin" && <AcadAdmin/>}
+                    {role === "nonAcadAdmin" && <HostelAdmin/>}
                     </div>
                 </>
             }

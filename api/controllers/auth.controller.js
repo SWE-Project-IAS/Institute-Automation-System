@@ -13,7 +13,7 @@ export const login = async (req, res) => {
             return res.status(400).json({ message: 'Email, password, and role are required' });
         }
 
-        const user = await User.findOne({ email: email.toLowerCase().trim() });
+        const user = await User.findOne({ email: email });
 
         if (!user) {
             return res.status(401).json({ message: 'Invalid credentials' });
@@ -28,13 +28,13 @@ export const login = async (req, res) => {
         let specificUser;
         switch (role) {
             case 'student':
-                specificUser = await Student.findOne({ email: email.toLowerCase().trim() }); // Assuming Student model is defined
+                specificUser = await Student.findOne({userId:user._id}); // Assuming Student model is defined
                 break;
-            case 'admin':
-                specificUser = await Admin.findOne({ email: email.toLowerCase().trim() });     // Assuming Admin model is defined
+            case 'acadAdmin':
+                specificUser = await Admin.findOne({ userId:user._id });     // Assuming Admin model is defined
                 break;
             case 'faculty':
-                specificUser = await Faculty.findOne({ email: email.toLowerCase().trim() });   // Assuming Faculty model is defined
+                specificUser = await Faculty.findOne({ userId:user._id });   // Assuming Faculty model is defined
                 break;
             default:
                 return res.status(400).json({ message: 'Invalid role' });

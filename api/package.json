@@ -2,9 +2,10 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "seed": "node scripts/seedDb.js"
   },
-  "type":"module",
+  "type": "module",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
@@ -12,7 +13,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.12.2",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.1",
     "nodemon": "^3.1.9",
     "ts-jest": "^29.3.0"
   },

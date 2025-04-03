@@ -23,6 +23,7 @@ const processSubscriptionRequest = async ({ requestId, status, rejectionReason }
 
 const SubscriptionManagement = () => {
   const [studentId, setStudentId] = useState('');
+  const [currentPlan, setCurrentPlan] = useState('REGULAR');
   const [newPlan, setNewPlan] = useState('REGULAR');
   const [error, setError] = useState('');
   const [requests, setRequests] = useState([]);
@@ -54,10 +55,16 @@ const SubscriptionManagement = () => {
       return;
     }
 
+    if (currentPlan === newPlan) {
+      setError('Current plan and new plan cannot be the same');
+      return;
+    }
+
     try {
-      await createSubscriptionRequest({ studentId, newPlan });
+      await createSubscriptionRequest({ studentId, currentPlan, newPlan });
       alert('Subscription request submitted successfully!');
       setStudentId('');
+      setCurrentPlan('REGULAR');
       setNewPlan('REGULAR');
       await fetchSubscriptionRequests();
     } catch (err) {
@@ -111,7 +118,37 @@ const SubscriptionManagement = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="messPlan">Mess Plan</label>
+            <label htmlFor="currentPlan">Current Plan</label>
+            <div className="plan-options">
+              <label 
+                className={`plan-option ${currentPlan === 'REGULAR' ? 'selected' : ''}`}
+              >
+                <input 
+                  type="radio" 
+                  value="REGULAR"
+                  checked={currentPlan === 'REGULAR'}
+                  onChange={() => setCurrentPlan('REGULAR')}
+                  className="plan-radio"
+                />
+                <span>Regular Plan</span>
+              </label>
+              <label 
+                className={`plan-option ${currentPlan === 'SPECIAL' ? 'selected' : ''}`}
+              >
+                <input 
+                  type="radio" 
+                  value="SPECIAL"
+                  checked={currentPlan === 'SPECIAL'}
+                  onChange={() => setCurrentPlan('SPECIAL')}
+                  className="plan-radio"
+                />
+                <span>Special Plan</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="newPlan">New Plan</label>
             <div className="plan-options">
               <label 
                 className={`plan-option ${newPlan === 'REGULAR' ? 'selected' : ''}`}
