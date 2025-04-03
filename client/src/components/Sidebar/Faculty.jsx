@@ -27,7 +27,9 @@ const Faculty = () => {
                     {expandedSections.course && (
                         <ul className="pl-5">
                             <li>Registration</li>
-                            <li>Feedback</li>
+                            <li>
+                                <Link to="/feedbackReports" className="text-gray-700 hover:text-gray-900">Feedback</Link>
+                            </li>
                             <li>Attendance Tracking</li>
                             <li>Grades Submission</li>
                             <li>Assignments</li>

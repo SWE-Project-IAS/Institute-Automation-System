@@ -7,8 +7,10 @@ import Sidebar from './components/Sidebar/Sidebar';
 import CourseRegistration from './components/CourseRegistration';
 import AttendanceLandingPage from './components/Attendance/AttendanceLandingPage';
 import AttendanceCoursePage from './components/Attendance/AttendanceCoursePage';
-import CourseFeedbackSelectionPage from './components/courseFeedback/courseFeedbackSelectionPage';
-import CourseFeedbackFormPage from './components/courseFeedback/courseFeedbackFormPage';
+import CourseFeedbackSelection from './components/courseFeedback/courseFeedbackSelection.jsx';
+import CourseFeedbackForm from './components/courseFeedback/courseFeedbackForm.jsx';
+import FeedbackConfiguration from './components/courseFeedback/feedbackConfiguration.jsx';
+import FeedbackReports from './components/courseFeedback/feedbackReports.jsx';
 import Mess from './components/HostelMess/Mess.jsx';
 import StudentSubscriptionForm from './components/HostelMess/StudentSubscriptionForm.jsx';
 import AdminSubscriptionRequests from './components/HostelMess/AdminSubscriptionRequests.jsx';
@@ -168,11 +170,19 @@ function App() {
                 },
                 {
                     path: "/courseFeedback",
-                    element: <CourseFeedbackSelectionPage/>
+                    element: <CourseFeedbackSelection/>
                 },
                 {
                     path: "/courseFeedback/selectedCourse",
-                    element: <CourseFeedbackFormPage/>
+                    element: <CourseFeedbackForm/>
+                },
+                {
+                    path: "/feedbackConfiguration",
+                    element: <FeedbackConfiguration/>
+                },
+                {
+                    path: "/feedbackReports",
+                    element: <FeedbackReports/>
                 },
                 {
                     path: "/profile",
