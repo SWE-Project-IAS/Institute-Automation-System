@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { RoleContext } from "../../../context/Rolecontext";
 import React, { useRef } from 'react';
+import { FaFileUpload, FaCheckCircle, FaUndo } from "react-icons/fa";
 
 
 const dummyCourses = [
@@ -74,7 +75,8 @@ const studentList = [
 // Create dummy attendance data for each student
 const generateStudentAttendanceData = () => {
   const studentAttendanceData = {};
-  
+
+
   studentList.forEach(student => {
     studentAttendanceData[student.rollNumber] = {
       classesMissed: Math.floor(Math.random() * 10),
@@ -92,6 +94,19 @@ const generateStudentAttendanceData = () => {
 };
 
 export const CourseStats = () => {
+
+    
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleSubmit = () => {
+    if (!file) return alert("Please attach a file before submitting.");
+    setSubmitted(true);
+    alert("Assignment submitted successfully!");
+  };
+
+
   const { role } = useContext(RoleContext);  
   const navigateTo = useNavigate();
   const { id } = useParams();
@@ -101,7 +116,8 @@ export const CourseStats = () => {
   const [courseId, setCourseId] = useState(course.courseId);
   const [semester, setSemester] = useState(course.semester);
   const [attendanceAll, setAttendanceAll] = useState(course.attendanceAll);
-  
+  const [file, setFile] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
   // Student selection and stats
   const [selectedStudent, setSelectedStudent] = useState("");
   const [showStats, setShowStats] = useState(false);
@@ -200,6 +216,32 @@ export const CourseStats = () => {
                 </div>
             </div>
           </div>
+        </div>
+      }
+      {role === "faculty" && <div>
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex items-center gap-4">
+            {/* File Upload */}
+            <div>
+              <label className="block text-gray-700 font-medium">
+                Upload attendance from file:  
+                <input 
+                  type="file" 
+                  onChange={handleFileChange} 
+                  className="block w-full mt-2 border border-gray-300 rounded-md p-2"
+  
+                />
+              </label>
+            </div>
+            
+            {/* Submit Button */}
+            <button
+              onClick={handleSubmit}
+              className="flex items-center bg-blue-300 text-black px-4 py-2 rounded-md  transition duration-300 mt-8">
+              <FaCheckCircle className="mr-2" /> Upload Attendance
+            </button>
+          </div>
+        </div>
         </div>
       }
       {role === "faculty" && <div className="course-dropdown">
