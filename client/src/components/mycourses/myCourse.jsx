@@ -138,7 +138,8 @@ export default function MyCourses() {
                   </Link>
                   
                   <Link
-                    to={`/course/${course.id}`}
+                    // to={`/course/${course.id}`}
+                    to="/attendancelanding"
                     className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200"
                   >
                     <FaCalendarAlt className="text-pink-400" />
@@ -166,7 +167,7 @@ export default function MyCourses() {
                 
                 <div className="mt-4">
                   <Link 
-                    to={`/course/${course.id}/details`}
+                    // to={`/course/${course.id}/details`}
                     className="flex items-center justify-center gap-2 w-full bg-pink-50 text-pink-600 border border-pink-200 rounded-md p-2 text-sm font-medium hover:bg-pink-100 transition duration-200"
                   >
                     <span>View Course Details</span>

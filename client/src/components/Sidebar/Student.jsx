@@ -37,7 +37,10 @@ const Student = () => {
                             </li>
                             <li>
                                 <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('activeCourses')}>
-                                    {expandedSections.activeCourses ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Active Courses
+                                    {expandedSections.activeCourses ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} 
+                                    <Link to = "/my-courses" className="text-gray-700 hover:text-gray-900">
+                                        Active Courses
+                                    </Link>
                                 </span>
                                 {expandedSections.activeCourses && (
                                 <ul className="pl-5">
@@ -61,11 +64,11 @@ const Student = () => {
                                             Drop Course
                                         </Link>
                                     </li>
-                                    <li>
+                                    {/* <li>
                                         <Link to="/course/:courseId/announcements" className="text-gray-700 hover:text-gray-900">
                                             Announcements
                                         </Link>
-                                    </li>
+                                    </li> */}
                                     <li>
                                         <Link to="/courseFeedback" className="text-gray-700 hover:text-gray-900">Feedback</Link>
                                     </li>

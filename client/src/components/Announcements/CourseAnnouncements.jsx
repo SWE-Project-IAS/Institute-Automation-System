@@ -1,17 +1,27 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { FaArrowLeft, FaBullhorn, FaCalendarAlt, FaUserCircle } from "react-icons/fa";
+import { FaArrowLeft, FaBullhorn, FaCalendarAlt, FaUserCircle, FaExclamationTriangle } from "react-icons/fa";
 
 export default function CourseAnnouncements() {
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   // Simulate fetching course data and announcements
   useEffect(() => {
     // This would be an API call in a real application
     setTimeout(() => {
+      // Check if course exists
+      const validCourseIds = ["CS101", "MATH202", "ENG105"];
+      
+      if (!validCourseIds.includes(courseId)) {
+        setError(true);
+        setLoading(false);
+        return;
+      }
+      
       const courseData = {
         id: courseId,
         name: courseId === "CS101" ? "Introduction to Computer Science" :
@@ -53,6 +63,7 @@ export default function CourseAnnouncements() {
     }, 500); // Simulate network delay
   }, [courseId]);
 
+  // Loading state
   if (loading) {
     return (
       <div className="p-6 flex justify-center items-center min-h-screen">
@@ -64,6 +75,29 @@ export default function CourseAnnouncements() {
     );
   }
 
+  // Error state - Course not found
+  if (error) {
+    return (
+      <div className="p-6 flex justify-center items-center min-h-screen">
+        <div className="text-center bg-white p-8 rounded-lg shadow-lg border border-red-200 max-w-md">
+          <FaExclamationTriangle className="text-5xl text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-800 mb-3">Course Not Found</h2>
+          <p className="text-gray-600 mb-6">
+            The course you're looking for doesn't exist or you don't have access to it.
+          </p>
+          <Link
+            to="/my-courses"
+            className="inline-flex items-center justify-center gap-2 bg-pink-500 text-white py-2 px-6 rounded-md font-medium hover:bg-pink-600 transition duration-300"
+          >
+            <FaArrowLeft className="text-sm" />
+            Return to My Courses
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Normal state - Display announcements
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header with Back Button */}
