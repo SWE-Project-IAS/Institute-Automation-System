@@ -1,8 +1,11 @@
 import express from "express";
+import { connectDB } from "./database/mongoDb.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import mongoose from "mongoose";
 import authRouter from "../api/routes/auth.route.js";
+
 import Razorpay from "razorpay";
 import crypto from "crypto"; // Needed for signature verification (production)
 
@@ -111,15 +114,23 @@ app.post("/api/payment/verify", (req, res) => {
 //     return res.status(errorStatus).send(errorMessage);
 // })
 
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
 
-app.listen(8000, () => {
-  console.log(`Backend server is running on port ${8000}`);
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-    console.warn(
-      "WARNING: Razorpay API keys not found in .env file. Payment integration will fail."
-    );
+// Start server with database connection
+const startServer = async () => {
+  try {
+    await connectDB();
+      app.listen(8000, () => {
+      console.log(`Backend server is running on port ${8000}`);
+      if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+        console.warn(
+          "WARNING: Razorpay API keys not found in .env file. Payment integration will fail."
+        );
+      }
+    });
+  } catch (error) {
+    console.error(`Failed to start server: ${error.message}`);
+    process.exit(1);
   }
-});
+};
+
+startServer();

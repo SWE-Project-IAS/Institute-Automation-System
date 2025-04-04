@@ -27,7 +27,9 @@ const HostelAdmin = () => {
                 {expandedSections.hostel && (
                     <ul className="pl-5">
                         <li>Leave</li>
-                        <li>Mess</li>
+                        <Link to="/hostel/leave" className='text-gray-700 hover:text-gray-900'>
+                            <li>Mess</li>
+                        </Link>
                         <li>Transfer</li>
                     </ul>
                 )}

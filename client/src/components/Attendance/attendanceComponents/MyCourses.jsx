@@ -1,10 +1,12 @@
 import Course from "./Course"
 import { useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-
+import { RoleContext } from "../../../context/Rolecontext";
+import { useContext } from "react";
 
 function MyCourses(){
     const navigateTo = useNavigate()
+    const { role } = useContext(RoleContext);
     //const [courses, setCourses] = useState([])
     /*
     useEffect(() =>{
@@ -36,12 +38,25 @@ function MyCourses(){
          {courseId : "CS 201", courseName: "Discrete Mathematics", attendance: "7%"},
          {courseId : "HS 125", courseName: "Macroeconomics", attendance: "7%"}
      ]
-     
+    
+    const facultycourses = [
+        { courseId: "EE 101", courseName: "Basic Electrical Engineering", averageAttendance: "85%" },
+        { courseId: "ME 201", courseName: "Thermodynamics", averageAttendance: "78%" },
+        { courseId: "CS 301", courseName: "Algorithms", averageAttendance: "92%" },
+        { courseId: "HS 101", courseName: "Psychology", averageAttendance: "88%" }
+    ];
+
     return (
-        <div className="courses" id = "my_courses">
+        <div className="courses" id="my_courses">
             <div className="text-wrapper-2">My Courses</div>
             {courses.length > 0 ? (
-                <Course courses={courses} />
+                role.includes("student") ? (
+                    <Course courses={courses} />
+                ) : role.includes("faculty") ? (
+                    <Course courses={facultycourses} />
+                ) : (
+                    <p>No courses available for your role.</p>
+                )
             ) : (
                 <p>Loading courses...</p>
             )}

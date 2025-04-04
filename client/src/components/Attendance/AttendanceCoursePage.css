@@ -268,9 +268,62 @@ html {
     position: relative;
     width: auto;
   }
+
+  .course-dropdown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 10px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .student-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .student-selector label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+  }
+  
+  .student-dropdown {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: white;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .student-dropdown:hover {
+    border-color: #aaa;
+  }
+  
+  .student-dropdown:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  }
+  
+  /* Optional: Style for the dropdown options */
+  .student-dropdown option {
+    padding: 10px;
+  }
   
   .course-page .course-stats .frame {
-    background-color: #fb02e214;
+    background-color: #2491ff80;
     border-radius: 8px;
     height: 69px;
     margin: 10px 10px;
@@ -404,7 +457,7 @@ html {
 
   .course-page .course-stats .frame-2 {
     align-content: center;
-    background-color: #fb02e214;
+    background-color: #2491ff80;
     border-radius: 8px;
     height: 189px;
     margin: 10px 10px;
@@ -528,6 +581,11 @@ html {
     width: 137px;
   }
 
+  .course-page .course-stats .student-stats .add-or-update {
+    float: left;
+    width: 100%;
+  }
+
   .course-page .AddAttendance{
     top: auto;
     position: relative;
@@ -559,7 +617,7 @@ html {
   }
 
   .course-page .AddButton{
-    margin: 40px 40px 40px 0px;
+    margin: 20px 25vw;
     align-items: center;
     width: fit-content;
     background-color: #164488;
@@ -571,7 +629,7 @@ html {
   }
 
   .course-page .UpdateButton{
-    margin: 40px 0px;
+    margin: 20px 25vw;
     align-items: center;
     width: fit-content;
     background-color: #164488;

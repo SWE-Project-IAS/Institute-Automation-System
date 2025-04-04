@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import SiteAlert from "./attendanceComponents/siteAlert";
 import MyCourses from "./attendanceComponents/MyCourses";
 import "./AttendanceLandingPage.css";
 import { useEffect,useState } from "react";
-
+import { RoleContext } from "../../context/Rolecontext";
 
 function AttendanceLandingPage (){
-  
+  const { role } = useContext(RoleContext);
   const [overall, setOverall] = useState(0)
 
   function makeInt(percentageString) {
@@ -36,10 +36,10 @@ function AttendanceLandingPage (){
   return (
     <div className="landing-page">
       <div className="div">
-        {overall<75 && <SiteAlert />}
+        {overall<75 && role === "student" && <SiteAlert />}
         <br />
-        <div className="MyCourses"><MyCourses /></div>
-  
+        <div className="MyCourses">{role === "student" && <MyCourses />}</div>
+        <div className="MyCourses">{role === "faculty" && <MyCourses />}</div>
         {/* <br/> */}
         {/* <Announcements /> */}
       </div>

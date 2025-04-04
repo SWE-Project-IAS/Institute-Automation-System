@@ -26,9 +26,22 @@ const Faculty = () => {
                     </span>
                     {expandedSections.course && (
                         <ul className="pl-5">
-                            <li>Registration</li>
-                            <li>Feedback</li>
-                            <li>Attendance Tracking</li>
+                            <li> 
+                                <Link to="/facultyregistration" className="text-gray-700 hover:text-gray-900">
+                                    Registration
+                                </Link>
+
+                            </li>
+
+                            <li>
+                                <Link to="/feedbackReports" className="text-gray-700 hover:text-gray-900">Feedback</Link>
+                            </li>
+                            <li>
+                                <Link to="/attendancelanding" className="text-gray-700 hover:text-gray-900">
+                                Attendance Tracking
+                                </Link>
+                            </li>
+
                             <li>Grades Submission</li>
                             <li>Assignments</li>
                         </ul>

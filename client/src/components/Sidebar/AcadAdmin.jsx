@@ -18,28 +18,57 @@ const AcadAdmin = () => {
     }));
   };
 
-  return (
-    <>
-      <ul className="list-none pl-5 mt-5">
-        <li>
-          <span
-            className="font-bold text-gray-800 cursor-pointer flex items-center"
-            onClick={() => toggleSection("course")}
-          >
-            {expandedSections.course ? (
-              <IoMdArrowDropdown />
-            ) : (
-              <IoMdArrowDropright />
-            )}{" "}
-            Course
-          </span>
-          {expandedSections.course && (
-            <ul className="pl-5">
-              <li>Registration</li>
-              <li>Create course</li>
-              <li>Attendance</li>
-              <li>Feedback</li>
-              <li>Announcements</li>
+
+    return (
+        <>
+            <ul className="list-none pl-5 mt-5">
+                <li>
+                    <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('course')}>
+                        {expandedSections.course ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Course
+                    </span>
+                    {expandedSections.course && (
+                        <ul className="pl-5">
+                            <li>Registration</li>
+                            <li>Create course</li>
+                            <li>Attendance</li>
+                            <li>
+                                <Link to="/feedbackConfiguration" className="text-gray-700 hover:text-gray-900">Feedback</Link>
+                            </li>
+                            <li>Announcements</li>
+                        </ul>
+                    )}
+                </li>
+                <li className="mt-2">
+                <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('documents')}>
+                    {expandedSections.documents ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Documents
+                </span>
+                {expandedSections.documents && (
+                    <ul className="pl-5">
+                        <li>View Requests</li>
+                    </ul>
+                )}
+                </li>
+                <li className="mt-2">
+                <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('complaint')}>
+                    {expandedSections.complaint ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Complaint
+                </span>
+                {expandedSections.complaint && (
+                    <ul className="pl-5">
+                        <li>View Complaints</li>
+                    </ul>
+                )}
+                </li>
+                <li className="mt-2">
+                <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('profile')}>
+                    {expandedSections.profile ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Profile
+                </span>
+                {expandedSections.profile && (
+                    <ul className="pl-5">
+                        <li>View Profile</li>
+                    </ul>
+                )}
+                </li>
+
             </ul>
           )}
         </li>
