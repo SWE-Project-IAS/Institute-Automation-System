@@ -32,6 +32,9 @@ import FeeReceiptPage from "./pages/Documents/FeeReceipt.jsx";
 import AssignmentLanding from "./components/Assignment/AssignmentLanding.jsx";
 import AssignmentList from "./components/Assignment/AssignmentList.jsx";
 import AssignmentDetail from "./components/Assignment/AssignmentDetails.jsx";
+import CreateAssignment from "./components/Assignment/CreateAssignment.jsx";
+import EditAssignment from "./components/Assignment/EditAssignment.jsx";
+import FacultyAssignmentSubmissions from "./components/Assignment/FacultyAssignmentSubmissions.jsx";
 import LoginPage from "./components/LoginPage/Login.jsx";
 import DropCourse from "./components/dropCourse/drop.jsx";
 import CourseAnnouncements from "./components/Announcements/CourseAnnouncements.jsx";
@@ -134,6 +137,19 @@ function App() {
                     path:"/course/:courseId/assignment/:assignmentId",
                     element: <AssignmentDetail/>
                 },
+                {
+                    path:"/course/:courseId/create-assignment",
+                    element: <CreateAssignment/>
+                },
+                {
+                    path:"/course/:courseId/assignment/:assignmentId/edit",
+                    element: <EditAssignment/>
+                },
+                {
+                    path:"/course/:courseId/assignment/:assignmentId/submissions",
+                    element: <FacultyAssignmentSubmissions/>
+                },
+
                 {
                     path:"/attendancelanding",
                     element: <AttendanceLandingPage/>

@@ -1,15 +1,19 @@
 import { useParams } from "react-router-dom";
-import { courses } from "./data";
+import { courses, assignments } from "./data";
 import { useState } from "react";
-import { FaFileUpload, FaCheckCircle, FaUndo } from "react-icons/fa";
+import { FaCheckCircle, FaUndo, FaFileUpload } from "react-icons/fa";
 
 export default function AssignmentDetail() {
-  const { courseId, assignmentId } = useParams();
-  const course = courses.find((c) => c.id === courseId);
-  const assignment = course?.assignments.find((a) => a.id === assignmentId);
+  const { assignmentId } = useParams();
+
+  // Find assignment details
+  const assignment = assignments.find((a) => a.id === assignmentId);
+  const course = courses.find((c) => c.id === assignment?.course_id);
 
   const [file, setFile] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [submissionTime, setSubmissionTime] = useState(null);
+
   const dueDate = new Date(assignment?.due_date);
   const today = new Date();
   const isBeforeDeadline = today <= dueDate;
@@ -19,49 +23,75 @@ export default function AssignmentDetail() {
   };
 
   const handleSubmit = () => {
-    if (!file) return alert("Please attach a file before submitting.");
+    if (!file) return alert("📂 Please attach a file before submitting.");
+    
     setSubmitted(true);
-    alert("Assignment submitted successfully!");
+    setSubmissionTime(new Date().toLocaleString());
+    alert("✅ Assignment submitted successfully!");
   };
 
   const handleUndo = () => {
     setSubmitted(false);
     setFile(null);
-    alert("Submission undone.");
+    setSubmissionTime(null);
+    alert("🔄 Submission undone.");
   };
 
   if (!assignment) {
-    return <p className="text-red-500 text-center p-6">Assignment not found.</p>;
+    return (
+      <p className="text-red-500 text-center p-6 font-semibold">
+        ❌ Assignment not found.
+      </p>
+    );
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto bg-white rounded-lg shadow-md border border-gray-200">
+    <div className="p-6 max-w-2xl mx-auto bg-white rounded-lg shadow-md border border-gray-300">
       {/* Assignment Title */}
-      <h2 className="text-3xl font-bold text-gray-900 mb-4">{assignment.title}</h2>
+      <h2 className="text-3xl font-bold text-gray-900 mb-2">{assignment.title}</h2>
+
+      {/* Course Name */}
+      {course && (
+        <p className="text-gray-600 text-sm mb-4">
+          <strong>📚 Course:</strong> {course.name} ({course.id})
+        </p>
+      )}
 
       {/* Description */}
       <p className="text-gray-700 leading-relaxed mb-4">{assignment.description}</p>
 
       {/* Due Date */}
       <p className="text-gray-600 text-sm mb-6">
-        <strong>Due Date:</strong> {assignment.due_date} (EOD)
+        <strong>📅 Due Date:</strong> {assignment.due_date} (End of Day)
       </p>
 
-      {/* File Upload & Submission Actions */}
+      {/* Submission Status */}
+      {submitted && (
+        <div className="p-4 mb-4 bg-green-100 border border-green-300 rounded-md">
+          <p className="text-green-700 font-semibold">✅ Assignment Submitted Successfully!</p>
+          <p className="text-gray-600 text-sm">📌 Submitted on: {submissionTime}</p>
+          {file && (
+            <p className="text-gray-600 text-sm">
+              📄 File: <span className="font-medium">{file.name}</span>
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* File Upload & Submission */}
       {isBeforeDeadline ? (
         <div className="space-y-4">
-          {/* File Upload */}
           <label className="block text-gray-700 font-medium">
+            <FaFileUpload className="inline-block mr-2" />
             Attach File:
-            <input 
-              type="file" 
-              onChange={handleFileChange} 
+            <input
+              type="file"
+              onChange={handleFileChange}
               className="block w-full mt-2 border border-gray-300 rounded-md p-2"
               disabled={submitted}
             />
           </label>
 
-          {/* Submit & Undo Buttons */}
           <div className="flex gap-4">
             {!submitted ? (
               <button
@@ -81,7 +111,9 @@ export default function AssignmentDetail() {
           </div>
         </div>
       ) : (
-        <p className="text-red-500 font-medium">⏳ Submission deadline has passed.</p>
+        <p className="text-red-500 font-medium">
+          ⏳ Submission deadline has passed.
+        </p>
       )}
     </div>
   );
