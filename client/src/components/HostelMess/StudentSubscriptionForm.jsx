@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { FaUtensils, FaExchangeAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import './styles/StudentSubscriptionForm.css';
 
 const createSubscriptionRequest = async (data) => {
@@ -7,101 +8,90 @@ const createSubscriptionRequest = async (data) => {
   return response.data;
 };
 
-const getSubscriptionRequests = async () => {
-  const response = await axios.get('/api/subscription-requests');
-  return response.data;
-};
-
-const processSubscriptionRequest = async ({ requestId, status, rejectionReason }) => {
-  const response = await axios.put('/api/process-request', {
-    requestId,
-    status,
-    rejectionReason
-  });
-  return response.data;
-};
-
-const SubscriptionManagement = () => {
+const StudentSubscriptionForm = () => {
   const [studentId, setStudentId] = useState('');
   const [currentPlan, setCurrentPlan] = useState('REGULAR');
   const [newPlan, setNewPlan] = useState('REGULAR');
   const [error, setError] = useState('');
-  const [requests, setRequests] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateStudentId = (id) => {
     const studentIdRegex = /^\d{9}$/;
     return studentIdRegex.test(id);
   };
 
-  const fetchSubscriptionRequests = async () => {
-    setIsLoading(true);
-    try {
-      const fetchedRequests = await getSubscriptionRequests();
-      setRequests(fetchedRequests);
-      setIsLoading(false);
-    } catch (err) {
-      setError('Failed to fetch subscription requests');
-      setIsLoading(false);
-    }
-  };
-
   const handleCreateRequest = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
+    setIsSubmitting(true);
 
     if (!validateStudentId(studentId)) {
       setError('Invalid Student ID. Must be exactly 9 digits');
+      setIsSubmitting(false);
       return;
     }
 
     if (currentPlan === newPlan) {
       setError('Current plan and new plan cannot be the same');
+      setIsSubmitting(false);
       return;
     }
 
     try {
       await createSubscriptionRequest({ studentId, currentPlan, newPlan });
-      alert('Subscription request submitted successfully!');
+      setSuccess('Subscription request submitted successfully!');
       setStudentId('');
       setCurrentPlan('REGULAR');
       setNewPlan('REGULAR');
-      await fetchSubscriptionRequests();
+      setIsSubmitting(false);
     } catch (err) {
       const errorMessage = err.response?.data?.message || 
         'Failed to submit request. Please try again.';
       setError(errorMessage);
-    }
-  };
-
-  const handleProcessRequest = async (requestId, status) => {
-    const rejectionReason = status === 'REJECTED' 
-      ? prompt('Please provide a reason for rejection:') 
-      : '';
-    
-    try {
-      await processSubscriptionRequest({ 
-        requestId, 
-        status, 
-        rejectionReason 
-      });
-      alert('Subscription request processed successfully!');
-      await fetchSubscriptionRequests();
-    } catch (err) {
-      setError('Failed to process subscription request');
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="subscription-container">
-      <div className="subscription-card">
-        <form onSubmit={handleCreateRequest} className="subscription-form">
-          <h2>Mess Subscription Management</h2>
+    <div className="max-w-2xl mx-auto">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-blue-600 px-6 py-4">
+          <h2 className="text-xl font-semibold text-white flex items-center">
+            <FaUtensils className="mr-2" /> Student Meal Plan Request
+          </h2>
+        </div>
+        
+        <form onSubmit={handleCreateRequest} className="p-6">
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <FaTimes className="h-5 w-5 text-red-500" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
           
-          {error && <div className="error-message">{error}</div>}
-          
-          <div className="form-group">
-            <label htmlFor="studentId">Student ID</label>
+          {success && (
+            <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <FaCheck className="h-5 w-5 text-green-500" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-green-700">{success}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="mb-6">
+            <label htmlFor="studentId" className="block text-gray-700 font-medium mb-2">Student ID</label>
             <input 
               type="number" 
               id="studentId"
@@ -114,117 +104,116 @@ const SubscriptionManagement = () => {
               required 
               min="100000000"
               max="999999999"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <p className="text-xs text-gray-500 mt-1">Must be exactly 9 digits</p>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="currentPlan">Current Plan</label>
-            <div className="plan-options">
+          <div className="mb-6">
+            <label className="block text-gray-700 font-medium mb-2">Current Plan</label>
+            <div className="grid grid-cols-2 gap-4">
               <label 
-                className={`plan-option ${currentPlan === 'REGULAR' ? 'selected' : ''}`}
+                className={`
+                  flex items-center p-4 border rounded-md cursor-pointer transition-all
+                  ${currentPlan === 'REGULAR' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                `}
               >
                 <input 
                   type="radio" 
                   value="REGULAR"
                   checked={currentPlan === 'REGULAR'}
                   onChange={() => setCurrentPlan('REGULAR')}
-                  className="plan-radio"
+                  className="sr-only"
                 />
-                <span>Regular Plan</span>
+                <div className="ml-2">
+                  <div className="font-medium text-gray-900">Regular Plan</div>
+                  <div className="text-sm text-gray-500">Standard meal options</div>
+                </div>
               </label>
               <label 
-                className={`plan-option ${currentPlan === 'SPECIAL' ? 'selected' : ''}`}
+                className={`
+                  flex items-center p-4 border rounded-md cursor-pointer transition-all
+                  ${currentPlan === 'SPECIAL' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                `}
               >
                 <input 
                   type="radio" 
                   value="SPECIAL"
                   checked={currentPlan === 'SPECIAL'}
                   onChange={() => setCurrentPlan('SPECIAL')}
-                  className="plan-radio"
+                  className="sr-only"
                 />
-                <span>Special Plan</span>
+                <div className="ml-2">
+                  <div className="font-medium text-gray-900">Special Plan</div>
+                  <div className="text-sm text-gray-500">Dietary restrictions</div>
+                </div>
               </label>
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="newPlan">New Plan</label>
-            <div className="plan-options">
+          <div className="mb-6">
+            <div className="flex items-center mb-2">
+              <label className="block text-gray-700 font-medium">New Plan</label>
+              <FaExchangeAlt className="ml-2 text-blue-500" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <label 
-                className={`plan-option ${newPlan === 'REGULAR' ? 'selected' : ''}`}
+                className={`
+                  flex items-center p-4 border rounded-md cursor-pointer transition-all
+                  ${newPlan === 'REGULAR' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                `}
               >
                 <input 
                   type="radio" 
                   value="REGULAR"
                   checked={newPlan === 'REGULAR'}
                   onChange={() => setNewPlan('REGULAR')}
-                  className="plan-radio"
+                  className="sr-only"
                 />
-                <span>Regular Plan</span>
+                <div className="ml-2">
+                  <div className="font-medium text-gray-900">Regular Plan</div>
+                  <div className="text-sm text-gray-500">Standard meal options</div>
+                </div>
               </label>
               <label 
-                className={`plan-option ${newPlan === 'SPECIAL' ? 'selected' : ''}`}
+                className={`
+                  flex items-center p-4 border rounded-md cursor-pointer transition-all
+                  ${newPlan === 'SPECIAL' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                `}
               >
                 <input 
                   type="radio" 
                   value="SPECIAL"
                   checked={newPlan === 'SPECIAL'}
                   onChange={() => setNewPlan('SPECIAL')}
-                  className="plan-radio"
+                  className="sr-only"
                 />
-                <span>Special Plan</span>
+                <div className="ml-2">
+                  <div className="font-medium text-gray-900">Special Plan</div>
+                  <div className="text-sm text-gray-500">Dietary restrictions</div>
+                </div>
               </label>
             </div>
           </div>
 
-          <button 
-            type="submit" 
-            className="submit-btn"
-          >
-            Submit Request
-          </button>
+          <div className="flex justify-end">
+            <button 
+              type="submit" 
+              className={`
+                px-6 py-2 bg-blue-600 text-white rounded-md font-medium 
+                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                focus:ring-offset-2 transition-all
+                ${isSubmitting ? 'opacity-75 cursor-wait' : ''}
+              `}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit Request'}
+            </button>
+          </div>
         </form>
-
-        {/* Subscription Requests List */}
-        <div className="requests-section">
-          <h3>Subscription Requests</h3>
-          {isLoading ? (
-            <div>Loading requests...</div>
-          ) : (
-            requests.map((request) => (
-              <div key={request._id} className="request-item">
-                <div>
-                  <strong>Student:</strong> {request.studentId?.name || 'Unknown'}
-                  <br />
-                  <strong>Current Plan:</strong> {request.currentPlan}
-                  <br />
-                  <strong>Requested Plan:</strong> {request.newPlan}
-                  <br />
-                  <strong>Status:</strong> {request.status}
-                </div>
-                {request.status === 'PENDING' && (
-                  <div className="request-actions">
-                    <button 
-                      onClick={() => handleProcessRequest(request._id, 'APPROVED')}
-                      className="approve-btn"
-                    >
-                      Approve
-                    </button>
-                    <button 
-                      onClick={() => handleProcessRequest(request._id, 'REJECTED')}
-                      className="reject-btn"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
       </div>
     </div>
   );
 };
 
-export default SubscriptionManagement;
+export default StudentSubscriptionForm;
