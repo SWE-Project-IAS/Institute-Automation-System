@@ -54,7 +54,7 @@ const ComplaintSection = () => {
   // Filter complaints based on search query and active page
   const filteredComplaints = complaintHistory.filter((complaint) =>
     complaint.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    (isStudentOrFaculty && activePage === "My Complaints" || complaint.status === activePage)
+    ((isStudentOrFaculty && activePage) === "My Complaints" || complaint.status === activePage)
   );
 
   // Handle GO button click to show the NewComplaintForm
