@@ -1,7 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {User} from '../models/user.model.js';
-import {Student} from '../models/student.model.js'; // Assuming Student model is defined
+import {Faculty} from '../models/faculty.model.js';
+import {Student} from '../models/student.model.js';
+import {AcadAdmin} from '../models/acadAdmin.model.js';
+import {HostelAdmin} from '../models/hostelAdmin.model.js';
+
 import { validateAccessToken, validateRefreshToken } from '../middleware/auth.middleware.js';
 import { findUserByEmail, verifyRefreshTokenInDB } from '../middleware/auth.middleware.js';
 
@@ -58,7 +62,7 @@ export const login = async (req, res) => {
         return res.status(200)
             .cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' })
             .header('Authorization', accessToken)
-            .json({ user: { email: user.email, role: role } });
+            .json({ user: specificUser });
 
     } catch (err) {
         console.error("Error during login:", err);

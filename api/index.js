@@ -121,8 +121,8 @@ app.post("/api/payment/verify", (req, res) => {
 const startServer = async () => {
   try {
     await connectDB();
-      app.listen(8000, () => {
-      console.log(`Backend server is running on port ${8000}`);
+      app.listen(port, () => {
+      console.log(`Backend server is running on port ${port}`);
       if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
         console.warn(
           "WARNING: Razorpay API keys not found in .env file. Payment integration will fail."
