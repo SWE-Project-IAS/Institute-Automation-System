@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const AcadAdmin = () => {
-    const [expandedSections, setExpandedSections] = useState({
-        course: false,
-        documents: false,
-        complaint: false, 
-        profile: false
-    });
+  const [expandedSections, setExpandedSections] = useState({
+    course: false,
+    documents: false,
+    complaint: false,
+    profile: false,
+  });
 
-    const toggleSection = (section) => {
-        setExpandedSections(prev => ({
-            ...prev,
-            [section]: !prev[section]
-        }));
-    };
+  const toggleSection = (section) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
 
     return (
         <>
@@ -29,7 +30,9 @@ const AcadAdmin = () => {
                         <ul className="pl-5">
                             <li>Registration</li>
                             <li>Create course</li>
-                            <li>Attendance</li>
+                            <Link to="/attendancelanding" className="text-gray-700 hover:text-gray-900">
+                                Attendance
+                                </Link>
                             <li>
                                 <Link to="/feedbackConfiguration" className="text-gray-700 hover:text-gray-900">Feedback</Link>
                             </li>
@@ -42,10 +45,25 @@ const AcadAdmin = () => {
                     {expandedSections.documents ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Documents
                 </span>
                 {expandedSections.documents && (
-                    <ul className="pl-5">
-                        <li>View Requests</li>
-                    </ul>
-                )}
+            <ul className="pl-5">
+              <li >
+                <Link
+                  to="/admin/documents"
+                  className="text-gray-700 hover:text-gray-900 flex items-center gap-2"
+                >
+                  Manage Applications
+                </Link>
+              </li>
+              <li >
+                <Link
+                  to="/admin/documents/access"
+                  className="text-gray-700 hover:text-gray-900 flex items-center gap-2"
+                >
+                  Access Control
+                </Link>
+              </li>
+            </ul>
+          )}
                 </li>
                 <li className="mt-2">
                 <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('complaint')}>
@@ -67,9 +85,10 @@ const AcadAdmin = () => {
                     </ul>
                 )}
                 </li>
-            </ul>
-        </>
-    );
+
+        </ul>
+    </>
+  );
 };
 
 export default AcadAdmin;

@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { User, Student, Admin, Faculty,AcadAdmin,HostelAdmin } from '../models/user.model.js';
+import {User} from '../models/user.model.js';
+import {Student} from '../models/student.model.js'; // Assuming Student model is defined
 import { validateAccessToken, validateRefreshToken } from '../middleware/auth.middleware.js';
 import { findUserByEmail, verifyRefreshTokenInDB } from '../middleware/auth.middleware.js';
 

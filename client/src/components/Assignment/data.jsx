@@ -1,92 +1,101 @@
 export const courses = [
+  { id: "ME101", name: "Engineering Mechanics", assignments: ["A1", "A2"] },
+  { id: "CS101", name: "Introduction to Computing", assignments: ["A3", "A4"] },
+  { id: "BT101", name: "Introduction to Biology", assignments: ["A5", "A6"] },
+  { id: "CS201", name: "Discrete Mathematics", assignments: ["A7", "A8"] },
+  { id: "AI101", name: "Artificial Intelligence", assignments: ["A9", "A10"] }
+];
+
+export const assignments = [
   {
-    id: "ME101",
-    name: "Engineering Mechanics",
-    assignments: [
-      { 
-        id: "A1", 
-        title: "Mastering Newton's Laws of Motion", 
-        description: "Newton's Laws of Motion form the foundation of classical mechanics. In this assignment, you will solve a variety of physics problems involving Newton's three laws. You must apply the principles of force, mass, and acceleration to analyze real-world mechanical systems. The problems include determining net forces, calculating acceleration in different scenarios, and solving for unknown variables using Newton's equations. Submit a detailed report with free-body diagrams, step-by-step solutions, and justifications for each answer. Clearly label all forces and explain reasoning behind each calculation.", 
-        due_date: "2025-04-10" 
-      },
-      { 
-        id: "A2", 
-        title: "Comprehensive Free Body Diagrams", 
-        description: "A free-body diagram is a graphical representation used to visualize the forces acting upon an object. For this assignment, you will analyze multiple mechanical systems, including pulleys, inclined planes, and connected bodies. Your task is to carefully draw accurate free-body diagrams for each given system, labeling all forces such as tension, normal force, friction, and applied forces. Additionally, you will explain the significance of each force and how they contribute to the system’s equilibrium. The submission should include a written explanation of the force interactions and corresponding equilibrium equations.", 
-        due_date: "2025-04-15" 
-      }
+    id: "A1",
+    course_id: "ME101",
+    title: "Mastering Newton's Laws of Motion",
+    description: "Newton's Laws of Motion form the foundation of classical mechanics and govern the relationship between a body and the forces acting on it. In this assignment, you will explore all three laws in detail, using real-world examples and solving quantitative problems involving acceleration, net force, and inertia. Your goal is to demonstrate a strong conceptual understanding along with mathematical problem-solving skills.",
+    due_date: "2025-04-10",
+    submissions: [
+      { student_id: "S101", student_name: "Alice Johnson", file_name: "alice_newton.pdf", submitted_at: "2025-04-08 14:30" },
+      { student_id: "S102", student_name: "Bob Smith", file_name: "bob_newton.docx", submitted_at: "2025-04-09 16:45" }
     ]
   },
   {
-    id: "CS101",
-    name: "Introduction to Computing",
-    assignments: [
-      { 
-        id: "A1", 
-        title: "Python Programming: Factorial Calculator", 
-        description: "Factorial computation is a fundamental concept in programming and is commonly used in permutations, combinations, and recursive algorithms. In this assignment, you will write a Python program that computes the factorial of a given number using both iterative and recursive approaches. Analyze the efficiency of each method by comparing their execution time for large input values. Implement error handling for invalid inputs and include test cases demonstrating the correctness of your program.", 
-        due_date: "2025-04-08" 
-      },
-      { 
-        id: "A2", 
-        title: "Linked List Implementation", 
-        description: "Linked lists are a fundamental data structure in computer science. Your task is to implement a singly linked list in JavaScript with functionalities for inserting, deleting, and traversing nodes. The implementation should include methods for adding a node at the beginning, at the end, and at a specific position. You should also implement a function to reverse the linked list and a function to detect cycles using Floyd’s Cycle Detection Algorithm. Submit a report explaining the advantages of linked lists over arrays, the time complexity of each operation, and real-world applications.", 
-        due_date: "2025-04-12" 
-      }
+    id: "A2",
+    course_id: "ME101",
+    title: "Comprehensive Free Body Diagrams",
+    description: "Free Body Diagrams (FBDs) are essential tools for visualizing the forces acting on a body in a static or dynamic environment. In this task, you are required to draw FBDs for a variety of real-world engineering problems, identify unknown forces, and apply equilibrium equations to solve for these forces. Emphasis should be on clarity, accuracy, and systematic approach to problem-solving.",
+    due_date: "2025-04-15",
+    submissions: []
+  },
+  {
+    id: "A3",
+    course_id: "CS101",
+    title: "Python Programming: Factorial Calculator",
+    description: "This assignment focuses on the implementation of a recursive and an iterative solution to calculate the factorial of a number in Python. You'll be required to handle edge cases, validate user input, and analyze the time complexity of both approaches. Your solution should be well-documented and submitted as a script or Jupyter notebook.",
+    due_date: "2025-04-08",
+    submissions: [
+      { student_id: "S103", student_name: "Charlie Brown", file_name: "charlie_factorial.py", submitted_at: "2025-04-07 10:20" }
     ]
   },
   {
-    id: "BT101",
-    name: "Introduction to Biology",
-    assignments: [
-      { 
-        id: "A1", 
-        title: "Understanding Cell Structure", 
-        description: "Cells are the building blocks of life. In this assignment, you will create detailed diagrams of prokaryotic and eukaryotic cells, labeling all organelles and explaining their functions. Additionally, you will write a comparative analysis discussing the differences between plant and animal cells, emphasizing structural and functional distinctions. Your submission should include hand-drawn or digital illustrations along with a detailed report discussing the role of each organelle in maintaining cellular function.", 
-        due_date: "2025-04-09" 
-      },
-      { 
-        id: "A2", 
-        title: "Exploring Mendelian Genetics", 
-        description: "Gregor Mendel's experiments laid the foundation for modern genetics. In this assignment, you will analyze different genetic crosses using Punnett squares to predict the inheritance of traits. You must explain dominant and recessive alleles, genotype and phenotype ratios, and real-world applications of genetic inheritance, such as genetic disorders and selective breeding. Your report should include well-illustrated diagrams, problem-solving examples, and a discussion on the impact of genetics in medicine and biotechnology.", 
-        due_date: "2025-04-14" 
-      }
+    id: "A4",
+    course_id: "CS101",
+    title: "HTML & CSS Landing Page",
+    description: "Design a responsive and visually appealing landing page using only HTML and CSS. You must include a header, a footer, navigation links, a call-to-action section, and use appropriate semantic tags. The final page should demonstrate clean layout principles, responsive design using media queries, and CSS best practices. Bonus for including simple animations or transitions.",
+    due_date: "2025-04-20",
+    submissions: []
+  },
+  {
+    id: "A5",
+    course_id: "BT101",
+    title: "Cell Structure Analysis",
+    description: "Prepare a detailed report that compares and contrasts prokaryotic and eukaryotic cell structures. Your submission should include labeled diagrams, explanations of each organelle’s function, and examples of organisms where these cell types are found. Reference at least two peer-reviewed articles and demonstrate a clear understanding of how cell structure affects function.",
+    due_date: "2025-04-14",
+    submissions: [
+      { student_id: "S104", student_name: "Daisy Ridley", file_name: "cells_report.pdf", submitted_at: "2025-04-13 12:00" }
     ]
   },
   {
-    id: "CS201",
-    name: "Discrete Mathematics",
-    assignments: [
-      { 
-        id: "A1", 
-        title: "Set Theory and its Applications", 
-        description: "Set theory is a fundamental concept in discrete mathematics. In this assignment, you will solve problems involving set operations such as union, intersection, and complement. You must also demonstrate how Venn diagrams are used to visualize these operations. Additionally, research and discuss real-world applications of set theory in database systems, artificial intelligence, and probability theory. Submit a report with problem solutions, graphical representations, and real-life examples.", 
-        due_date: "2025-04-07" 
-      },
-      { 
-        id: "A2", 
-        title: "Graph Theory Fundamentals", 
-        description: "Graph theory has numerous applications in computer science, from network design to social media analytics. In this assignment, you will study different types of graphs, such as directed, undirected, weighted, and unweighted graphs. Implement an adjacency list and matrix representation of graphs and use algorithms like Dijkstra’s and Kruskal’s to solve pathfinding problems. Your submission should include working code, test cases, and a report analyzing algorithm efficiency and real-world applications.", 
-        due_date: "2025-04-13" 
-      }
+    id: "A6",
+    course_id: "BT101",
+    title: "DNA Structure Presentation",
+    description: "Create a 6–10 slide presentation explaining the molecular structure of DNA, including its components, the double helix model, and the principles of base pairing. Include illustrations, historical background, and mention key contributors like Watson, Crick, and Rosalind Franklin. The presentation should be designed for a high school audience and include speaker notes.",
+    due_date: "2025-04-22",
+    submissions: []
+  },
+  {
+    id: "A7",
+    course_id: "CS201",
+    title: "Set Theory Assignment",
+    description: "Apply basic set theory to solve a collection of mathematical problems involving sets, subsets, Venn diagrams, and Cartesian products. Each problem should be solved with detailed steps, and all answers should be justified. You are also expected to write brief explanations of how these concepts are used in computing, especially in databases and algorithms.",
+    due_date: "2025-04-09",
+    submissions: [
+      { student_id: "S105", student_name: "Ethan Hunt", file_name: "set_theory.pdf", submitted_at: "2025-04-08 11:15" }
     ]
   },
   {
-    id: "AI101",
-    name: "Artificial Intelligence",
-    assignments: [
-      { 
-        id: "A1", 
-        title: "Exploring Search Algorithms: BFS vs. DFS", 
-        description: "Search algorithms play a crucial role in artificial intelligence, especially in pathfinding and decision-making systems. In this assignment, you will implement Breadth-First Search (BFS) and Depth-First Search (DFS) algorithms in Python to traverse a graph. Test your implementations on a sample dataset and analyze their time and space complexity. Additionally, submit a report comparing the strengths and weaknesses of BFS and DFS and their real-world applications, such as web crawling and route optimization.", 
-        due_date: "2025-04-05" 
-      },
-      { 
-        id: "A2", 
-        title: "Building a Simple Neural Network", 
-        description: "Neural networks are the foundation of deep learning. In this assignment, you will build a simple feedforward neural network using TensorFlow and train it to recognize handwritten digits using the MNIST dataset. Your submission should include a well-documented Python script that defines the network architecture, implements forward and backward propagation, and visualizes training performance. Additionally, write a report explaining key concepts such as activation functions, gradient descent, and backpropagation.", 
-        due_date: "2025-04-15" 
-      }
+    id: "A8",
+    course_id: "CS201",
+    title: "Graph Theory Worksheet",
+    description: "This worksheet contains problems related to graph traversal (DFS and BFS), connected components, and graph coloring. You'll need to write both theoretical answers and code snippets (in any language) to illustrate traversal mechanisms. Real-world use cases of graphs in networking and social media analysis should also be briefly discussed.",
+    due_date: "2025-04-18",
+    submissions: []
+  },
+  {
+    id: "A9",
+    course_id: "AI101",
+    title: "AI and Ethics Essay",
+    description: "Write a 1500-word essay discussing ethical considerations in the development and deployment of artificial intelligence. Topics may include algorithmic bias, data privacy, job displacement, and the future of autonomous systems. Support your arguments with real-world examples and citations from at least three reputable sources.",
+    due_date: "2025-04-12",
+    submissions: [
+      { student_id: "S106", student_name: "Fiona Gallagher", file_name: "ai_ethics.docx", submitted_at: "2025-04-11 17:00" }
     ]
+  },
+  {
+    id: "A10",
+    course_id: "AI101",
+    title: "Intro to Machine Learning",
+    description: "Train a simple linear regression model using any programming language or ML framework (Python + scikit-learn recommended). You'll use a dataset of your choice to predict a continuous variable. Explain your preprocessing, training, testing, and evaluation steps. Submit your code, plots, and a report summarizing your model's performance and accuracy.",
+    due_date: "2025-04-25",
+    submissions: []
   }
 ];

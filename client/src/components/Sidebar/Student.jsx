@@ -7,6 +7,7 @@ const Student = () => {
     const [expandedSections, setExpandedSections] = useState({
         course: false,
         activeCourses: false,
+        feepayment: false,
         document: false,
         hostel: false,
         complaint: false,
@@ -36,7 +37,10 @@ const Student = () => {
                             </li>
                             <li>
                                 <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('activeCourses')}>
-                                    {expandedSections.activeCourses ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Active Courses
+                                    {expandedSections.activeCourses ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} 
+                                    <Link to = "/my-courses" className="text-gray-700 hover:text-gray-900">
+                                        Active Courses
+                                    </Link>
                                 </span>
                                 {expandedSections.activeCourses && (
                                 <ul className="pl-5">
@@ -60,11 +64,11 @@ const Student = () => {
                                             Drop Course
                                         </Link>
                                     </li>
-                                    <li>
+                                    {/* <li>
                                         <Link to="/course/:courseId/announcements" className="text-gray-700 hover:text-gray-900">
                                             Announcements
                                         </Link>
-                                    </li>
+                                    </li> */}
                                     <li>
                                         <Link to="/courseFeedback" className="text-gray-700 hover:text-gray-900">Feedback</Link>
                                     </li>
@@ -74,6 +78,21 @@ const Student = () => {
                         </ul>
                     )}
                 </li>
+                
+                <li className="mt-2">
+                <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('feepayment')}>
+                    {expandedSections.feepayment ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Fee Payment
+                </span>
+                {expandedSections.feepayment && (
+                    <ul className="pl-5">
+                        <li><Link to="/feepayment" className="text-gray-700 hover:text-gray-900">
+                                Pay Fee
+                            </Link>
+                        </li>
+                    </ul>
+                )}
+                </li>
+
                 <li className="mt-2">
                 <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('document')}>
                     {expandedSections.document ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Document

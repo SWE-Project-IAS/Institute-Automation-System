@@ -12,13 +12,13 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    if (!email || !password || !role) {
-        alert("All fields are required!");
-        return;
-    }
-    console.log({ email, password, role });
+    // if (!email || !password || !role) {
+    //     alert("All fields are required!");
+    //     return;
+    // }
+    // console.log({ email, password, role });
     // try {
-    //   const response = await fetch("http://localhost:8000/login", {
+    //   const response = await fetch("http://localhost:8000/api/auth/login", {
     //       method: "POST",
     //       headers: {
     //         "Content-Type": "application/json",
@@ -40,7 +40,7 @@ export default function LoginPage() {
     //     alert("Failed to connect to the server.");
     // }
     
-    navigate("/profile", { state: { role } });
+    navigate("/profile", { state: {role}});
   };
 
   return (
@@ -77,8 +77,8 @@ export default function LoginPage() {
             <option value="" disabled selected>Select your role</option>
             <option value="student">Student</option>
             <option value="faculty">Faculty</option>
-            <option value="academic-admin">Academic Admin</option>
-            <option value="hostel-admin">Hostel Admin</option>
+            <option value="acadAdmin">Academic Admin</option>
+            <option value="nonAcadAdmin">Hostel Admin</option>
           </select>
         </div>
         <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600" onClick={handleLogin}>Login</button>

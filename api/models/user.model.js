@@ -1,29 +1,5 @@
 import mongoose from "mongoose";
 
-// Admin Model
-const adminSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  roleType: { 
-    type: String, 
-    enum: ['superAdmin', 'admin', 'administrator'], 
-    required: true 
-  },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
-
-// Administrator Model
-const administratorSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  department: { type: String, required: true },
-  role: { type: String, required: true },
-  permissions: [{ type: String }],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
-
 // User Model
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -301,17 +277,3 @@ export const HostelAdmin = mongoose.model('HostelAdmin', hostelAdminSchema);
 export const AcadAdmin = mongoose.model('AcadAdmin', acadAdminSchema);
 export const Administrator = mongoose.model('Administrator', administratorSchema);
 export const User = mongoose.model('User', userSchema);
-export const Student = mongoose.model('Student', studentSchema);
-export const Faculty = mongoose.model('Faculty', facultySchema);
-export const Course = mongoose.model('Course', courseSchema);
-export const Assignment = mongoose.model('Assignment', assignmentSchema);
-export const Submission = mongoose.model('Submission', submissionSchema);
-export const AssignmentGrade = mongoose.model('AssignmentGrade', assignmentGradeSchema);
-export const Grade = mongoose.model('Grade', gradeSchema);
-export const Notification = mongoose.model('Notification', notificationSchema);
-export const RegistrationRequest = mongoose.model('RegistrationRequest', registrationRequestSchema);
-export const AttendanceRecord = mongoose.model('AttendanceRecord', attendanceRecordSchema);
-export const IDCard = mongoose.model('IDCard', idCardSchema);
-export const Transcript = mongoose.model('Transcript', transcriptSchema);
-export const BonafideCertificate = mongoose.model('BonafideCertificate', bonafideCertificateSchema);
-export const FeeReceipt = mongoose.model('FeeReceipt', feeReceiptSchema);

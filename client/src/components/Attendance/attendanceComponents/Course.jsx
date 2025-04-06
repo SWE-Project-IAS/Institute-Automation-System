@@ -18,6 +18,7 @@ function Course(courses) {
                                 <div className="ellipse"></div>
                                 <div className="text-wrapper-4-attendance">{role === "faculty" && course.averageAttendance}</div>
                                 <div className="text-wrapper-4-attendance">{role === "student" && course.attendance}</div>
+                                <div className="text-wrapper-4-attendance">{role === "acadAdmin" && course.attendance}</div>
                             </div>
                             </div>
                         </div>

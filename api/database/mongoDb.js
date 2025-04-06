@@ -9,7 +9,7 @@ const options = {
 // MongoDB connection function
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(MONGODB_URI, options);
+    const conn = await mongoose.connect(MONGODB_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {

@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { RoleContext } from "../../../context/Rolecontext";
 import React, { useRef } from 'react';
+import SearchableStudentDropdown from "./SearchableStudentDropdown";
 import { FaFileUpload, FaCheckCircle, FaUndo } from "react-icons/fa";
 
 
@@ -111,6 +112,7 @@ export const CourseStats = () => {
   const navigateTo = useNavigate();
   const { id } = useParams();
   const course = dummyCourses.find((c) => c.id === id) || dummyCourses[0];
+  const [showStats, setShowStats] = useState(false);
 
   const [courseName, setCourseName] = useState(course.courseName);
   const [courseId, setCourseId] = useState(course.courseId);
@@ -120,7 +122,6 @@ export const CourseStats = () => {
   const [submitted, setSubmitted] = useState(false);
   // Student selection and stats
   const [selectedStudent, setSelectedStudent] = useState("");
-  const [showStats, setShowStats] = useState(false);
   const [studentAttendanceData, setStudentAttendanceData] = useState({});
   
   const [classesMissed, setClassesMissed] = useState(course.stats.classesMissed);
@@ -165,7 +166,7 @@ export const CourseStats = () => {
         </div>
         <div className="text-wrapper-2">{semester} Semester</div>
       </div>
-      {role === "student" &&
+      {(role === "student" || role === "acadAdmin") &&
         <div>
           <div className="calendar">
             <MyCalendar />
@@ -244,7 +245,8 @@ export const CourseStats = () => {
         </div>
         </div>
       }
-      {role === "faculty" && <div className="course-dropdown">
+      {role === "faculty" && <SearchableStudentDropdown setShowStats={setShowStats} />}
+      {/* <div className="course-dropdown">
         <div className="student-selector">
           <label htmlFor="student-select">Select Student: </label>
           <select 
@@ -261,7 +263,7 @@ export const CourseStats = () => {
             ))}
           </select>
         </div>
-      </div>}
+      </div> */}
       {role === "faculty" && showStats && (
         <div className="student-stats">
           <div className="calendar">
