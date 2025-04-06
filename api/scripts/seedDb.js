@@ -1,5 +1,6 @@
 import { connectDB } from "../database/mongoDb.js";
-import { User, Student } from "../models/user.model.js";
+import { User} from "../models/user.model.js";
+import { Student } from "../models/student.model.js"; 
 import bcrypt from "bcrypt"; // Import the bcrypt library
 
 

@@ -167,7 +167,18 @@ function HostelLeaveStudent() {
 
                             <div>
                                 <label className="block text-gray-700 font-medium">End Date</label>
-                                <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} required className="w-full p-2 border rounded-lg" />
+                                <input 
+                                    type="date" 
+                                    name="endDate" 
+                                    value={formData.endDate} 
+                                    onChange={handleChange} 
+                                    // min={formData.startDate}
+                                    required 
+                                    className={`w-full p-2 border rounded-lg ${formData.endDate && formData.startDate && new Date(formData.endDate) <= new Date(formData.startDate) ? 'border-red-500' : ''}`}
+                                />
+                                {formData.endDate && formData.startDate && new Date(formData.endDate) <= new Date(formData.startDate) && (
+                                    <p className="text-red-500 text-sm mt-1">End date must be after start date</p>
+                                )}
                             </div>
 
                             <div>
@@ -177,7 +188,13 @@ function HostelLeaveStudent() {
 
                             <div className="flex justify-end space-x-4">
                                 <button type="button" className="bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500 transition" onClick={handleDiscard}>Discard</button>
-                                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Submit</button>
+                                <button 
+                                    type="submit" 
+                                    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+                                    disabled={formData.endDate && formData.startDate && new Date(formData.endDate) <= new Date(formData.startDate)}
+                                >
+                                    Submit
+                                </button>
                             </div>
                         </form>
                     </div>

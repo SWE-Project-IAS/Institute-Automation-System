@@ -1,18 +1,12 @@
 import mongoose from 'mongoose';
 
 // Get MongoDB URI from environment variables
-const MONGODB_URI = "mongodb+srv://kevintj916:VvLxpm85TJLuxr0B@institutionautomationcl.bn7xvyp.mongodb.net/?retryWrites=true&w=majority&appName=institutionAutomationclu";
-
-// Connection options
-const options = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
+const MONGODB_URI="mongodb+srv://divyansh:KrHRg7mgeh7tgNiU@cluster0.qhaz53w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // MongoDB connection function
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(MONGODB_URI, options);
+    const conn = await mongoose.connect(MONGODB_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {

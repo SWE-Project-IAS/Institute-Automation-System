@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {User,Student,Admin,Faculty} from '../models/user.model.js';
+import {User} from '../models/user.model.js';
+import {Student} from '../models/student.model.js'; // Assuming Student model is defined
 import { validateAccessToken, validateRefreshToken } from '../middleware/auth.middleware.js';
 import { findUserByEmail, verifyRefreshTokenInDB } from '../middleware/auth.middleware.js';
 
@@ -30,12 +31,12 @@ export const login = async (req, res) => {
             case 'student':
                 specificUser = await Student.findOne({userId:user._id}); // Assuming Student model is defined
                 break;
-            case 'acadAdmin':
-                specificUser = await Admin.findOne({ userId:user._id });     // Assuming Admin model is defined
-                break;
-            case 'faculty':
-                specificUser = await Faculty.findOne({ userId:user._id });   // Assuming Faculty model is defined
-                break;
+            // case 'acadAdmin':
+            //     specificUser = await Admin.findOne({ userId:user._id });     // Assuming Admin model is defined
+            //     break;
+            // case 'faculty':
+            //     specificUser = await Faculty.findOne({ userId:user._id });   // Assuming Faculty model is defined
+            //     break;
             default:
                 return res.status(400).json({ message: 'Invalid role' });
         }

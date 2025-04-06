@@ -4,7 +4,7 @@ import "./AttendanceCoursePage.css";
 import { useRef } from 'react';
 import AddOrUpdate from "./attendanceComponents/AddOrUpdate";
 import { RoleContext } from "../../context/Rolecontext";
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 function AttendanceCoursePage() {
     const { role } = useContext(RoleContext);

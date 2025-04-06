@@ -2,7 +2,6 @@
 import './App.css';
 import ComplaintSection from './components/complaintSection';
 import HostelLeave from './components/HostelLeave/HostelLeave';
-import HostelTransfer from './components/HostelTransfer/HostelTransfer.jsx';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar/Sidebar';
 import CourseRegistration from './components/CourseRegistration';
@@ -48,6 +47,7 @@ import StudentProfile from './pages/ProfilePage.jsx';
 import TimeTable from './components/TimeTable/timetable.jsx';
 import { RoleContext } from './context/Rolecontext.jsx';
 import FacultyDashboard from "./components/registration/faculty_registration_page.jsx";  // New Course Selection Page
+import HostelTransfer from './components/HostelTransfer/HostelTransfer.jsx';
 //import CourseRegistration from "./pages/CourseRegistration";  // New Registration Page
 
 const queryClient = new QueryClient()
@@ -96,7 +96,7 @@ function App() {
                 },
                 {
                     path: "/hostel/transfer",
-                    element: <HostelTransfer />,
+                    element: <HostelTransfer />
                 },
                 {
                     path: "/hostel/mess",
