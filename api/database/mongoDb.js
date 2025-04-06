@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
-// Get MongoDB URI from environment variables
-const MONGODB_URI="mongodb+srv://divyansh:KrHRg7mgeh7tgNiU@cluster0.qhaz53w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+// Connection options
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
 
 // MongoDB connection function
 const connectDB = async () => {

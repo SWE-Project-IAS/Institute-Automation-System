@@ -49,7 +49,7 @@ export const validateRefreshToken = (req, res, next) => {
 export const findUserByEmail = async (req, res, next) => {
     try {
         const email = req.user.email; // Assuming email is in the decoded token
-        const user = await User.findOne({ email: email.toLowerCase().trim() });
+        const user = await User.findOne({ email: email });
 
         if (!user) {
             return res
