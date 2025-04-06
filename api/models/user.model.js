@@ -62,6 +62,7 @@ const facultySchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   department: { type: String, required: true },
   designation: { type: String, required: true },
+  courses:  [courseSchema],
   specialization: { type: String },
   qualifications: [{ type: String }],
   status: { 
@@ -72,6 +73,7 @@ const facultySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
+
 
 // Course Model
 const courseSchema = new mongoose.Schema({
@@ -86,6 +88,44 @@ const courseSchema = new mongoose.Schema({
   status: { 
     type: String, 
     enum: ['active', 'inactive', 'upcoming'], 
+    default: 'active' 
+  },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+
+const hostelTypeEnum= ["kameng","subansiri","lohit","disang","brahmaputra","dihing","kapili","manas","dhansiri","barak"];
+
+// Hostel Admin Model
+const hostelAdminSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  hostel: {
+    type: String,
+    required: true,
+    enum: hostelTypeEnum,
+    default: "Not Assigned"
+  },
+  designation: { type: String, required: true },
+  status: { 
+    type: String, 
+    enum: ['active', 'inactive', 'on-leave'], 
+    default: 'active' 
+  },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+
+// Academic Admin Model
+const acadAdminSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  designation: { type: String, required: true },
+  qualifications: [{ type: String }],
+  registrationRequests :[registrationRequestSchema],
+  feeReceipts : [feeReceiptSchema],
+  status: { 
+    type: String, 
+    enum: ['active', 'inactive', 'on-leave'], 
     default: 'active' 
   },
   createdAt: { type: Date, default: Date.now },
@@ -257,6 +297,8 @@ const feeReceiptSchema = new mongoose.Schema({
 });
 
 export const Admin = mongoose.model('Admin', adminSchema);
+export const HostelAdmin = mongoose.model('HostelAdmin', hostelAdminSchema);
+export const AcadAdmin = mongoose.model('AcadAdmin', acadAdminSchema);
 export const Administrator = mongoose.model('Administrator', administratorSchema);
 export const User = mongoose.model('User', userSchema);
 export const Student = mongoose.model('Student', studentSchema);
