@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
 
-// Get MongoDB URI from environment variables
-const MONGODB_URI = "mongodb+srv://kevintj916:VvLxpm85TJLuxr0B@institutionautomationcl.bn7xvyp.mongodb.net/?retryWrites=true&w=majority&appName=institutionAutomationclu";
-
 // Connection options
 const options = {
   useNewUrlParser: true,
