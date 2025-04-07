@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import authRoute from "../api/routes/auth.route.js";
 import hostelRoute from "../api/routes/hostel.route.js";
 import studentRoute from "../api/routes/student.route.js";
+import complaintsRouter from "../api/routes/complaints.route.js";
 
 import Razorpay from "razorpay";
 import crypto from "crypto"; // Needed for signature verification (production)
@@ -21,9 +22,9 @@ dotenv.config(); // Load environment variables first
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use("/api/auth",authRoute);
-app.use("/api/hostel",hostelRoute);
-app.use("/api/student",studentRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/hostel", hostelRoute);
+app.use("/api/student", studentRoute);
 
 const port = process.env.PORT || 8000;
 
@@ -37,6 +38,7 @@ const razorpay = new Razorpay({
 });
 
 // --- Routes ---
+app.use('/api/complaints', complaintsRouter);
 
 // Endpoint to create a Razorpay order
 app.post("/api/payment/create-order", async (req, res) => {
@@ -123,7 +125,7 @@ app.post("/api/payment/verify", (req, res) => {
 const startServer = async () => {
   try {
     await connectDB();
-      app.listen(8000, () => {
+    app.listen(8000, () => {
       console.log(`Backend server is running on port ${8000}`);
       if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
         console.warn(
