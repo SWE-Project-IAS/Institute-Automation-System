@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import newRequest from "../../utils/newRequest";
 
 const HostelLeaveAdmin = () => {
 const [requests, setRequests] = useState([
@@ -7,6 +9,28 @@ const [requests, setRequests] = useState([
     { id: 3, name: "Mike Johnson", studentId: "2023345678", startDate: "15-04-2025", endDate: "20-04-2025", reason: "Personal Reason", status: "Pending" },
     { id: 4, name: "Sarah Wilson", studentId: "2023901234", startDate: "12-04-2025", endDate: "18-04-2025", reason: "Noise Disturbance", status: "Pending" },
 ]);
+
+const { isLoading, error, data } = useQuery({
+    queryKey: ["leaves"],
+    queryFn: () =>
+        newRequest.get(`/hostel/leaves`).then((res) => {
+            return res.data;
+        }),
+});
+
+useEffect(() => {
+    if (!isLoading && !error && data) {
+        setRequests(data.map(item => ({
+            id: item._id,
+            // name: item.name,
+            studentId: item.rollNo,
+            startDate: item.startDate,
+            endDate: item.endDate,
+            reason: item.reason,
+            status: item.status
+        })));
+    }
+}, [data, isLoading, error]);
 
   const handleAction = (id, newStatus) => {
     setRequests(requests.map(req => req.id === id ? { ...req, status: newStatus } : req));
@@ -21,7 +45,7 @@ return (
             <table className="min-w-full border border-gray-200">
                 <thead>
                     <tr className="bg-gray-200">
-                        <th className="py-2 px-4 border">Student Name</th>
+                        {/* <th className="py-2 px-4 border">Student Name</th> */}
                         <th className="py-2 px-4 border">Student ID</th>
                         <th className="py-2 px-4 border">Start Date</th>
                         <th className="py-2 px-4 border">End Date</th>
@@ -33,7 +57,7 @@ return (
                 <tbody>
                     {requests.map((request) => (
                         <tr key={request.id} className="text-center border-b">
-                            <td className="py-2 px-4 border">{request.name}</td>
+                            {/* <td className="py-2 px-4 border">{request.name}</td> */}
                             <td className="py-2 px-4 border">{request.studentId}</td>
                             <td className="py-2 px-4 border">{request.startDate}</td>
                             <td className="py-2 px-4 border">{request.endDate}</td>

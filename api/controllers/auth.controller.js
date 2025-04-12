@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {User,Student,Admin,Faculty} from '../models/user.model.js';
+import {User} from '../models/user.model.js';
+import {Faculty} from '../models/faculty.model.js';
+import {Student} from '../models/student.model.js';
+import {AcadAdmin} from '../models/acadAdmin.model.js';
+import {HostelAdmin} from '../models/hostelAdmin.model.js';
 import { validateAccessToken, validateRefreshToken } from '../middleware/auth.middleware.js';
 import { findUserByEmail, verifyRefreshTokenInDB } from '../middleware/auth.middleware.js';
 
@@ -31,10 +35,13 @@ export const login = async (req, res) => {
                 specificUser = await Student.findOne({userId:user._id}); // Assuming Student model is defined
                 break;
             case 'acadAdmin':
-                specificUser = await Admin.findOne({ userId:user._id });     // Assuming Admin model is defined
+                specificUser = await AcadAdmin.findOne({ userId:user._id });     // Assuming Admin model is defined
                 break;
             case 'faculty':
                 specificUser = await Faculty.findOne({ userId:user._id });   // Assuming Faculty model is defined
+                break;
+            case 'nonAcadAdmin':
+                specificUser = await HostelAdmin.findOne({ userId:user._id }); // Assuming HostelAdmin model is defined
                 break;
             default:
                 return res.status(400).json({ message: 'Invalid role' });
@@ -54,7 +61,7 @@ export const login = async (req, res) => {
         return res.status(200)
             .cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' })
             .header('Authorization', accessToken)
-            .json({ user: { email: user.email, role: role } });
+            .json({ user: { email: user.email, userId: user._id } });
 
     } catch (err) {
         console.error("Error during login:", err);
@@ -81,16 +88,11 @@ export const refresh = [
 
 export const logout = [
     validateAccessToken,
+    findUserByEmail,
     async (req, res) => {
         try {
-            const user = await User.findOne({ email: req.user.email }); // User info from validateAccessToken
-
-            if (!user) {
-                return res.status(404).json({ message: "User not found" });
-            }
-
-            user.refreshToken = null;
-            await user.save();
+            req.foundUser.refreshToken = null;
+            await  req.foundUser.save();
 
             res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'strict' });
             return res.status(200).json({ message: "Logout successful" });

@@ -30,7 +30,9 @@ const AcadAdmin = () => {
                         <ul className="pl-5">
                             <li>Registration</li>
                             <li>Create course</li>
-                            <li>Attendance</li>
+                            <Link to="/attendancelanding" className="text-gray-700 hover:text-gray-900">
+                                Attendance
+                                </Link>
                             <li>
                                 <Link to="/feedbackConfiguration" className="text-gray-700 hover:text-gray-900">Feedback</Link>
                             </li>
@@ -47,7 +49,7 @@ const AcadAdmin = () => {
               <li >
                 <Link
                   to="/admin/documents"
-                  className="text-gray-700 hover:text-primary hover:underline flex items-center gap-2"
+                  className="text-gray-700 hover:text-gray-900 flex items-center gap-2"
                 >
                   Manage Applications
                 </Link>
@@ -55,7 +57,7 @@ const AcadAdmin = () => {
               <li >
                 <Link
                   to="/admin/documents/access"
-                  className="text-gray-700 hover:text-primary hover:underline flex items-center gap-2"
+                  className="text-gray-700 hover:text-gray-900 flex items-center gap-2"
                 >
                   Access Control
                 </Link>

@@ -1,60 +1,72 @@
-/* General Container */
 .profileContainer {
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  /* Profile Header */
-  .profileHeader {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    border-bottom: 2px solid #d9d9d9;
-    padding-bottom: 20px;
-  }
-  
-  /* Profile Image */
-  .profilePhoto {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    border: 3px solid #007bff;
-    object-fit: cover;
-    box-shadow: 0 3px 10px rgba(0, 123, 255, 0.2);
-  }
-  
-  /* Profile Info */
-  .profileInfo {
-    flex-grow: 1;
-  }
-  
-  .profileInfo h1 {
-    margin: 0;
-    font-size: 26px;
-    font-weight: bold;
-    color: #222;
-  }
-  
-  /* Keeping only labels in black, values in blue */
-  .profileInfo p {
-    margin: 6px 0;
-    font-size: 16px;
-    color: #000; /* Labels remain black */
-  }
-  
-  .profileInfo p strong {
-    font-weight: bold;
-    color: #000; /* Ensure labels remain black */
-  }
-  
-  .profileInfo p span {
-    font-weight: normal;
-  }
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Profile Header */
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 2px solid #d9d9d9;
+  padding-bottom: 20px;
+}
+
+/* Profile Image */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profilePhoto {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 3px solid #007bff;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(0, 123, 255, 0.2);
+}
+
+.signPhoto {
+  width: 100px;  /* Updated from 1px to 100px for width */
+  height: 40px;  /* Updated from 3px to 40px for height */
+  object-fit: contain;
+  margin-top: 8px;  /* Space between profile photo and signature */
+  display: block;  /* Ensures the signature is on its own line */
+}
+
+/* Profile Info */
+.profileInfo {
+  flex-grow: 1;
+}
+
+.profileInfo h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: bold;
+  color: #222;
+}
+
+.profileInfo p {
+  margin: 6px 0;
+  font-size: 16px;
+  color: #000;
+}
+
+.profileInfo p strong {
+  font-weight: bold;
+  color: #000;
+}
+
+.profileInfo p span {
+  font-weight: normal;
+}
   
   /* Faculty Section */
   .facultySection {
@@ -129,8 +141,8 @@
   /* Responsive Design */
   @media (max-width: 600px) {
     .profileHeader {
-      flex-direction: column;
-      align-items: center;
+      flex-direction: row;
+      align-items: left;
     }
   
     .profileInfo {

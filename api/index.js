@@ -4,7 +4,9 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import mongoose from "mongoose";
-import authRouter from "../api/routes/auth.route.js";
+import authRoute from "../api/routes/auth.route.js";
+import hostelRoute from "../api/routes/hostel.route.js";
+import studentRoute from "../api/routes/student.route.js";
 
 import Razorpay from "razorpay";
 import crypto from "crypto"; // Needed for signature verification (production)
@@ -19,7 +21,9 @@ dotenv.config(); // Load environment variables first
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(authRouter);
+app.use("/api/auth",authRoute);
+app.use("/api/hostel",hostelRoute);
+app.use("/api/student",studentRoute);
 
 const port = process.env.PORT || 8000;
 
@@ -96,24 +100,6 @@ app.post("/api/payment/verify", (req, res) => {
     res.status(400).json({ status: "failure", message: "Invalid signature" });
   }
 });
-
-// try{
-//     // console.log(process.env.MONGO_URI)
-//     await mongoose.connect(process.env.MONGO_URI);
-//     console.log("Connected to mongoDb")
-// }catch(err){
-//     console.log(err);
-// }
-
-// app.use("/api/auth",authRoute);
-
-// app.use((err,req,res,next)=>{
-//     const errorStatus=err.status||500;
-//     const errorMessage=err.message||"Something went wrong!";
-
-//     return res.status(errorStatus).send(errorMessage);
-// })
-
 
 // Start server with database connection
 const startServer = async () => {

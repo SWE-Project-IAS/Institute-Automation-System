@@ -32,7 +32,9 @@ const HostelAdmin = () => {
                         <Link to="/hostel/mess" className='text-gray-700 hover:text-gray-900'>
                             <li>Mess</li>
                         </Link>
-                        <li>Transfer</li>
+                        <Link to="/hostel/transfer" className='text-gray-700 hover:text-gray-900'>
+                            <li>Transfer</li>
+                        </Link>
                     </ul>
                 )}
                 </li>
