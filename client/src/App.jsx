@@ -48,6 +48,9 @@ import TimeTable from './components/TimeTable/timetable.jsx';
 import { RoleContext } from './context/Rolecontext.jsx';
 import FacultyDashboard from "./components/registration/faculty_registration_page.jsx";  // New Course Selection Page
 import HostelTransfer from './components/HostelTransfer/HostelTransfer.jsx';
+
+import AdminRegistration from './components/registration/admin_reg.jsx';
+
 //import CourseRegistration from "./pages/CourseRegistration";  // New Registration Page
 
 const queryClient = new QueryClient()
@@ -124,7 +127,10 @@ function App() {
                     path:'facultyregistration/:id',
                     element:<CourseRegistrationFaculty/>
                 },
-                
+                {
+                    path: '/adminregistration',
+                    element:<AdminRegistration/>
+                },
                 {
                     path:"/assigngmentlanding",
                     element: <AssignmentLanding/>
