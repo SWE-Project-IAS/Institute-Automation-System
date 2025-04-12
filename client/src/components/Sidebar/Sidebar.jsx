@@ -9,7 +9,7 @@ import { RoleContext } from '../../context/Rolecontext';
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(true);
     const { role } = useContext(RoleContext);
-    console.log(role)
+    // console.log(role)
     return (
         <>
             {!isOpen && 

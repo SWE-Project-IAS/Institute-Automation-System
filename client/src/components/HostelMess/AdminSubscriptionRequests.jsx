@@ -1,48 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import { FaCheck, FaTimes, FaUser, FaCalendarAlt, FaUtensils, FaSearch } from 'react-icons/fa';
 import './styles/AdminSubscriptionRequests.css';
 
-const fetchSubscriptionRequests = async () => {
-  const response = await axios.get('/api/subscription-requests');
-  return response.data;
-};
-
-const processSubscriptionRequest = async ({ requestId, status, rejectionReason }) => {
-  const response = await axios.put('/api/process-request', {
-    requestId,
-    status,
-    rejectionReason
-  });
-  return response.data;
-};
+// Hard-coded demo data for the subscription requests
+const demoRequests = [
+  {
+    _id: '1',
+    studentId: {
+      name: 'Sai',
+      studentId: '20220001'
+    },
+    currentPlan: 'Basic (10 meals/week)',
+    newPlan: 'Premium (19 meals/week)',
+    status: 'PENDING',
+    createdAt: '2025-03-29T10:30:00'
+  },
+  {
+    _id: '2',
+    studentId: {
+      name: 'Vishnu',
+      studentId: '20220042'
+    },
+    currentPlan: 'Premium (19 meals/week)', 
+    newPlan: 'Basic (10 meals/week)',
+    status: 'APPROVED',
+    createdAt: '2025-03-25T14:15:00'
+  },
+  {
+    _id: '3',
+    studentId: {
+      name: 'Jithu',
+      studentId: '20220078'
+    },
+    currentPlan: 'None',
+    newPlan: 'Basic (10 meals/week)',
+    status: 'PENDING',
+    createdAt: '2025-04-01T09:45:00'
+  },
+  {
+    _id: '4',
+    studentId: {
+      name: 'Daksh',
+      studentId: '20220105'
+    },
+    currentPlan: 'Basic (10 meals/week)',
+    newPlan: 'Premium (19 meals/week)',
+    status: 'REJECTED',
+    rejectionReason: 'Student has outstanding balance on account',
+    createdAt: '2025-03-20T16:20:00'
+  },
+  {
+    _id: '5',
+    studentId: {
+      name: 'Dipesh',
+      studentId: '20220136'
+    },
+    currentPlan: 'Premium (19 meals/week)',
+    newPlan: 'Unlimited (24/7 access)',
+    status: 'PENDING',
+    createdAt: '2025-04-02T11:10:00'
+  },
+  {
+    _id: '6',
+    studentId: {
+      name: 'Aryan',
+      studentId: '20220203'
+    },
+    currentPlan: 'Basic (10 meals/week)',
+    newPlan: 'Unlimited (24/7 access)',
+    status: 'PENDING',
+    createdAt: '2025-04-03T13:50:00'
+  }
+];
 
 const AdminSubscriptionRequests = () => {
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState(demoRequests);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectionDialog, setShowRejectionDialog] = useState(false);
-
-  const loadSubscriptionRequests = async () => {
-    try {
-      setIsLoading(true);
-      const fetchedRequests = await fetchSubscriptionRequests();
-      setRequests(fetchedRequests);
-      setIsLoading(false);
-    } catch (err) {
-      setError('Unable to load subscription requests');
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadSubscriptionRequests();
-  }, []);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const filteredRequests = requests.filter(request => {
     const matchesSearch = 
@@ -64,41 +102,33 @@ const AdminSubscriptionRequests = () => {
       return;
     }
 
-    try {
-      setIsProcessing(true);
-      await processSubscriptionRequest({
-        requestId: selectedRequest._id,
-        status,
-        rejectionReason: ''
-      });
-
-      await loadSubscriptionRequests();
+    // Simulate API call with timeout
+    setIsProcessing(true);
+    setTimeout(() => {
+      const updatedRequests = requests.map(req => 
+        req._id === selectedRequest._id ? { ...req, status } : req
+      );
+      setRequests(updatedRequests);
       setSelectedRequest(null);
       setIsProcessing(false);
-    } catch (err) {
-      setError('Failed to process request');
-      setIsProcessing(false);
-    }
+    }, 800); // Simulate network delay
   };
 
   const handleRejectConfirm = async () => {
-    try {
-      setIsProcessing(true);
-      await processSubscriptionRequest({
-        requestId: selectedRequest._id,
-        status: 'REJECTED',
-        rejectionReason
-      });
-
-      await loadSubscriptionRequests();
+    // Simulate API call with timeout
+    setIsProcessing(true);
+    setTimeout(() => {
+      const updatedRequests = requests.map(req => 
+        req._id === selectedRequest._id 
+          ? { ...req, status: 'REJECTED', rejectionReason } 
+          : req
+      );
+      setRequests(updatedRequests);
       setSelectedRequest(null);
       setRejectionReason('');
       setShowRejectionDialog(false);
       setIsProcessing(false);
-    } catch (err) {
-      setError('Failed to process request');
-      setIsProcessing(false);
-    }
+    }, 800); // Simulate network delay
   };
 
   const getStatusBadge = (status) => {
@@ -116,33 +146,6 @@ const AdminSubscriptionRequests = () => {
       </span>
     );
   };
-
-  if (isLoading) {
-    return (
-      <div className="max-w-6xl mx-auto p-4">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-6xl mx-auto p-4">
-        <div className="bg-red-50 border-l-4 border-red-500 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <FaTimes className="h-5 w-5 text-red-500" />
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-6xl mx-auto p-4">
@@ -230,6 +233,12 @@ const AdminSubscriptionRequests = () => {
                           {new Date(request.createdAt).toLocaleDateString() || 'Unknown'}
                         </span>
                       </div>
+                      {request.status === 'REJECTED' && request.rejectionReason && (
+                        <div className="mt-2 text-sm">
+                          <span className="text-gray-500">Rejection Reason:</span>
+                          <p className="text-red-600 mt-1">{request.rejectionReason}</p>
+                        </div>
+                      )}
                     </div>
                     
                     {request.status === 'PENDING' && (

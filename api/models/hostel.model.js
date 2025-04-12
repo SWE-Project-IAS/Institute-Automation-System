@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // Hostel Leave Model
 const hostelLeaveSchema = new mongoose.Schema({
-  applicationId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
+//   applicationId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
   rollNo: { type: String, required: true, ref: 'Student' },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
@@ -35,3 +35,4 @@ const hostelTransferSchema = new mongoose.Schema({
 });
 
 export const HostelTransfer = mongoose.model('HostelTransfer', hostelTransferSchema);
+export const HostelLeave = mongoose.model('HostelLeave', hostelLeaveSchema);

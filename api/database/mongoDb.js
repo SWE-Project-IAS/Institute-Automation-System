@@ -4,9 +4,10 @@ import mongoose from 'mongoose';
 
 // MongoDB connection function
 const connectDB = async () => {
-    const MONGODB_URI = process.env.MONGODB_URI;
-  try {
-    const conn = await mongoose.connect(MONGODB_URI);
+    try {
+    //   console.log(process.env.MONGODB_URI);
+    // const conn = await mongoose.connect(process.env.MONGODB_URI);
+    const conn = await mongoose.connect("mongodb+srv://divyansh:KrHRg7mgeh7tgNiU@cluster0.qhaz53w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return conn;
   } catch (error) {

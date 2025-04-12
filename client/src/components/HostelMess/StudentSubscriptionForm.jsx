@@ -1,23 +1,17 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { FaUtensils, FaExchangeAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import './styles/StudentSubscriptionForm.css';
 
-const createSubscriptionRequest = async (data) => {
-  const response = await axios.post('/api/subscription-request', data);
-  return response.data;
-};
-
 const StudentSubscriptionForm = () => {
   const [studentId, setStudentId] = useState('');
-  const [currentPlan, setCurrentPlan] = useState('REGULAR');
-  const [newPlan, setNewPlan] = useState('REGULAR');
+  const [currentPlan, setCurrentPlan] = useState('Basic (10 meals/week)');
+  const [newPlan, setNewPlan] = useState('Premium (19 meals/week)');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateStudentId = (id) => {
-    const studentIdRegex = /^\d{9}$/;
+    const studentIdRegex = /^\d{8}$/;
     return studentIdRegex.test(id);
   };
 
@@ -28,7 +22,7 @@ const StudentSubscriptionForm = () => {
     setIsSubmitting(true);
 
     if (!validateStudentId(studentId)) {
-      setError('Invalid Student ID. Must be exactly 9 digits');
+      setError('Invalid Student ID. Must be exactly 8 digits');
       setIsSubmitting(false);
       return;
     }
@@ -39,19 +33,14 @@ const StudentSubscriptionForm = () => {
       return;
     }
 
-    try {
-      await createSubscriptionRequest({ studentId, currentPlan, newPlan });
-      setSuccess('Subscription request submitted successfully!');
+    // Simulate API call with a timeout
+    setTimeout(() => {
+      setSuccess('Meal plan change request submitted successfully! You will be notified when your request is processed.');
       setStudentId('');
-      setCurrentPlan('REGULAR');
-      setNewPlan('REGULAR');
+      setCurrentPlan('Basic (10 meals/week)');
+      setNewPlan('Premium (19 meals/week)');
       setIsSubmitting(false);
-    } catch (err) {
-      const errorMessage = err.response?.data?.message || 
-        'Failed to submit request. Please try again.';
-      setError(errorMessage);
-      setIsSubmitting(false);
-    }
+    }, 1500);
   };
 
   return (
@@ -59,7 +48,7 @@ const StudentSubscriptionForm = () => {
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="bg-blue-600 px-6 py-4">
           <h2 className="text-xl font-semibold text-white flex items-center">
-            <FaUtensils className="mr-2" /> Student Meal Plan Request
+            <FaUtensils className="mr-2" /> Student Meal Plan Change Request
           </h2>
         </div>
         
@@ -97,55 +86,73 @@ const StudentSubscriptionForm = () => {
               id="studentId"
               value={studentId}
               onChange={(e) => {
-                const value = e.target.value.slice(0, 9);
+                const value = e.target.value.slice(0, 8);
                 setStudentId(value);
               }}
-              placeholder="Enter 9-digit Student ID"
+              placeholder="Enter 8-digit Student ID"
               required 
-              min="100000000"
-              max="999999999"
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <p className="text-xs text-gray-500 mt-1">Must be exactly 9 digits</p>
+            <p className="text-xs text-gray-500 mt-1">Must be exactly 8 digits</p>
           </div>
 
           <div className="mb-6">
             <label className="block text-gray-700 font-medium mb-2">Current Plan</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <label 
                 className={`
                   flex items-center p-4 border rounded-md cursor-pointer transition-all
-                  ${currentPlan === 'REGULAR' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                  ${currentPlan === 'Basic (10 meals/week)' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
                 `}
               >
                 <input 
                   type="radio" 
-                  value="REGULAR"
-                  checked={currentPlan === 'REGULAR'}
-                  onChange={() => setCurrentPlan('REGULAR')}
+                  value="Basic (10 meals/week)"
+                  checked={currentPlan === 'Basic (10 meals/week)'}
+                  onChange={() => setCurrentPlan('Basic (10 meals/week)')}
                   className="sr-only"
                 />
                 <div className="ml-2">
-                  <div className="font-medium text-gray-900">Regular Plan</div>
-                  <div className="text-sm text-gray-500">Standard meal options</div>
+                  <div className="font-medium text-gray-900">Basic</div>
+                  <div className="text-sm text-gray-500">10 meals/week</div>
                 </div>
               </label>
+              
               <label 
                 className={`
                   flex items-center p-4 border rounded-md cursor-pointer transition-all
-                  ${currentPlan === 'SPECIAL' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                  ${currentPlan === 'Premium (19 meals/week)' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
                 `}
               >
                 <input 
                   type="radio" 
-                  value="SPECIAL"
-                  checked={currentPlan === 'SPECIAL'}
-                  onChange={() => setCurrentPlan('SPECIAL')}
+                  value="Premium (19 meals/week)"
+                  checked={currentPlan === 'Premium (19 meals/week)'}
+                  onChange={() => setCurrentPlan('Premium (19 meals/week)')}
                   className="sr-only"
                 />
                 <div className="ml-2">
-                  <div className="font-medium text-gray-900">Special Plan</div>
-                  <div className="text-sm text-gray-500">Dietary restrictions</div>
+                  <div className="font-medium text-gray-900">Premium</div>
+                  <div className="text-sm text-gray-500">19 meals/week</div>
+                </div>
+              </label>
+              
+              <label 
+                className={`
+                  flex items-center p-4 border rounded-md cursor-pointer transition-all
+                  ${currentPlan === 'Unlimited (24/7 access)' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                `}
+              >
+                <input 
+                  type="radio" 
+                  value="Unlimited (24/7 access)"
+                  checked={currentPlan === 'Unlimited (24/7 access)'}
+                  onChange={() => setCurrentPlan('Unlimited (24/7 access)')}
+                  className="sr-only"
+                />
+                <div className="ml-2">
+                  <div className="font-medium text-gray-900">Unlimited</div>
+                  <div className="text-sm text-gray-500">24/7 access</div>
                 </div>
               </label>
             </div>
@@ -156,43 +163,69 @@ const StudentSubscriptionForm = () => {
               <label className="block text-gray-700 font-medium">New Plan</label>
               <FaExchangeAlt className="ml-2 text-blue-500" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <label 
                 className={`
                   flex items-center p-4 border rounded-md cursor-pointer transition-all
-                  ${newPlan === 'REGULAR' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                  ${newPlan === 'Basic (10 meals/week)' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
                 `}
               >
                 <input 
                   type="radio" 
-                  value="REGULAR"
-                  checked={newPlan === 'REGULAR'}
-                  onChange={() => setNewPlan('REGULAR')}
+                  value="Basic (10 meals/week)"
+                  checked={newPlan === 'Basic (10 meals/week)'}
+                  onChange={() => setNewPlan('Basic (10 meals/week)')}
                   className="sr-only"
                 />
                 <div className="ml-2">
-                  <div className="font-medium text-gray-900">Regular Plan</div>
-                  <div className="text-sm text-gray-500">Standard meal options</div>
+                  <div className="font-medium text-gray-900">Basic</div>
+                  <div className="text-sm text-gray-500">10 meals/week</div>
                 </div>
               </label>
+              
               <label 
                 className={`
                   flex items-center p-4 border rounded-md cursor-pointer transition-all
-                  ${newPlan === 'SPECIAL' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                  ${newPlan === 'Premium (19 meals/week)' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
                 `}
               >
                 <input 
                   type="radio" 
-                  value="SPECIAL"
-                  checked={newPlan === 'SPECIAL'}
-                  onChange={() => setNewPlan('SPECIAL')}
+                  value="Premium (19 meals/week)"
+                  checked={newPlan === 'Premium (19 meals/week)'}
+                  onChange={() => setNewPlan('Premium (19 meals/week)')}
                   className="sr-only"
                 />
                 <div className="ml-2">
-                  <div className="font-medium text-gray-900">Special Plan</div>
-                  <div className="text-sm text-gray-500">Dietary restrictions</div>
+                  <div className="font-medium text-gray-900">Premium</div>
+                  <div className="text-sm text-gray-500">19 meals/week</div>
                 </div>
               </label>
+              
+              <label 
+                className={`
+                  flex items-center p-4 border rounded-md cursor-pointer transition-all
+                  ${newPlan === 'Unlimited (24/7 access)' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-200' : 'border-gray-300 hover:bg-gray-50'}
+                `}
+              >
+                <input 
+                  type="radio" 
+                  value="Unlimited (24/7 access)"
+                  checked={newPlan === 'Unlimited (24/7 access)'}
+                  onChange={() => setNewPlan('Unlimited (24/7 access)')}
+                  className="sr-only"
+                />
+                <div className="ml-2">
+                  <div className="font-medium text-gray-900">Unlimited</div>
+                  <div className="text-sm text-gray-500">24/7 access</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 pt-4 mt-6">
+            <div className="text-sm text-gray-600 mb-4">
+              <p><strong>Important:</strong> Plan changes are subject to approval and typically processed within 2-3 business days.</p>
             </div>
           </div>
 
