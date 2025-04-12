@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 // Student Model
 const studentSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    email: { type: String, required: true, unique: true },
     rollNo: { type: String, unique: true, required: true },
     department: { type: String, required: true }, // enum?
     semester: { type: Number, required: true, default: 1 },

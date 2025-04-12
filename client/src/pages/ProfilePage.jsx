@@ -6,9 +6,8 @@ import HostelAdminProfile from "../components/ProfilePage/hostelAdminProfile.jsx
 import { RoleContext } from "../context/Rolecontext.jsx";
 
 const ProfilePage = () => {
-  const { role } = useContext(RoleContext);
-
-  // Conditionally render the profile based on the role stored in the context
+    
+    const { role } = useContext(RoleContext);
   switch (role) {
     case "student":
       return <StudentProfile />;

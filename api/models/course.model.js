@@ -24,7 +24,7 @@ const studentCourseSchema = new mongoose.Schema({
 });
 
 // Faculty Courses Model
-const facultyCourseSchema = new mongoose.Schema({
+export const facultyCourseSchema = new mongoose.Schema({
     facultyId: { type: String, required: true, ref: 'Faculty' },
     courseCode: { type: String, required: true, ref: 'Course' },
     year: { type: Number, required: true },

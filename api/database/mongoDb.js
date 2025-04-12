@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
 // Get MongoDB URI from environment variables
-const MONGODB_URI="mongodb+srv://divyansh:KrHRg7mgeh7tgNiU@cluster0.qhaz53w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // MongoDB connection function
 const connectDB = async () => {
+    const MONGODB_URI = process.env.MONGODB_URI;
   try {
     const conn = await mongoose.connect(MONGODB_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);

@@ -40,11 +40,15 @@ const seedDatabase = async () => {
       userId: createdUser._id,
       hostel: "Lohit",
       rollNo: "220101039",
-      department: "Computer Science",
+      email: "testStudent@iitg.ac.in",
+      department: "Computer Science and Engineering",
       semester: 3,
       batch: "2023-2027",
       program: "BTech",
-      status: "active"
+      status: "active",
+      roomNo: "D-234",
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
     console.log("Student created with register number:", student.registerNo);
     console.log("Student is linked to user with email:", createdUser.email);
