@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import newRequest from '../../utils/newRequest';
+import { useQuery } from '@tanstack/react-query';
 
 function HostelLeaveStudent() {
+    const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
+    const {email, userId} = userData.user;
     const [requests, setRequests] = useState([]);
     const [showForm, setShowForm] = useState(false);
 
@@ -10,7 +14,6 @@ function HostelLeaveStudent() {
         startDate: '',
         endDate: '',
         reason: '',
-        hostelName: '',
     });
 
     const handleOpenForm = () => {
@@ -25,7 +28,6 @@ function HostelLeaveStudent() {
             startDate: '',
             endDate: '',
             reason: '',
-            hostelName: '',
         });
     };
 
@@ -33,15 +35,30 @@ function HostelLeaveStudent() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const newRequest = {
-            id: Date.now(),
+        const newReq = {
+            applicationId: Date.now(),
             status: 'Pending',
+            email: email,
+            ...formData,
         };
-        setRequests([...requests, newRequest]);
+        setRequests([...requests, newReq]);
+        console.log(newReq);
+        await newRequest.post('/hostel/leave', newReq);
         handleDiscard();
     };
+
+    const { isLoading, error, data } = useQuery({
+        queryKey: ["leaves"],
+        queryFn: () =>
+            newRequest.get(`/hostel/${userId}/leaves`).then((res) => {
+                return res.data;
+            }),
+    });
+    // console.log(data);
+
+    const [selectedReason, setSelectedReason] = useState(null);
 
     return (
         <div className="w-full min-h-screen bg-gray-100 text-gray-900 flex flex-col items-center p-4 m-2">
@@ -49,16 +66,38 @@ function HostelLeaveStudent() {
                 <h2 className="text-2xl font-semibold text-center mb-4">Requests</h2>
                 <hr className="border-gray-300 mb-4 w-full" />
                 
-                {requests.length === 0 ? (
-                    <p className="text-center text-lg font-medium text-gray-600">No pending requests</p>
-                ) : (
-                    <div className="space-y-3">
-                        {requests.map((req) => (
-                            <div key={req.id} className="p-4 bg-gray-200 rounded-lg shadow">
-                                <p><strong>ID:</strong> {req.id}</p>
-                                <p><strong>Status:</strong> {req.status}</p>
-                            </div>
-                        ))}
+                {isLoading ? <p>Loading...</p> : error ? <p>No pending requests</p>: 
+                    <>
+                    {data?.length === 0 ? (
+                        <p className="text-center text-lg font-medium text-gray-600">No pending requests</p>
+                    ) : (
+                        <div className="space-y-3">
+                            {data.map((req) => (
+                                <div key={req._id} className="p-4 bg-gray-200 rounded-lg shadow cursor-pointer" onClick={() => setSelectedReason(req.reason)}>
+                                    <p><strong>ID:</strong> {req._id}</p>
+                                    <p><strong>Reason:</strong>{req.reason.split(' ').slice(0, 4).join(' ')}...</p>
+                                    <p><strong>Start Date:</strong>{req.startDate.substring(0,10)}</p>
+                                    <p><strong>End Date:</strong>{req.endDate.substring(0,10)}</p>
+                                    <p><strong>Status:</strong> {req.status}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    </>
+                }
+
+                {selectedReason && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                        <div className="bg-white p-6 rounded-lg max-w-lg w-full m-4">
+                            <h3 className="text-xl font-semibold mb-4">Complete Reason</h3>
+                            <p className="text-gray-700">{selectedReason}</p>
+                            <button 
+                                className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+                                onClick={() => setSelectedReason(null)}
+                            >
+                                Close
+                            </button>
+                        </div>
                     </div>
                 )}
                 
@@ -94,7 +133,6 @@ function HostelLeaveStudent() {
                                     name="endDate" 
                                     value={formData.endDate} 
                                     onChange={handleChange} 
-                                    // min={formData.startDate}
                                     required 
                                     className={`w-full p-2 border rounded-lg ${formData.endDate && formData.startDate && new Date(formData.endDate) <= new Date(formData.startDate) ? 'border-red-500' : ''}`}
                                 />

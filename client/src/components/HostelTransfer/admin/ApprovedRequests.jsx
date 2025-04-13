@@ -1,6 +1,14 @@
 import React from 'react';
 
 const ApprovedRequests = ({ requests }) => {
+  if (requests.length === 0) {
+    return (
+      <div className="card bg-base-100 shadow border border-base-200 rounded-lg text-center text-gray-500 py-4">
+        No approved requests.
+      </div>
+    );
+  }
+
   return (
     <div className='card bg-base-100 shadow border border-base200 p-6 rounded-lg'>
       {requests.map(request => (

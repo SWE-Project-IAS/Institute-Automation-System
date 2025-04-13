@@ -46,6 +46,12 @@ const Documents = () => {
                 path: "/documents/feereceipt",
                 description: "Download your fee receipts",
                 icon: <FaReceipt className="text-yellow-500 text-4xl mb-4" />
+            },
+            {
+                title: "Other Forms",
+                path: "/documents/othersform",
+                description: "Download your forms",
+                icon: <FaFileAlt className="text-yellow-500 text-4xl mb-4" />
             }
             // Add other documents here
         ];

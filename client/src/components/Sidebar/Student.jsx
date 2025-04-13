@@ -129,6 +129,11 @@ const Student = () => {
                                 Fee Receipt
                             </Link>
                         </li>
+                        <li>
+                            <Link to="/documents/othersform" className="text-gray-700 hover:text-gray-900">
+                                Other Forms
+                            </Link>
+                        </li>
                     </ul>
                 )}
                 </li>

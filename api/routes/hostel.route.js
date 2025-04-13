@@ -1,8 +1,11 @@
 import express from "express";
-import { studentLeave } from "../controllers/hostel.controller.js";
+import { studentLeave, getStudentLeave, getAllLeaves, updateAnyLeave } from "../controllers/hostel.controller.js";
 
 const router=express.Router();
 
-router.post("/studentLeave",studentLeave)
+router.post("/leave",studentLeave)
+router.get("/:id/leaves", getStudentLeave);
+router.get("/leaves", getAllLeaves);
+router.put("/leaves/:id", updateAnyLeave);
 
 export default router;

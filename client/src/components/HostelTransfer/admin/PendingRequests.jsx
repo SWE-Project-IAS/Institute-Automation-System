@@ -1,8 +1,16 @@
 import React from 'react';
 
 const PendingRequests = ({ requests, onApprove, onReject, rejectionReasons, handleReasonChange }) => {
+  if (requests.length === 0) {
+    return (
+      <div className="card bg-base-100 shadow border border-base-200 rounded-lg text-center text-gray-500 py-4">
+        No pending requests.
+      </div>
+    );
+  }
+
   return (
-    <div className='card bg-base-100 shadow border border-base200 p-6 rounded-lg'>
+    <div className='card bg-base-100 shadow border border-base-200 p-6 rounded-lg'>
       {requests.map(request => (
         <div key={request.id} className="border rounded-lg shadow-sm mb-4 p-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
@@ -50,13 +58,13 @@ const PendingRequests = ({ requests, onApprove, onReject, rejectionReasons, hand
             <div className='flex justify-left mt-2'>
               <button
                 onClick={() => onApprove(request)}
-                className="bg-green-500 max-h-10 shadow-sm text-white px-3 py-2 rounded mr-4"
+                className="bg-green-500 max-h-10 shadow-sm text-white px-3 py-2 rounded mr-4 hover:scale-105 transition duration-200"
               >
                 Approve
               </button>
               <button
                 onClick={() => handleReasonChange(request.id, '')}
-                className="bg-red-500 max-h-10 shadow-sm text-white px-4 py-2 rounded"
+                className="bg-red-500 max-h-10 shadow-sm text-white px-4 py-2 rounded hover:scale-105 transition duration-200"
               >
                 Reject
               </button>
@@ -71,7 +79,7 @@ const PendingRequests = ({ requests, onApprove, onReject, rejectionReasons, hand
                   />
                   <button
                     onClick={() => onReject(request)}
-                    className="bg-red-500 shadow-sm text-white px-4 py-2 rounded"
+                    className="bg-red-500 shadow-sm text-white px-4 py-2 rounded hover:scale-105 transition duration-200"
                   >
                     Submit Rejection
                   </button>

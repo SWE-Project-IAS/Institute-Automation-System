@@ -29,7 +29,11 @@ const AcadAdmin = () => {
                     {expandedSections.course && (
                         <ul className="pl-5">
                             <li>Registration</li>
-                            <li>Create course</li>
+                            <li>
+                                <Link to="/adminregistration" className="text-gray-700 hover:text-gray-900">
+                                  Create course
+                                </Link>
+                            </li>
                             <Link to="/attendancelanding" className="text-gray-700 hover:text-gray-900">
                                 Attendance
                                 </Link>
