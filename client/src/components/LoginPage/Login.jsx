@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RoleContext } from "../../context/Rolecontext";
+import axios from "axios";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -8,39 +9,40 @@ export default function LoginPage() {
   const [role, setRoleInput] = useState("");
   const navigate = useNavigate();
 
-  const {setRole}=useContext(RoleContext);
+  const { setRole } = useContext(RoleContext);
 
   const handleLogin = async () => {
     if (!email || !password || !role) {
-        alert("All fields are required!");
-        return;
+      alert("All fields are required!");
+      return;
     }
     console.log({ email, role });
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password, role }),
+      const user = {
+        email: email,
+        password: password,
+        role: role
+      }
+
+      const response = await axios.post("http://localhost:8000/api/auth/login", user, {
+        withCredentials: true,
       });
 
-      const data = await response.json();
+      const data = response.data;
+
       console.log(data);
-      if (response.ok) {
-          console.log("Login successful:", data);
-          localStorage.setItem("currentUser",JSON.stringify({data,role}));
-          setRole(role);
-          navigate("/profile", { role });
-      } else {
+      if (response) {
+        console.log("Login successful:", data);
+        localStorage.setItem("currentUser", JSON.stringify({ data, role }));
+        setRole(role);
+        navigate("/profile", { role });
+      }else {
         alert(`Login failed: ${data.message || "Unknown error"}`);
       }
     } catch (error) {
-        console.error("Error logging in:", error);
-        alert("Failed to connect to the server.");
+      console.error("Error logging in:", error);
+      alert("Failed to connect to the server.");
     }
-    
-    // navigate("/profile", { state: {role}});
   };
 
   return (

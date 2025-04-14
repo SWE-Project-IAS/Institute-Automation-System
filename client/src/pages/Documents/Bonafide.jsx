@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import newRequest from "../../utils/newRequest";
 import { toast } from 'react-hot-toast';
 import {
-  FaUser, FaIdBadge, FaUserTie, FaCalendarAlt, FaGraduationCap, FaBook, FaHome, FaDoorOpen, FaBirthdayCake, FaChartLine, FaFileAlt, FaInfoCircle, FaListAlt, FaPlus, FaExclamationCircle
+  FaCircle,FaUser, FaIdBadge, FaUserTie, FaCalendarAlt, FaGraduationCap, FaBook, FaHome, FaDoorOpen, FaBirthdayCake, FaChartLine, FaFileAlt, FaInfoCircle, FaListAlt, FaPlus, FaExclamationCircle
 } from "react-icons/fa";
 
 const BonafidePage = () => {
@@ -46,6 +46,7 @@ const BonafidePage = () => {
       queryClient.invalidateQueries(['bonafide-applications']);
       toast.success('Bonafide application submitted successfully');
       setFormData(initialFormData);
+      setActiveTab('status');
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message || 'Error submitting application');
@@ -295,9 +296,9 @@ const BonafidePage = () => {
 
   const renderStatus = () => (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h3 className="text-2xl md:text-3xl font-bold text-indigo-600 flex items-center">
-          <FaListAlt className="w-7 h-7 mr-3" /> Application Status History
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h3 className={`text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-700 flex items-center`}>
+          <FaListAlt className="w-7 h-7 mr-3 text-indigo-600" /> Application Status History
         </h3>
         <div className="text-sm font-medium text-gray-600 bg-base-200 px-3 py-1 rounded-full">
           Total Applications: {applications.length}
@@ -308,7 +309,7 @@ const BonafidePage = () => {
         <table className="w-full table-auto">
           <thead className="bg-gradient-to-r from-indigo-50 to-blue-50 text-left">
             <tr>
-              {["Sl.", "Date", "Purpose", "Details", "Current Status"].map((header) => (
+              {["Sl.", "Date", "Purpose", "Status", "Details"].map((header) => (
                 <th key={header} className="px-6 py-4 text-xs font-semibold text-indigo-800 uppercase tracking-wider">
                   {header}
                 </th>
@@ -327,26 +328,42 @@ const BonafidePage = () => {
                 <tr key={index} className="hover:bg-indigo-50/50 transition-colors duration-150">
                   <td className="px-6 py-4 text-sm font-medium text-gray-600">{index + 1}.</td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                    {new Date(app.applicationDate).toLocaleDateString()}
+                    {new Date(app.applicationDate).toLocaleString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                   </td>
-                  <td className="px-6 py-4 text-sm">
-                    <span className="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap">
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       {app.certificateFor}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate" title={app.remarks}>
-                    {app.remarks || '-'}
-                  </td>
                   <td className="px-6 py-4 text-sm">
-                    <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap
-                      ${app.currentStatus.toLowerCase() === 'approved'
-                        ? 'bg-green-100 text-green-800'
-                        : app.currentStatus.toLowerCase() === 'rejected'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-yellow-100 text-yellow-800'}
-                    `}>
-                      {app.currentStatus}
-                    </span>
+                      <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap capitalize
+                          ${app.currentStatus === 'Approved' 
+                              ? 'bg-green-100 text-green-800' 
+                              : app.currentStatus === 'Rejected'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-yellow-100 text-yellow-800'}`}>
+                          <FaCircle className="w-1.5 h-1.5 mr-1.5" />
+                          {app.currentStatus}
+                      </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate" title={app.remarks}>
+                    {Array.isArray(app.remarks) ? (
+                        <div className="max-w-xs space-y-1">
+                            {app.remarks.map((remark, idx) => (
+                                <div key={idx} className="truncate" title={remark}>
+                                    • {remark}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <span className="text-gray-400">No remarks</span>
+                    )}
                   </td>
                 </tr>
               ))

@@ -1,67 +1,57 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import newRequest from '../../utils/newRequest';
+import { useQuery } from '@tanstack/react-query';
 import { 
   FaBookOpen, 
   FaClipboardList, 
   FaBullhorn, 
-  FaCalendarAlt, 
-  FaChartBar,
+  FaCalendarAlt,
   FaComments,
-  FaFileAlt,
   FaExternalLinkAlt,
   FaLock
 } from "react-icons/fa";
 
-export default function MyCourses() {
-  // Example student object with current courses
-  const [studentCourses] = useState([
-    {
-      id: "CS101",
-      name: "Introduction to Computer Science",
-      instructor: "Dr. Jane Smith",
-      credits: 4,
-      assignments: 8,
-      announcements: 3,
-      attendance: 85
-    },
-    {
-      id: "MATH202",
-      name: "Calculus II",
-      instructor: "Prof. Robert Johnson",
-      credits: 3,
-      assignments: 12,
-      announcements: 2,
-      attendance: 92
-    },
-    {
-      id: "ENG105",
-      name: "Academic Writing",
-      instructor: "Dr. Maria Garcia",
-      credits: 3,
-      assignments: 5,
-      announcements: 5,
-      attendance: 78
-    },
-    {
-      id: "PHYS101",
-      name: "Physics for Engineers",
-      instructor: "Dr. Alan Chen",
-      credits: 4,
-      assignments: 10,
-      announcements: 7,
-      attendance: 88
-    }
-  ]);
+function MyCourses() {
+  // Get userId from localStorage just like in HostelLeaveStudent
+  const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
+  const {userId} = userData.user;
+  
+  const [isFeedbackAvailable, setIsFeedbackAvailable] = useState(false);
 
-  // New state to track if feedback is currently available
-  const [isFeedbackAvailable] = useState(false); // Set to false by default, you would get this from backend later
+  console.log("User ID:", userId);
+
+  const { isLoading, error, data: studentCourses = [] } = useQuery({
+    queryKey: ["courses"],
+    queryFn: () =>
+      newRequest.get(`/student/${userId}/courses`).then((res) => {
+        console.log("Course data received:", res.data);
+        setIsFeedbackAvailable(res.data.feedbackOpen || false);
+        return res.data.courses || [];
+      }),
+  });
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-2 text-gray-800">My Courses</h1>
       <p className="text-gray-600 mb-6">Current semester enrolled courses</p>
       
-      {studentCourses.length === 0 ? (
+      {isLoading ? (
+        <div className="bg-gray-100 p-8 rounded-lg text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
+          <p className="text-gray-700">Loading your courses...</p>
+        </div>
+      ) : error ? (
+        <div className="bg-red-100 p-8 rounded-lg text-center">
+          <p className="text-red-700 text-lg mb-4">{error.message || "Failed to fetch courses"}</p>
+          <Link
+            to="/registration"
+            className="bg-pink-500 text-white py-2 px-6 rounded-md font-medium hover:bg-pink-600 transition duration-300"
+          >
+            Go to Course Registration
+          </Link>
+        </div>
+      ) : studentCourses.length === 0 ? (
         <div className="bg-gray-100 p-8 rounded-lg text-center">
           <p className="text-gray-700 text-lg mb-4">You are not enrolled in any courses.</p>
           <Link
@@ -138,7 +128,6 @@ export default function MyCourses() {
                   </Link>
                   
                   <Link
-                    // to={`/course/${course.id}`}
                     to="/attendancelanding"
                     className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200"
                   >
@@ -167,7 +156,7 @@ export default function MyCourses() {
                 
                 <div className="mt-4">
                   <Link 
-                    // to={`/course/${course.id}/details`}
+                    to={`/course/${course.id}`}
                     className="flex items-center justify-center gap-2 w-full bg-pink-50 text-pink-600 border border-pink-200 rounded-md p-2 text-sm font-medium hover:bg-pink-100 transition duration-200"
                   >
                     <span>View Course Details</span>
@@ -192,7 +181,7 @@ export default function MyCourses() {
       </div>
       
       {/* Feedback availability notice */}
-      {!isFeedbackAvailable && (
+      {!isFeedbackAvailable && studentCourses.length > 0 && (
         <div className="mt-4 text-center text-sm text-gray-600">
           Course feedback is currently closed. Check back during the feedback period.
         </div>
@@ -200,3 +189,5 @@ export default function MyCourses() {
     </div>
   );
 }
+
+export default MyCourses;

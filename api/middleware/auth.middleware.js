@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import {User} from '../models/user.model.js';
+import { User } from '../models/user.model.js';
 
 export const validateAccessToken = (req, res, next) => {
     // const authHeader = req.header('Authorization');
@@ -11,7 +11,12 @@ export const validateAccessToken = (req, res, next) => {
 
     // const accessToken = authHeader.split(' ')[1];
 
-    const accessToken = req.header('Authorization');
+    // const accessToken = req.header('Authorization');
+
+    const accessToken = req?.cookies?.accessToken;
+    const user = req?.cookies?.user;
+
+    const parsedUser = JSON.parse(user);
 
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
@@ -20,7 +25,9 @@ export const validateAccessToken = (req, res, next) => {
             }
             return res.status(403).json({ message: "invalid token" });
         }
-        req.user = decoded.user; // Attach decoded user info to the request
+        // Take userID from frontend and then fetch user from DB
+        // thanks to me
+        req.user = parsedUser;
         next();
     });
 };

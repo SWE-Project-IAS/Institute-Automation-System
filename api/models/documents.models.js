@@ -9,7 +9,7 @@ const applicationDocumentSchema = new mongoose.Schema({
   approvalDetails: {
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     approvalDate: { type: Date },
-    remarks: { type: String }
+    remarks: [{ type: String }]  // Changed from String to Array of Strings
   },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
@@ -38,6 +38,40 @@ const bonafideSchema = new mongoose.Schema({
     }
   },
   otherDetails: { type: String }
+});
+
+// Passport Application Schema
+const passportSchema = new mongoose.Schema({
+  applicationId: { type: mongoose.Schema.Types.ObjectId, ref: 'ApplicationDocument', required: true },
+  applicationType: { type: String, enum: ['fresh', 'renewal'], required: true },
+  placeOfBirth: { type: String, required: true },
+  semester: { type: Number, required: true },
+  mode: { type: String, enum: ['normal', 'tatkal'], required: true },
+  tatkalReason: { 
+    type: String,
+    required: function() {
+      return this.mode === 'tatkal';
+    }
+  },
+  travelPlans: { type: String, enum: ['yes', 'no'], required: true },
+  travelDetails: { 
+    type: String,
+    required: function() {
+      return this.travelPlans === 'yes';
+    }
+  },
+  fromDate: { 
+    type: Date,
+    required: function() {
+      return this.travelPlans === 'yes';
+    }
+  },
+  toDate: { 
+    type: Date,
+    required: function() {
+      return this.travelPlans === 'yes';
+    }
+  }
 });
 
 // Viewable Document Schema (for direct access documents)
@@ -77,3 +111,4 @@ export const Bonafide = mongoose.model('Bonafide', bonafideSchema);
 export const ViewableDocument = mongoose.model('ViewableDocument', viewableDocumentSchema);
 export const FeeDetails = mongoose.model('FeeDetails', feeDetailsSchema);
 export const IDCard = mongoose.model('IDCard', idCardSchema);
+export const Passport = mongoose.model('Passport', passportSchema);

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import DocumentLayout from '../../components/documentSection/DocumentLayout';
+import newRequest from '../../utils/newRequest';
+import toast from 'react-hot-toast';
 import {
     FaPassport, FaUserGraduate, FaGraduationCap, FaInfoCircle, FaRegClock,
     FaPlaneDeparture, FaCalendarAlt, FaMapMarkerAlt, FaSyncAlt,
     FaPaperPlane, FaCheckCircle, FaHourglassHalf, FaListAlt, FaPlus,
-    FaUniversity, FaIdCard, FaEnvelope, FaPhone, FaHome, FaUser, FaUsers,
+    FaUniversity, FaIdCard, FaEnvelope, FaPhone, FaHome, FaUser, FaUsers, FaCircle,
     FaBirthdayCake // Added for Date of Birth
 } from 'react-icons/fa'; // Import necessary icons
 
@@ -22,40 +25,85 @@ const PassportPage = () => {
     };
 
     const [formData, setFormData] = useState(initialFormData);
+    const [formErrors, setFormErrors] = useState({});
     const [activeTab, setActiveTab] = useState('application');
+    const queryClient = useQueryClient();
 
-    // Hardcoded student data
-    const studentInfo = {
-        name: 'JOHN MICHAEL DOE',
-        rollNo: '210104067',
-        department: 'DEPT. OF MECHANICAL ENGINEERING',
-        programme: 'BTECH',
-        dateOfBirth: '2003-08-24',
-        email: 'j.doe@iitg.ac.in',
-        contactNumber: '9876543210',
-        hostelName: 'UMIAM',
-        roomNo: 'D-234',
-        fathersName: 'MICHAEL JAMES DOE',
-        mothersName: 'SARAH MICHAEL DOE',
+    // Get user data from localStorage
+    const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
+    const {userId} = userData.user;
+
+    // Fetch student data
+    const { isLoading, error, data: studentData } = useQuery({
+        queryKey: [`passport-${userId}`],
+        queryFn: () =>
+            newRequest.get(`/student/${userId}/passport`).then((res) => res.data),
+    });
+
+    // Fetch application history
+    const { data: applications = [] } = useQuery({
+        queryKey: ['passport-applications'],
+        queryFn: () =>
+            newRequest.get(`/student/${userId}/passport/applications`).then((res) => res.data),
+    });
+
+    // Add studentInfo from studentData
+    const studentInfo = studentData || {};
+
+    // Add statusData from applications
+    const statusData = applications || [];
+
+    // Validate form before submission
+    const validateForm = () => {
+        const errors = {};
+        
+        if (!formData.placeOfBirth?.trim()) {
+            errors.placeOfBirth = 'Place of birth is required';
+        }
+        
+        if (!formData.semester) {
+            errors.semester = 'Please select your current semester';
+        }
+
+        if (formData.mode === 'tatkal' && !formData.tatkalReason?.trim()) {
+            errors.tatkalReason = 'Reason for tatkal application is required';
+        }
+
+        if (formData.travelPlans === 'yes') {
+            if (!formData.travelDetails?.trim()) {
+                errors.travelDetails = 'Travel details are required';
+            }
+            if (!formData.fromDate) {
+                errors.fromDate = 'From date is required';
+            }
+            if (!formData.toDate) {
+                errors.toDate = 'To date is required';
+            }
+            if (formData.fromDate && formData.toDate && new Date(formData.toDate) <= new Date(formData.fromDate)) {
+                errors.toDate = 'To date must be after from date';
+            }
+        }
+
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
-    // Hardcoded status data
-    const [statusData] = useState([
-        {
-            applicationDate: '2025-03-01',
-            appliedFor: 'Fresh Passport',
-            otherDetails: 'No additional docs required',
-            documentStatus: 'Submitted ID proofs',
-            currentStatus: 'Under Review'
+    // Create passport application mutation
+    const createApplication = useMutation({
+        mutationFn: (formData) => {
+            return newRequest.post(`/student/${userId}/passport/apply`, formData);
         },
-        {
-            applicationDate: '2025-04-10',
-            appliedFor: 'Renewal of Passport',
-            otherDetails: 'New address proof needed',
-            documentStatus: 'Documents verified',
-            currentStatus: 'Approved'
+        onSuccess: () => {
+            queryClient.invalidateQueries(['passport-applications']);
+            setFormData(initialFormData);
+            setFormErrors({});
+            toast.success('Passport application submitted successfully');
+            setActiveTab('status');
+        },
+        onError: (error) => {
+            toast.error(error?.response?.data?.message || 'Error submitting application');
         }
-    ]);
+    });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -63,13 +111,17 @@ const PassportPage = () => {
             ...prev,
             [name]: value
         }));
+        // Clear error when user types
+        if (formErrors[name]) {
+            setFormErrors(prev => ({ ...prev, [name]: '' }));
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log({ ...studentInfo, ...formData });
-        // TODO: Submit data
-        alert('Application Submitted (Simulated)');
+        if (validateForm()) {
+            createApplication.mutate(formData);
+        }
     };
 
     // Apply gradient style to text
@@ -179,6 +231,7 @@ const PassportPage = () => {
                                 <option key={num} value={num}>{num}</option>
                             ))}
                         </select>
+                        {formErrors.semester && <p className="text-red-500 text-xs mt-1">{formErrors.semester}</p>}
                     </div>
 
                     {/* Place of Birth */}
@@ -197,6 +250,7 @@ const PassportPage = () => {
                             placeholder="e.g., New Delhi"
                             required
                         />
+                        {formErrors.placeOfBirth && <p className="text-red-500 text-xs mt-1">{formErrors.placeOfBirth}</p>}
                     </div>
                 </div>
             </div>
@@ -240,6 +294,7 @@ const PassportPage = () => {
                             placeholder="Explain the urgency..."
                             required={formData.mode === 'tatkal'}
                         />
+                        {formErrors.tatkalReason && <p className="text-red-500 text-xs mt-1">{formErrors.tatkalReason}</p>}
                     </div>
                 )}
             </div>
@@ -284,6 +339,7 @@ const PassportPage = () => {
                                 placeholder="e.g., Paris, France for Summer Internship"
                                 required={formData.travelPlans === 'yes'}
                             />
+                            {formErrors.travelDetails && <p className="text-red-500 text-xs mt-1">{formErrors.travelDetails}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -301,6 +357,7 @@ const PassportPage = () => {
                                     onChange={handleInputChange}
                                     required={formData.travelPlans === 'yes'}
                                 />
+                                {formErrors.fromDate && <p className="text-red-500 text-xs mt-1">{formErrors.fromDate}</p>}
                             </div>
                             <div className="form-control">
                                 <label className="label pb-1">
@@ -316,6 +373,7 @@ const PassportPage = () => {
                                     onChange={handleInputChange}
                                     required={formData.travelPlans === 'yes'}
                                 />
+                                {formErrors.toDate && <p className="text-red-500 text-xs mt-1">{formErrors.toDate}</p>}
                             </div>
                         </div>
                     </div>
@@ -344,7 +402,7 @@ const PassportPage = () => {
     // --- Status Table Rendering ---
     const renderStatus = () => (
         <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <h3 className={`text-2xl md:text-3xl font-bold ${gradientTextStyle} flex items-center`}>
                     <FaListAlt className="w-7 h-7 mr-3" /> Application Status History
                 </h3>
@@ -358,7 +416,7 @@ const PassportPage = () => {
                     <thead className="bg-gradient-to-r from-indigo-50 to-blue-50 text-left">
                         <tr>
                             {[
-                                'Sl.', 'Date', 'Type', 'Details', 'Docs Status', 'Current Status'
+                                'Sl.', 'Date', 'Application Type', 'Mode', 'Remarks', 'Status'
                             ].map((header) => (
                                 <th key={header} className="px-6 py-4 text-xs font-semibold text-indigo-800 uppercase tracking-wider">
                                     {header}
@@ -382,32 +440,37 @@ const PassportPage = () => {
                                         {row.applicationDate}
                                     </td>
                                     <td className="px-6 py-4 text-sm">
-                                        <span className="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap">
-                                            {row.appliedFor}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate" title={row.otherDetails}>
-                                        {row.otherDetails || '-'}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm">
-                                        <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap
-                      ${row.documentStatus.toLowerCase().includes('verified')
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-yellow-100 text-yellow-800'}
-                    `}>
-                                            {row.documentStatus.toLowerCase().includes('verified') ? <FaCheckCircle className="w-3 h-3 mr-1.5" /> : <FaHourglassHalf className="w-3 h-3 mr-1.5" />}
-                                            {row.documentStatus}
+                                        <span className="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap capitalize">
+                                            {row.applicationType}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-sm">
-                                        <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-full font-semibold whitespace-nowrap
-                      ${row.currentStatus.toLowerCase() === 'approved'
-                                                ? 'bg-green-100 text-green-800'
-                                                : row.currentStatus.toLowerCase() === 'under review'
-                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                    : 'bg-gray-100 text-gray-800'}
-                    `}>
-                                            {row.currentStatus.toLowerCase() === 'approved' ? <FaCheckCircle className="w-3 h-3 mr-1.5" /> : <FaHourglassHalf className="w-3 h-3 mr-1.5" />}
+                                        <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap capitalize
+                                            ${row.mode === 'tatkal' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'}`}>
+                                            {row.mode}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-600">
+                                        {Array.isArray(row.remarks) ? (
+                                            <div className="max-w-xs space-y-1">
+                                                {row.remarks.map((remark, idx) => (
+                                                    <div key={idx} className="truncate" title={remark}>
+                                                        • {remark}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <span className="text-gray-400">No remarks</span>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm">
+                                        <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap capitalize
+                                            ${row.currentStatus === 'Approved' 
+                                                ? 'bg-green-100 text-green-800' 
+                                                : row.currentStatus === 'Rejected'
+                                                    ? 'bg-red-100 text-red-800'
+                                                    : 'bg-yellow-100 text-yellow-800'}`}>
+                                            <FaCircle className="w-1.5 h-1.5 mr-1.5" />
                                             {row.currentStatus}
                                         </span>
                                     </td>

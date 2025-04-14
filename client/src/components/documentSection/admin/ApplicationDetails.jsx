@@ -1,20 +1,87 @@
 import React, { useState } from 'react';
 import { FaTimesCircle, FaEye } from 'react-icons/fa';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import newRequest from '../../../utils/newRequest';
+import { toast } from 'react-hot-toast';
 
 const ApplicationDetails = ({ application, onClose, onViewFull }) => {
     const [newComment, setNewComment] = useState('');
-    const [status, setStatus] = useState(application.status);
+    const [loading, setLoading] = useState(false);
+    const queryClient = useQueryClient();
 
-    const handleStatusChange = (newStatus) => {
-        setStatus(newStatus);
-        // Add API call here
+    // Fetch detailed application data including remarks
+    const { data: details } = useQuery({
+        queryKey: ['application-details', application.id],
+        queryFn: () => newRequest.get(`/acadAdmin/documents/applications/${application.id}`)
+            .then(res => res.data),
+        onError: (error) => {
+            toast.error(error?.response?.data?.message || 'Error fetching application details');
+        }
+    });
+
+    const [applicationStatus, setApplicationStatus] = useState(application.status);
+
+    // Status update mutation
+    const updateStatusMutation = useMutation({
+        mutationFn: ({ newStatus, remarks }) => {
+            return newRequest.patch(`/acadAdmin/documents/applications/${application.id}/status`, {
+                status: newStatus,
+                remarks
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['applications']);
+            queryClient.invalidateQueries(['application-details', application.id]);
+            toast.success('Status updated successfully');
+        },
+        onError: (error) => {
+            toast.error(error?.response?.data?.message || 'Error updating status');
+        }
+    });
+
+    // Add comment mutation
+    const addCommentMutation = useMutation({
+        mutationFn: (comment) => {
+            return newRequest.post(`/acadAdmin/documents/applications/${application.id}/comment`, {
+                comment
+            });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['applications']);
+            queryClient.invalidateQueries(['application-details', application.id]);
+            setNewComment('');
+            toast.success('Comment added successfully');
+        },
+        onError: (error) => {
+            toast.error(error?.response?.data?.message || 'Error adding comment');
+        }
+    });
+
+    const handleStatusChange = async (newStatus) => {
+        if (loading || applicationStatus === newStatus) return;
+        
+        setLoading(true);
+        try {
+            const properStatus = newStatus.charAt(0).toUpperCase() + newStatus.slice(1).toLowerCase();
+            await updateStatusMutation.mutateAsync({
+                newStatus: properStatus, 
+                remarks: `Application ${properStatus.toLowerCase()}`
+            });
+            setApplicationStatus(properStatus);
+        } catch (error) {
+            console.error('Error updating status:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleAddComment = () => {
+    const handleAddComment = async () => {
         if (!newComment.trim()) return;
-        // Add API call here
-        setNewComment('');
+        addCommentMutation.mutate(newComment);
     };
+
+    // Ensure we have remarks array even if approvalDetails is undefined
+    const remarks = details?.approvalDetails?.remarks || [];
 
     return (
         <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -46,10 +113,10 @@ const ApplicationDetails = ({ application, onClose, onViewFull }) => {
                     {/* Status Badge */}
                     <div className="flex justify-center">
                         <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium
-                            ${status === 'approved' ? 'bg-green-100 text-green-700' :
-                            status === 'rejected' ? 'bg-red-100 text-red-700' :
-                            'bg-yellow-100 text-yellow-700'}`}>
-                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                            ${applicationStatus === 'Approved' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
+                            applicationStatus === 'Rejected' ? 'bg-rose-100 text-rose-800 border border-rose-300' :
+                            'bg-amber-100 text-amber-800 border border-amber-300'}`}>
+                            {applicationStatus.charAt(0).toUpperCase() + applicationStatus.slice(1)}
                         </span>
                     </div>
 
@@ -70,39 +137,42 @@ const ApplicationDetails = ({ application, onClose, onViewFull }) => {
                         </div>
                     </div>
 
-                    {/* Comments Section */}
+                    {/* Approval History with Add Comment Section */}
                     <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Comments & History</h3>
-                        <div className="space-y-3 max-h-[300px] overflow-y-auto p-4 bg-gray-50 rounded-lg">
-                            {application.comments.map((comment, index) => (
-                                <div key={index} className="bg-white p-3 rounded-lg shadow-sm">
-                                    <p className="text-gray-900">{comment.text}</p>
-                                    <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-                                        <span>{comment.by}</span>
-                                        <span>•</span>
-                                        <span>{comment.date}</span>
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">Approval History</h3>
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Add a remark..."
+                                />
+                                <button 
+                                    onClick={handleAddComment}
+                                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                                    disabled={!newComment.trim() || loading}
+                                >
+                                    Add Remark
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {remarks.length > 0 ? (
+                            <div className="space-y-3">
+                                {remarks.map((remark, index) => (
+                                    <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                                        <p className="text-gray-900">{remark}</p>
+                                        <div className="mt-2 text-sm text-gray-500">
+                                            By: {details?.approvalDetails?.approvedBy?.name || 'Admin'}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Add Comment */}
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Add a comment..."
-                            />
-                            <button 
-                                onClick={handleAddComment}
-                                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
-                                disabled={!newComment.trim()}
-                            >
-                                Add Comment
-                            </button>
-                        </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-gray-500 italic">No remarks available</div>
+                        )}
                     </div>
                 </div>
 
@@ -111,14 +181,14 @@ const ApplicationDetails = ({ application, onClose, onViewFull }) => {
                     <button 
                         onClick={() => handleStatusChange('rejected')}
                         className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50"
-                        disabled={status === 'rejected'}
+                        disabled={applicationStatus === 'rejected' || loading}
                     >
                         Reject Application
                     </button>
                     <button 
                         onClick={() => handleStatusChange('approved')}
                         className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
-                        disabled={status === 'approved'}
+                        disabled={applicationStatus === 'approved' || loading}
                     >
                         Approve Application
                     </button>
