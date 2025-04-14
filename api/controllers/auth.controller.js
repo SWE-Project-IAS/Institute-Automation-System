@@ -5,10 +5,6 @@ import {Faculty} from '../models/faculty.model.js';
 import {Student} from '../models/student.model.js';
 import {AcadAdmin} from '../models/acadAdmin.model.js';
 import {HostelAdmin} from '../models/hostelAdmin.model.js';
-import {Faculty} from '../models/faculty.model.js';
-import {Student} from '../models/student.model.js';
-import {AcadAdmin} from '../models/acadAdmin.model.js';
-import {HostelAdmin} from '../models/hostelAdmin.model.js';
 
 import { validateAccessToken, validateRefreshToken } from '../middleware/auth.middleware.js';
 import { findUserByEmail, verifyRefreshTokenInDB } from '../middleware/auth.middleware.js';
@@ -47,15 +43,6 @@ export const login = async (req, res) => {
                 break;
             case 'faculty':
                 specificUser = await Faculty.findOne({ userId: user._id });   // Assuming Faculty model is defined
-                break;
-            case 'acadAdmin':
-                specificUser = await AcadAdmin.findOne({ userId:user._id });     // Assuming Admin model is defined
-                break;
-            case 'faculty':
-                specificUser = await Faculty.findOne({ userId:user._id });   // Assuming Faculty model is defined
-                break;
-            case 'nonAcadAdmin':
-                specificUser = await HostelAdmin.findOne({ userId:user._id }); // Assuming HostelAdmin model is defined
                 break;
             default:
                 return res.status(400).json({ message: 'Invalid role' });
