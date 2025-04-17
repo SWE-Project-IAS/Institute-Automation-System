@@ -15,6 +15,9 @@ import facultyRoute from "../api/routes/faculty.route.js";
 import seedSupportStaff from "./scripts/seedSupportStaff.js";
 import attendanceRoute from "../api/routes/attendance.route.js"
 import assignmentRoute from "../api/routes/assignment.route.js"
+import facultyCourseRoute from "../api/routes/facultyCourse.route.js"
+import studentCourseRoute from "../api/routes/studentCourse.route.js"
+
 
 import Razorpay from "razorpay";
 import crypto from "crypto"; // Needed for signature verification (production)
@@ -41,7 +44,8 @@ app.use("/api/acadadmin", acadAdminRoute);
 app.use("/api/attendancelanding", attendanceRoute);
 app.use("/api/assignment", assignmentRoute);
 app.use('/api/complaints', complaintsRouter);
- 
+app.use('/api/facultyCourse', facultyCourseRoute);
+app.use("/api/studentCourse", studentCourseRoute);
 
 // --- Middleware ---
 app.use(express.urlencoded({ extended: true,limit: '5mb' }));

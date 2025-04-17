@@ -4,7 +4,7 @@ import { Course } from '../models/course.model.js';
 import { CourseRegistration } from '../models/course.model.js';
 import { Student } from '../models/student.model.js';
 import { StudentCourse } from '../models/course.model.js';
-
+import { User } from '../models/user.model.js';
 
 export const getFacultyCourses = async (req, res) => {    
   try {
@@ -61,24 +61,33 @@ export const getFacultyCourses = async (req, res) => {
 // Get students registered for a course
 export const getStudentsByCourse = async (req, res) => {
     const { courseCode } = req.params;
-  
+    console.log(courseCode);
     try {
-      const registrations = await CourseRegistration.find({ courseCode }).populate({
-        path: 'rollNo',
-        model: Student
-      });
+      const registrations = await CourseRegistration.find({ courseCode });
+
+const students = await Promise.all(
+  registrations.map(async (reg) => {
+    // Find the student by rollNo directly
+    const student = await Student.findOne({ rollNo: reg.rollNo });
+    let userName = "N/A";
+    if (student && student.userId) {
+      const user = await User.findById(student.userId);
+      userName = user?.name || "N/A";
+    }
+    // If the student exists, extract the necessary fields
+    return {
+      name: userName,
+      rollNo: student?.rollNo,
+      program: student?.program,
+      semester: student?.semester,
+    };
+  })
+);
   
-      const students = registrations.map((reg) => ({
-        name: reg.rollNo?.userId?.name || "N/A",
-        rollNo: reg.rollNo?.rollNo,
-        program: reg.rollNo?.program,
-        semester: reg.rollNo?.semester,
-      }));
-  
-      res.status(200).json({ success: true, students });
+      return res.status(200).json({ success: true, students });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ success: false, message: err.message });
+      return res.status(500).json({ success: false, message: err.message });
     }
   };
 

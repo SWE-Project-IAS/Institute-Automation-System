@@ -1,23 +1,63 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const CourseRegistration = () => {
-    const coreCourses = ["Data Structures", "Operating Systems", "Computer Networks"];
-    const electiveCourses = ["AI", "Cyber Security", "Cloud Computing", "Blockchain", "Data Science"];
-    const auditCourses = ["Ethics in AI", "Financial Management", "Psychology", "Machine Learning", "Leadership", "Philosophy", "Environmental Science", "Digital Marketing", "Robotics", "Astronomy"];
-
+    const [coreCourses, setCoreCourses] = useState([]);
+    const [electiveCourses, setElectiveCourses] = useState([]);
+    const [auditCourses, setAuditCourses] = useState([]);
     const [selectedElectives, setSelectedElectives] = useState(["", ""]);
     const [selectedAudits, setSelectedAudits] = useState(["", "", ""]);
 
+    const [userId, setUserId] = useState("");
+    //const [rollNo, setRollNo] = useState("");
+
+    useEffect(() => {
+        const { data: userData } = JSON.parse(localStorage.getItem("currentUser"));
+        const user = userData.user;
+        setUserId(user.userId);
+        //setRollNo(user.rollNo);
+        //console.log(rollNo);
+        if (user.userId) {
+            axios
+                .get(`http://localhost:8000/api/studentCourse/getCourse/${user.userId}`)
+                .then((res) => {
+                    const { coreCourses, electiveCourses, auditCourses } = res.data;
+                    setCoreCourses(coreCourses);
+                    setElectiveCourses(electiveCourses);
+                    setAuditCourses(auditCourses);
+                })
+                .catch((err) => {
+                    console.error("Failed to fetch course data:", err);
+                });
+        }
+    }, []);
+
+    const registerCourse = (course, creditOrAudit) => {
+        axios
+            .post("http://localhost:8000/api/studentCourse/register", {
+                userId,
+                courseCode: course.courseCode,
+                creditOrAudit,
+            })
+            .then((res) => {
+                alert(res.data.message);
+            })
+            .catch((err) => {
+                alert(err.response?.data?.message || "Registration failed");
+                console.error(err);
+            });
+    };
+
     const handleElectiveChange = (index, course) => {
-        let updatedElectives = [...selectedElectives];
-        updatedElectives[index] = course;
-        setSelectedElectives(updatedElectives);
+        const updated = [...selectedElectives];
+        updated[index] = course;
+        setSelectedElectives(updated);
     };
 
     const handleAuditChange = (index, course) => {
-        let updatedAudits = [...selectedAudits];
-        updatedAudits[index] = course;
-        setSelectedAudits(updatedAudits);
+        const updated = [...selectedAudits];
+        updated[index] = course;
+        setSelectedAudits(updated);
     };
 
     return (
@@ -27,12 +67,21 @@ const CourseRegistration = () => {
             {/* Core Courses Section */}
             <h3 className="text-lg font-semibold mb-2">Core Courses</h3>
             <ul className="mb-4">
-                {coreCourses.map((course) => (
-                    <li key={course} className="flex justify-between p-2 border-b">
-                        {course}
-                        <button className="bg-blue-500 text-white px-3 py-1 rounded">Register</button>
-                    </li>
-                ))}
+                {coreCourses.length === 0 ? (
+                    <p className="text-gray-500">No core courses available</p>
+                ) : (
+                    coreCourses.map((course) => (
+                        <li key={course.courseCode} className="flex justify-between p-2 border-b">
+                            <span>{course.courseName}</span>
+                            <button
+                                className="bg-blue-500 text-white px-3 py-1 rounded"
+                                onClick={() => registerCourse(course, "Credit")}
+                            >
+                                Register
+                            </button>
+                        </li>
+                    ))
+                )}
             </ul>
 
             {/* Elective Courses Section */}
@@ -40,14 +89,14 @@ const CourseRegistration = () => {
             {selectedElectives.map((selected, index) => (
                 <div key={index} className="flex justify-between p-2 border-b">
                     <select
-                        className="border p-2 w-1/4"
+                        className="border p-2 w-1/3"
                         onChange={(e) => handleElectiveChange(index, e.target.value)}
                         value={selected}
                     >
                         <option value="">Select Elective Course</option>
                         {electiveCourses.map((course) => (
-                            <option key={course} value={course}>
-                                {course}
+                            <option key={course.courseCode} value={course.courseCode}>
+                                {course.courseName}
                             </option>
                         ))}
                     </select>
@@ -56,6 +105,10 @@ const CourseRegistration = () => {
                             selected ? "bg-blue-500 text-white" : "bg-gray-300"
                         }`}
                         disabled={!selected}
+                        onClick={() => {
+                            const course = electiveCourses.find(c => c.courseCode === selected);
+                            if (course) registerCourse(course, "Credit");
+                        }}
                     >
                         Register
                     </button>
@@ -67,14 +120,14 @@ const CourseRegistration = () => {
             {selectedAudits.map((selected, index) => (
                 <div key={index} className="flex justify-between p-2 border-b">
                     <select
-                        className="border p-2 w-1/4"
+                        className="border p-2 w-1/3"
                         onChange={(e) => handleAuditChange(index, e.target.value)}
                         value={selected}
                     >
                         <option value="">Select Audit Course</option>
                         {auditCourses.map((course) => (
-                            <option key={course} value={course}>
-                                {course}
+                            <option key={course.courseCode} value={course.courseCode}>
+                                {course.courseName}
                             </option>
                         ))}
                     </select>
@@ -83,6 +136,10 @@ const CourseRegistration = () => {
                             selected ? "bg-blue-500 text-white" : "bg-gray-300"
                         }`}
                         disabled={!selected}
+                        onClick={() => {
+                            const course = auditCourses.find(c => c.courseCode === selected);
+                            if (course) registerCourse(course, "Audit");
+                        }}
                     >
                         Register
                     </button>

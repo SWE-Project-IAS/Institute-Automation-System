@@ -17,6 +17,7 @@ const CourseRegistrationFaculty = () => {
       }
     } catch (error) {
       console.error("Error fetching students:", error);
+      console.log("Full error:", error.response);
     } finally {
       setLoading(false);
     }
