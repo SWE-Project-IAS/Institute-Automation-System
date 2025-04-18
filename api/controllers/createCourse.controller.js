@@ -41,12 +41,12 @@ export const createCourse = async (req, res) => {
     // Process configurations
     for (const config of configurations) {
       const { program, department, semesters, type } = config;
-      
+
       // Validate configuration
       if (!program || !department || !semesters?.length || !type) {
         continue; // Skip invalid configurations
       }
-      
+
 
       // Create mappings for each semester
       for (const semester of semesters) {
@@ -60,7 +60,7 @@ export const createCourse = async (req, res) => {
           session
         });
         await facultyCourse.save();
-        
+
 
         // Create program-course mapping
         const programMapping = new ProgramCourseMapping({
@@ -80,7 +80,7 @@ export const createCourse = async (req, res) => {
       message: "Course and mappings created successfully",
       courseCode
     });
-    
+
   } catch (err) {
     console.error("Error in createCourse:", err);
     return res.status(500).json({
@@ -88,3 +88,4 @@ export const createCourse = async (req, res) => {
     });
   }
 };
+export default createCourse; 
