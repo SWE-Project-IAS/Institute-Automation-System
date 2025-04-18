@@ -7,6 +7,7 @@ import { User } from '../models/user.model.js';
 import { FeeBreakdown, FeeDetails } from "../models/fees.model.js";
 import mongoose from "mongoose";
 import { Feedback , GlobalFeedbackConfig } from '../models/feedback.model.js';
+import { Attendance } from '../models/attendance.model.js';
 
 // Get basic student info
 export const getStudent = async (req, res) => {
@@ -219,6 +220,21 @@ export const getStudentCourses = async (req, res) => {
                     }
                 }
 
+                const totalDays = await Attendance.countDocuments({ 
+                  rollNo: student.rollNo ,
+                  courseCode: sc.courseId,
+                  isApproved: true
+                });
+
+                const presentDays = await Attendance.countDocuments({ 
+                  rollNo: student.rollNo ,
+                  courseCode: sc.courseId,
+                  isPresent: true,
+                  isApproved: true
+                });
+
+                const percentage = totalDays > 0 ? ((presentDays / totalDays) * 100 ).toFixed(2): 0;
+
                 // Use placeholder values for some fields
                 return {
                     id: course.courseCode,
@@ -227,7 +243,7 @@ export const getStudentCourses = async (req, res) => {
                     credits: course.credits,
                     assignments: 8, // Placeholder
                     announcements: course.announcements.length,
-                    attendance: 85, // Placeholder
+                    attendance: percentage,
                     feedbackOpen: feedbackOpen,
                     slot: course.slot,
                 };

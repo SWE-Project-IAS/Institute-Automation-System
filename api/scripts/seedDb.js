@@ -11,13 +11,13 @@ import { FacultyCourse } from "../models/course.model.js";
 import { Feedback } from "../models/feedback.model.js";
 // Sample user data
 const userData = {
-  name: "John Doe",
-  email: "testStudent@iitg.ac.in",
-  hostel: "Lohit",
-  rollNo: "220101039",
-  password: "password123", // In a real app, you should hash this
-  refreshToken: "sample-refresh-token-1",
-  contactNo: "1234567890",
+  name: "Mahek Choudhary",
+  email: "mahek@iitg.ac.in",
+  hostel: "Disang",
+  rollNo: "220101066",
+  password: "pass123", // In a real app, you should hash this
+  refreshToken: "sample-refresh-token-10",
+  contactNo: "1234598890",
   isVerified: true
 };
 const nonAcadAdminData = {
@@ -302,7 +302,7 @@ const seedDatabase = async () => {
     
     // Generate a salt
     const saltRounds = 10; // You can adjust this number for more or less security (higher is more secure but slower)
-    const hashedPassword = await bcrypt.hash(facultyData.password, saltRounds);
+    // const hashedPassword = await bcrypt.hash(facultyData.password, saltRounds);
     // Create user with the hashed password
     // const createdFacultyUser = await User.create({
     //   ...facultyData, // Spread the existing facultyData
@@ -310,20 +310,20 @@ const seedDatabase = async () => {
     // });
     // console.log("User created:", createdFacultyUser.name, "with email:", createdFacultyUser.email);
     // Create a faculty with the same email
-    const faculty = await Faculty.create({
-      userId: createdFacultyUser._id,
-      email: facultyData.email,
-      department: facultyData.department,
-      designation: facultyData.designation,
-      courses: facultyData.courses,
-          specialization: facultyData.specialization,
-          qualifications: facultyData.qualifications,
-          status: facultyData.status,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        });
-        console.log("Faculty created with designation:", faculty.designation);
-        console.log("Faculty is linked to user with email:", createdFacultyUser.email);
+    // const faculty = await Faculty.create({
+    //   userId: createdFacultyUser._id,
+    //   email: facultyData.email,
+    //   department: facultyData.department,
+    //   designation: facultyData.designation,
+    //   courses: facultyData.courses,
+    //       specialization: facultyData.specialization,
+    //       qualifications: facultyData.qualifications,
+    //       status: facultyData.status,
+    //       createdAt: new Date(),
+    //       updatedAt: new Date()
+    //     });
+    //     console.log("Faculty created with designation:", faculty.designation);
+    //     console.log("Faculty is linked to user with email:", createdFacultyUser.email);
         
         // const hashedPassword = await bcrypt.hash(acadAdminData.password, saltRounds);
         
@@ -347,32 +347,34 @@ const seedDatabase = async () => {
             //     console.log("Academic Admin created with designation:", acadAdmin.designation);
             //     console.log("Academic Admin is linked to user with email:", createdAcadAdminUser.email);
             
-            // const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+            const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
             
-            // // Create user with the hashed password
-            // const createdUser = await User.create({
-              //   ...userData, // Spread the existing userData
-              //   password: hashedPassword, // Override the plain text password with the hashed one
-              // });
-              // console.log("User created:", createdUser.name, "with email:", createdUser.email);
+            // Create user with the hashed password
+            const createdUser = await User.create({
+                ...userData, // Spread the existing userData
+                password: hashedPassword, // Override the plain text password with the hashed one
+              });
+              console.log("User created:", createdUser.name, "with email:", createdUser.email);
               
-              // // Create a student with the same email
-              // const student = await Student.create({
-                //       userId: createdUser._id,
-                //       hostel: "Lohit",
-                //       rollNo: "220101039",
-                //       email: "testStudent@iitg.ac.in",
-                //       department: "Computer Science and Engineering",
-                //       semester: 3,
-                //       batch: "2023-2027",
-                //       program: "BTech",
-                //       status: "active",
-                //       roomNo: "D-234",
-                //       createdAt: new Date(),
-                //       updatedAt: new Date()
-                //     });
-                //     console.log("Student created with register number:", student.registerNo);
-                //     console.log("Student is linked to user with email:", createdUser.email);
+              // Create a student with the same email
+              const student = await Student.create({
+                      userId: createdUser._id,
+                      hostel: "Disang",
+                      rollNo: "220101066",
+                      fatherName: "Anuraag",
+                      motherName:"Seema",
+                      email: "mahek@iitg.ac.in",
+                      department: "Computer Science and Engineering",
+                      semester: 6,
+                      batch: "2023-2027",
+                      program: "BTech",
+                      status: "active",
+                      roomNo: "G-180",
+                      createdAt: new Date(),
+                      updatedAt: new Date()
+                    });
+                    // console.log("Student created with register number:", student.registerNo);
+                    console.log("Student is linked to user with email:", createdUser.email);
                 
                 // const hashedPassword2 = await bcrypt.hash(nonAcadAdminData.password, saltRounds);
                 // console.log("Hashed password for non-academic admin:", hashedPassword2);
@@ -709,3 +711,4 @@ const seedStudentCourses = async () => {
 }
 
   export {fixFeedbackIndexes, seedDatabase, seedStudentCourses, seedCourses, removeAllStudentsFromCourse, seedFacultyCourses, fillFacultyCourse };
+seedDatabase();

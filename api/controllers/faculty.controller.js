@@ -5,7 +5,7 @@ import { StudentCourse } from '../models/course.model.js';
 import { User } from '../models/user.model.js';
 import { CourseApprovalRequest } from "../models/course.model.js";
 import { GlobalFeedbackConfig } from '../models/feedback.model.js';
-
+import { Attendance } from '../models/attendance.model.js';
 
 // Get basic faculty info
 export const getFaculty = async (req, res) => {
@@ -114,8 +114,55 @@ try {
         // Get assignment count
         const assignmentCount = Math.floor(Math.random() * 5) + 1; // Random between 1-5
         
-        // Get average attendance (dummy data)
-        const avgAttendance = Math.floor(Math.random() * 30) + 70; // Random between 70-100
+        // Get average attendance
+        // First, get all students who have not completed this course
+        const activeStudents = await StudentCourse.find({
+          courseId: course.courseCode,
+          isCompleted: false
+        }).select('rollNo');
+        
+        // Extract roll numbers of active students
+        const activeStudentRolls = activeStudents.map(student => student.rollNo);
+        
+        // If no active students found
+        // if (!activeStudentRolls.length) {
+        //   return {
+        //     ...course.toObject(),
+        //     attendancePercentage: 0,
+        //     totalStudents: 0
+        //   };
+        // }
+        
+        // Get all attendance records for this course for active students only
+        const attendanceRecords = await Attendance.find({
+          courseCode: course.courseCode,
+          rollNo: { $in: activeStudentRolls }
+        });
+        
+        // If no attendance records found for active students
+        // if (!attendanceRecords.length) {
+        //   return {
+        //     ...course.toObject(),
+        //     attendancePercentage: 0,
+        //     totalStudents: activeStudentRolls.length
+        //   };
+        // }
+        
+        // Get unique student roll numbers from attendance records
+        const uniqueStudents = [...new Set(attendanceRecords.map(record => record.rollNo))];
+        const totalStudents = uniqueStudents.length;
+        
+        // Count total present attendance
+        const totalPresent = attendanceRecords.filter(record => record.isPresent && record.isApproved).length;
+        
+        // Total possible attendance (total approved records)
+        const totalAttendance = attendanceRecords.filter(record => record.isApproved).length;
+        
+        // Calculate percentage
+        const attendancePercentage = totalAttendance > 0 
+          ? ((totalPresent / totalAttendance) * 100).toFixed(2)
+          : 0;
+        const avgAttendance = attendancePercentage;
         
         return {
             id: courseDetails.courseCode,

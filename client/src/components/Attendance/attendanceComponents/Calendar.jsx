@@ -27,7 +27,7 @@ function MyCalendar({ selectedStudent }) {
     const { role } = useContext(RoleContext);
     const { id: courseId } = useParams();
     const [myEventsList, setMyEventsList] = useState([]);
-    const [view, setView] = useState(Views.WEEK);
+    const [view, setView] = useState(Views.MONTH);
     const [date, setDate] = useState(new Date());
     
     useEffect(() => {
