@@ -8,6 +8,7 @@ import { FeeBreakdown, FeeDetails } from "../models/fees.model.js";
 import mongoose from "mongoose";
 import { Feedback , GlobalFeedbackConfig } from '../models/feedback.model.js';
 import { Attendance } from '../models/attendance.model.js';
+import { Assignment } from '../models/assignment.model.js';
 
 // Get basic student info
 export const getStudent = async (req, res) => {
@@ -235,13 +236,16 @@ export const getStudentCourses = async (req, res) => {
 
                 const percentage = totalDays > 0 ? ((presentDays / totalDays) * 100 ).toFixed(2): 0;
 
+                // Get the count of assignments for this course
+                const assignmentCounter = await Assignment.countDocuments({ courseCode: course.courseCode });
+
                 // Use placeholder values for some fields
                 return {
                     id: course.courseCode,
                     name: course.courseName,
                     instructor: facultyUser.name,
                     credits: course.credits,
-                    assignments: 8, // Placeholder
+                    assignments: assignmentCounter, // Placeholder
                     announcements: course.announcements.length,
                     attendance: percentage,
                     feedbackOpen: feedbackOpen,

@@ -19,8 +19,8 @@ export const getFacultyCourses = async (req, res) => {
         }
 
         // Get all faculty course mappings
+        console.log(userId)
         const facultyCourses = await FacultyCourse.find({ facultyId: userId, status: "Ongoing" });
-
         if (!facultyCourses.length) {
             return res.status(404).json({ message: 'No courses found for this faculty' });
         }
@@ -46,7 +46,7 @@ export const getStudentCourses = async (req, res) => {
         }
 
         // Get all courses the student is enrolled in
-        const studentCourses = await StudentCourse.find({ rollNo: student.rollNo, status: 'Approved' });
+        const studentCourses = await StudentCourse.find({ rollNo: student.rollNo, status: 'Approved', isCompleted: false });
 
         const courseCodes = studentCourses.map(sc => sc.courseId);
 
