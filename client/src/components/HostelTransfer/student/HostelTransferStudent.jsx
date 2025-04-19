@@ -132,17 +132,17 @@ const HostelTransferStudent = () => {
         <div className="flex justify-around w-full mb-6">
           <button 
             onClick={() => setActiveTab('pending')}
-            className={`flex items-center px-5 py-2.5 shadow rounded-md text-sm font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 ${activeTab === 'pending' ? 'bg-indigo-700 text-white' : 'bg-gray-200'} text-indigo-700`}>
+            className={`flex items-center px-5 py-2.5 shadow rounded-md text-sm font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 ${activeTab === 'pending' ? 'bg-indigo-700 text-white' : 'bg-gray-200 text-indigo-700' } `}>
             Pending
           </button>
           <button 
             onClick={() => setActiveTab('approved')}
-            className={`flex items-center px-5 py-2.5 shadow rounded-md text-sm font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 ${activeTab === 'approved' ? 'bg-indigo-700 text-white' : 'bg-gray-200'} text-indigo-700`}>
+            className={`flex items-center px-5 py-2.5 shadow rounded-md text-sm font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 ${activeTab === 'approved' ? 'bg-indigo-700 text-white' : 'bg-gray-200 text-indigo-700'} `}>
             Approved
           </button>
           <button 
             onClick={() => setActiveTab('rejected')}
-            className={`flex items-center px-5 py-2.5 shadow rounded-md text-sm font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 ${activeTab === 'rejected' ? 'bg-indigo-700 text-white' : 'bg-gray-200'} text-indigo-700`}>
+            className={`flex items-center px-5 py-2.5 shadow rounded-md text-sm font-medium transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 ${activeTab === 'rejected' ? 'bg-indigo-700 text-white' : 'bg-gray-200 text-indigo-700'} `}>
             Rejected
           </button>
         </div>
