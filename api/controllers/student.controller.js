@@ -293,22 +293,34 @@ export const getCourseAnnouncements = async (req, res) => {
         course.announcements.map((announcement) => announcement.postedBy)
       ),
     ];
+    
+    console.log("Faculty IDs found:", facultyIds);
 
     // Find all faculty members who posted announcements
     const facultyMembers = await Faculty.find({
-      facultyId: { $in: facultyIds },
+      userId: { $in: facultyIds },
     });
+
+    console.log("Faculty members found1:", facultyMembers);
+    
+    const facultyUsers = await User.find({
+      _id: { $in: facultyMembers.map((faculty) => faculty.userId) },
+    });
+
+    console.log("Faculty members found:", facultyUsers);  
 
     // Create a lookup object for faculty
     const facultyLookup = {};
-    facultyMembers.forEach((faculty) => {
-      facultyLookup[faculty.facultyId] = {
+    facultyUsers.forEach((faculty) => {
+      facultyLookup[faculty._id] = {
         name: faculty.name,
         email: faculty.email,
-        department: faculty.department,
-        designation: faculty.designation,
+        // department: faculty.department,
+        // designation: faculty.designation,
       };
     });
+
+    console.log("Faculty lookup object:", facultyLookup);
 
     // Add faculty details to each announcement
     const announcementsWithFaculty = course.announcements.map(
@@ -321,7 +333,7 @@ export const getCourseAnnouncements = async (req, res) => {
         };
       }
     );
-
+    console.log("Announcements with faculty details:", announcementsWithFaculty);
     // Sort announcements by date (most recent first)
     announcementsWithFaculty.sort(
       (a, b) => new Date(b.date) - new Date(a.date)

@@ -432,24 +432,37 @@ const seedStudentCourses = async () => {
       console.log("Connected to MongoDB, starting courses seed process...");
       
       // Check if courses already exist
-      const existingCourses = await Course.find({
-        // courseCode: { $in: coursesData.map(course => course.courseCode) }
-      });
-      console.log("Existing courses found:", existingCourses);
-      if (existingCourses.length > 0) {
-        console.log(`Found ${existingCourses.length} existing courses. Deleting them before re-seeding.`);
-        await Course.deleteMany({
-          // courseCode: { $in: coursesData.map(course => course.courseCode) }
-        });
-      }
+      // const existingCourses = await Course.find({
+      //   // courseCode: { $in: coursesData.map(course => course.courseCode) }
+      // });
+      // console.log("Existing courses found:", existingCourses);
+      // if (existingCourses.length > 0) {
+      //   console.log(`Found ${existingCourses.length} existing courses. Deleting them before re-seeding.`);
+      //   await Course.deleteMany({
+      //     // courseCode: { $in: coursesData.map(course => course.courseCode) }
+      //   });
+      // }
       
+      const result = await Course.updateMany(
+        { "announcements.postedBy": "Dr. Sarah Johnson" },
+        { 
+          $pull: { 
+            announcements: { postedBy: "Dr. Sarah Johnson" } 
+          } 
+        }
+      );
+      
+      console.log(`Operation completed. Modified ${result.modifiedCount} courses.`);
+      console.log(`Matched ${result.matchedCount} courses with Dr. Johnson's announcements.`);
+      
+      return result;
       // Insert the courses
-      const result = await Course.insertMany(coursesData);
+      // const result = await Course.insertMany(coursesData);
       
-      console.log(`Successfully added ${result.length} courses:`);
-      result.forEach(course => {
-        console.log(`- ${course.courseCode}: ${course.courseName} (${course.credits} credits, Slot: ${course.slot})`);
-      });
+      // console.log(`Successfully added ${result.length} courses:`);
+      // result.forEach(course => {
+      //   console.log(`- ${course.courseCode}: ${course.courseName} (${course.credits} credits, Slot: ${course.slot})`);
+      // });
       
       console.log("Courses seeded successfully!");
       

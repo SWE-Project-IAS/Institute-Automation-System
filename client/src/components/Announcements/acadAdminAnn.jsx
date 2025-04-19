@@ -28,7 +28,7 @@ export default function AdminAnnouncements() {
   const [editingAnnouncementId, setEditingAnnouncementId] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
-    content: "",
+    content: "",  
     importance: "Medium",
     audienceType: "all", // Default audience type
     // Merged audience targeting
@@ -38,7 +38,7 @@ export default function AdminAnnouncements() {
       faculty: false,
       departments: [],
       programs: [],
-      semester: "",
+      semester: "all",
       specificEmails: ""
     }
   });
@@ -154,7 +154,7 @@ export default function AdminAnnouncements() {
       faculty: false,
       departments: [],
       programs: [],
-      semester: "",
+      semester: "all",
       specificEmails: ""
     };
 
@@ -300,7 +300,7 @@ export default function AdminAnnouncements() {
         faculty: false,
         departments: [],
         programs: [],
-        semester: "",
+        semester: "all",
         specificEmails: ""
       }
     });
@@ -571,11 +571,11 @@ export default function AdminAnnouncements() {
             {error.response?.data?.message || "There was an error loading announcements. Please try again later."}
           </p>
           <Link
-            to="/acadAdmin/dashboard"
+            to="/profile"
             className="inline-flex items-center justify-center gap-2 bg-purple-500 text-white py-2 px-6 rounded-md font-medium hover:bg-purple-600 transition duration-300"
           >
             <FaArrowLeft className="text-sm" />
-            Return to Dashboard
+            Return to Profile
           </Link>
         </div>
       </div>
@@ -588,7 +588,7 @@ export default function AdminAnnouncements() {
       {/* Header with Back Button */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <Link to="/acadAdmin/dashboard" className="mr-4 text-purple-500 hover:text-purple-600">
+          <Link to="/profile" className="mr-4 text-purple-500 hover:text-purple-600">
             <FaArrowLeft className="text-xl" />
           </Link>
           <h1 className="text-3xl font-bold text-gray-800">Academic Announcements</h1>
@@ -851,7 +851,7 @@ export default function AdminAnnouncements() {
                       onChange={handleSemesterChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                     >
-                      <option value="">All Semesters</option>
+                      <option value="all">All Semesters</option>
                       {[1, 2, 3, 4, 5, 6, 7, 8].map(sem => (
                         <option key={sem} value={sem}>
                           Semester {sem}
