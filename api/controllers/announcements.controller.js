@@ -330,7 +330,12 @@ export const getAllAnnouncements = async (req, res) => {
                 { 'targetGroups.programs': { $in: [student.program] } }
               ]
             },
-            { 'targetGroups.semester': String(student.semester) }
+            {
+              $or: [
+                { 'targetGroups.semester': { $in: ['all'] } },
+                { 'targetGroups.semester': { $in: [student.semester] } },
+              ]
+            }
           ]
         }
       ]

@@ -28,7 +28,7 @@ export default function AdminAnnouncements() {
   const [editingAnnouncementId, setEditingAnnouncementId] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
-    content: "",
+    content: "",  
     importance: "Medium",
     audienceType: "all", // Default audience type
     // Merged audience targeting
@@ -38,7 +38,7 @@ export default function AdminAnnouncements() {
       faculty: false,
       departments: [],
       programs: [],
-      semester: "",
+      semester: "all",
       specificEmails: ""
     }
   });
@@ -154,7 +154,7 @@ export default function AdminAnnouncements() {
       faculty: false,
       departments: [],
       programs: [],
-      semester: "",
+      semester: "all",
       specificEmails: ""
     };
 
@@ -300,7 +300,7 @@ export default function AdminAnnouncements() {
         faculty: false,
         departments: [],
         programs: [],
-        semester: "",
+        semester: "all",
         specificEmails: ""
       }
     });
@@ -851,7 +851,7 @@ export default function AdminAnnouncements() {
                       onChange={handleSemesterChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                     >
-                      <option value="">All Semesters</option>
+                      <option value="all">All Semesters</option>
                       {[1, 2, 3, 4, 5, 6, 7, 8].map(sem => (
                         <option key={sem} value={sem}>
                           Semester {sem}
