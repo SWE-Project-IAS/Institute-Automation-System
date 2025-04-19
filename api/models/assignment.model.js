@@ -23,6 +23,10 @@ const submissionSchema = new mongoose.Schema({
   submittedAt: {
     type: Date,
     default: Date.now
+  },
+  marks: {
+    type: Number,
+    default: null
   }
 }, { _id: false });
 

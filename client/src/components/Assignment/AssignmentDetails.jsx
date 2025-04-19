@@ -13,6 +13,7 @@
     const [isBeforeDeadline, setIsBeforeDeadline] = useState(true);
     const [user, setUser] = useState(null);
     const [submittedFileName, setSubmittedFileName] = useState('');
+    const [marks, setMarks] = useState(null);
 
 
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -53,6 +54,7 @@
             setSubmissionTime(sub.submittedAt);
             setSubmissionText(sub.content);
             setSubmittedFileName(sub.fileName);
+            setMarks(sub.marks);
           }
           setAssignment(data.assignment);
         }
@@ -61,7 +63,7 @@
       if (courseId && assignmentId && student) {
         fetchAssignment();
       }
-    }, [courseId, assignmentId, student]);
+    }, [courseId, assignmentId, student,marks]);
 
     const handleFileChange = (e) => setFile(e.target.files[0]);
 
@@ -153,6 +155,7 @@
                 <p className="mt-1 text-sm text-gray-600">
                   📎 Submitted file: <span className="font-medium">{submittedFileName}</span>
                 </p>
+                
               )}
               {/* If no file is chosen, show "No file chosen" or the submitted file's name */}
             </label>
@@ -176,7 +179,15 @@
             </div>
           </div>
         ) : (
-          <p className="text-red-500 font-medium">⏳ Deadline has passed.</p>
+          <>
+    <p className="text-red-500 font-medium">⏳ Deadline has passed.</p>
+    {submitted && (
+      <p className="text-gray-600 text-sm">
+        Marks: {marks !== null && marks !== undefined ? `${marks}/100` : 'Not graded yet'}
+      </p>
+    )}
+  </>
+          
         )}
       </div>
     );
