@@ -480,7 +480,7 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
                             <img
 
                                 src={`https://ias-server-cpoh.onrender.com/uploads/complaints/${complaint.imageUrls[activeImageIndex]}`}
-                                alt={`Complaint Image ${activeImageIndex + 1}`}
+                                alt={`Complaint ${activeImageIndex + 1}`}
                                 className="max-h-80 object-contain"
                             />
                         </div>
