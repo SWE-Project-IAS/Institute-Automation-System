@@ -8,6 +8,7 @@ import { FeeBreakdown, FeeDetails } from "../models/fees.model.js";
 import mongoose from "mongoose";
 import { Feedback , GlobalFeedbackConfig } from '../models/feedback.model.js';
 import { Attendance } from '../models/attendance.model.js';
+import { Assignment } from '../models/assignment.model.js';
 
 // Get basic student info
 export const getStudent = async (req, res) => {
@@ -235,13 +236,16 @@ export const getStudentCourses = async (req, res) => {
 
                 const percentage = totalDays > 0 ? ((presentDays / totalDays) * 100 ).toFixed(2): 0;
 
+                // Get the count of assignments for this course
+                const assignmentCounter = await Assignment.countDocuments({ courseCode: course.courseCode });
+
                 // Use placeholder values for some fields
                 return {
                     id: course.courseCode,
                     name: course.courseName,
                     instructor: facultyUser.name,
                     credits: course.credits,
-                    assignments: 8, // Placeholder
+                    assignments: assignmentCounter, // Placeholder
                     announcements: course.announcements.length,
                     attendance: percentage,
                     feedbackOpen: feedbackOpen,
@@ -293,22 +297,34 @@ export const getCourseAnnouncements = async (req, res) => {
         course.announcements.map((announcement) => announcement.postedBy)
       ),
     ];
+    
+    console.log("Faculty IDs found:", facultyIds);
 
     // Find all faculty members who posted announcements
     const facultyMembers = await Faculty.find({
-      facultyId: { $in: facultyIds },
+      userId: { $in: facultyIds },
     });
+
+    console.log("Faculty members found1:", facultyMembers);
+    
+    const facultyUsers = await User.find({
+      _id: { $in: facultyMembers.map((faculty) => faculty.userId) },
+    });
+
+    console.log("Faculty members found:", facultyUsers);  
 
     // Create a lookup object for faculty
     const facultyLookup = {};
-    facultyMembers.forEach((faculty) => {
-      facultyLookup[faculty.facultyId] = {
+    facultyUsers.forEach((faculty) => {
+      facultyLookup[faculty._id] = {
         name: faculty.name,
         email: faculty.email,
-        department: faculty.department,
-        designation: faculty.designation,
+        // department: faculty.department,
+        // designation: faculty.designation,
       };
     });
+
+    console.log("Faculty lookup object:", facultyLookup);
 
     // Add faculty details to each announcement
     const announcementsWithFaculty = course.announcements.map(
@@ -321,7 +337,7 @@ export const getCourseAnnouncements = async (req, res) => {
         };
       }
     );
-
+    console.log("Announcements with faculty details:", announcementsWithFaculty);
     // Sort announcements by date (most recent first)
     announcementsWithFaculty.sort(
       (a, b) => new Date(b.date) - new Date(a.date)
