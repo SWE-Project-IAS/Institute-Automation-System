@@ -35,10 +35,39 @@ export default function FacultyAssignmentSubmissions() {
         setLoading(false);
       }
     };
-
     fetchAssignment();
   }, [courseId, assignmentId]);
-
+  const downloadFile = async (url, rollNo, originalFileName) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+  
+      let extension = "";
+      if (originalFileName) {
+        const dotIndex = originalFileName.lastIndexOf(".");
+        if (dotIndex !== -1) {
+          extension = originalFileName.substring(dotIndex); // e.g., .zip
+        }
+      }
+  
+      const finalFileName = `${rollNo}${extension || ''}`;
+  
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = finalFileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Failed to download file", err);
+      alert("Could not download file.");
+    }
+  };
+  
+  
+  
   if (loading) return <p className="text-center py-6">Loading assignment...</p>;
   if (error) return <p className="text-red-500 text-center py-6">❌ {error}</p>;
   if (!assignment) return <p className="text-red-500 text-center py-6">❌ Assignment not found.</p>;
@@ -60,7 +89,6 @@ export default function FacultyAssignmentSubmissions() {
 
       <div>
         <h3 className="text-xl font-semibold mb-2">📥 Student Submissions</h3>
-        {console.log("Assignment data:", assignment)}
         {assignment.submissions.length === 0 ? (
           <p className="text-gray-500">No submissions yet.</p>
         ) : (
@@ -72,25 +100,50 @@ export default function FacultyAssignmentSubmissions() {
                   <th className="p-3 border border-gray-300 text-left">Roll No</th>
                   <th className="p-3 border border-gray-300 text-left">Submitted At</th>
                   <th className="p-3 border border-gray-300 text-left">Answer</th>
+                  <th className="p-3 border border-gray-300 text-left">File</th>
                 </tr>
               </thead>
               <tbody>
                 {assignment.submissions.map((submission, idx) => {
-                  console.log("Submission data:", submission);
+                  const fileUrl = submission.fileUrl;
+                  const fileName = fileUrl ? fileUrl.split("/").pop() : null;
+
                   return (
                     <tr key={idx} className="hover:bg-gray-50 text-sm">
                       <td className="p-3 border border-gray-300">{submission.studentName}</td>
                       <td className="p-3 border border-gray-300">{submission.studentRollNo}</td>
                       <td className="p-3 border border-gray-300">
-                      {submission.submittedAt
-                      ? new Date(submission.submittedAt).toLocaleString("en-IN", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })
-                      : "N/A"}
+                        {submission.submittedAt
+                          ? new Date(submission.submittedAt).toLocaleString("en-IN", {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            })
+                          : "N/A"}
                       </td>
-                      <td className="p-3 border border-gray-300 whitespace-pre-line text-gray-700">
-                        {submission.content}
+                      <td className="p-3 border border-gray-300 whitespace-pre-line text-gray-700 space-y-1">
+                        {submission.content && (
+                          <div className="mb-1">{submission.content}</div>
+                        )}
+                        {!submission.content && !fileUrl && (
+                          <span className="text-gray-400 italic">No answer provided</span>
+                        )}
+                      </td>
+                      <td className="p-3 border border-gray-300 whitespace-pre-line text-gray-700 space-y-1">
+                        {fileUrl && (
+                          <a
+                          href={fileUrl}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            downloadFile(fileUrl, submission.studentRollNo, submission.fileName);
+                          }}
+                          className="text-blue-600 underline"
+                        >
+                          📎 submission_file
+                        </a>
+                        )}
+                        {!submission.content && !fileUrl && (
+                          <span className="text-gray-400 italic">No answer provided</span>
+                        )}
                       </td>
                     </tr>
                   );

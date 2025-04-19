@@ -64,9 +64,7 @@ try {
     }
    
     // Get the faculty courses with details
-    const facultyCourses = await FacultyCourse.find({ facultyId: id })
-      .lean()
-      .exec();
+    const facultyCourses = faculty.courses || [];
     // console.log("Faculty courses:", facultyCourses);
     // Get current semester status
     const currentDate = new Date();

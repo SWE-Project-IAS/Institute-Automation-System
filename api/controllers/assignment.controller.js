@@ -10,16 +10,16 @@ export const getFacultyCourses = async (req, res) => {
     const {userId} = req.params;
 
     try {
-        console.log("userId:",userId);
+        // console.log("userId:",userId);
         // Ensure userId is a string
         const faculty = await Faculty.findOne({ userId: userId });
-        console.log(faculty);
+        // console.log(faculty);
         if (!faculty) {
             return res.status(404).json({ message: 'Faculty not found' });
         }
 
         // Get all faculty course mappings
-        console.log(userId)
+        // console.log(userId)
         const facultyCourses = await FacultyCourse.find({ facultyId: userId, status: "Ongoing" });
         if (!facultyCourses.length) {
             return res.status(404).json({ message: 'No courses found for this faculty' });
@@ -62,7 +62,7 @@ export const createAssignment = async (req, res) => {
     const {courseId }  = req.params;
     try {
       const { title, description, dueDate } = req.body;
-      console.log(title, description, dueDate, courseId); // Debugging line
+      // console.log(title, description, dueDate, courseId); // Debugging line
       if (!title || !description || !dueDate || !courseId) {
         return res.status(400).json({
           success: false,
@@ -106,7 +106,7 @@ export const createAssignment = async (req, res) => {
 
   export const getCourseAssignments = async (req, res) => {
     const {courseId} = req.params;
-    console.log('Course ID:', courseId); // Debugging line
+    // console.log('Course ID:', courseId); // Debugging line
     if (!courseId) {
         return res.status(400).json({ success: false, message: 'Course ID is required' });
     }
@@ -177,7 +177,7 @@ export const getAssignmentDetails = async (req, res) => {
   export const deleteAssignmentDetails = async (req, res) => {
     try {
     const { courseId, assignmentId } = req.params;
-      console.log("Delete request received for:", { courseId, assignmentId });
+      // console.log("Delete request received for:", { courseId, assignmentId });
   
       if (!courseId || !assignmentId) {
         return res.status(400).json({ success: false, message: "Course ID and Assignment ID are required." });
@@ -207,7 +207,7 @@ export const getAssignmentDetails = async (req, res) => {
       const { courseId, assignmentId } = req.params;
       const { title, description, dueDate } = req.body;
   
-      console.log("Editing assignment:", { courseId, assignmentId, title, description, dueDate });
+      // console.log("Editing assignment:", { courseId, assignmentId, title, description, dueDate });
   
       // Validate input
       if (!title || !description || !dueDate) {
@@ -248,47 +248,52 @@ export const getAssignmentDetails = async (req, res) => {
   
 // Controller to submit an assignment
 export const submitAssignment = async (req, res) => {
-    try {
-      const { courseCode, assignmentId } = req.params;
-      const { studentRollNo, studentName, content } = req.body;
-  
-      const assignment = await Assignment.findOne({
-        assignmentNumber: assignmentId,
-        courseCode: courseCode,
-      });
-  
-      if (!assignment) {
-        return res.status(404).json({ success: false, message: "Assignment not found" });
-      }
-  
-      const alreadySubmitted = assignment.submissions.some(
-        (sub) => sub.studentRollNo === studentRollNo
-      );
-  
-      if (alreadySubmitted) {
-        return res.status(409).json({ success: false, message: "Already submitted" });
-      }
-  
-      assignment.submissions.push({
-        studentRollNo,
-        studentName,
-        content,
-        submittedAt: new Date(),
-      });
-  
-      await assignment.save();
-  
-      res.status(200).json({ success: true, message: "Submitted successfully" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: "Failed to submit assignment" });
+  try {
+    const { courseCode, assignmentId } = req.params;
+    const { studentRollNo, studentName, content } = req.body;
+    console.log("Uploaded file info:", req.file);
+    const assignment = await Assignment.findOne({
+      assignmentNumber: assignmentId,
+      courseCode: courseCode,
+    });
+
+    if (!assignment) {
+      return res.status(404).json({ success: false, message: "Assignment not found" });
     }
-  };
-  
+
+    const alreadySubmitted = assignment.submissions.some(
+      (sub) => sub.studentRollNo === studentRollNo
+    );
+
+    if (alreadySubmitted) {
+      return res.status(409).json({ success: false, message: "Already submitted" });
+    }
+
+    const fileUrl = req.file ? req.file.path : null;
+    const fileName = req.file ? req.file.originalname : null;
+    assignment.submissions.push({
+      studentRollNo,
+      studentName,
+      content,
+      fileUrl,
+      fileName,
+      submittedAt: new Date(),
+    });
+    
+
+    await assignment.save();
+
+    res.status(200).json({ success: true, message: "Submitted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Failed to submit assignment" });
+  }
+};
+
   export const undoSubmission = async (req, res) => {
     try {
       const { courseCode, assignmentId, rollNo } = req.params;
-        console.log("Undo submission request:", { courseCode, assignmentId, rollNo });
+        // console.log("Undo submission request:", { courseCode, assignmentId, rollNo });
       const assignment = await Assignment.findOne({
         assignmentNumber: assignmentId,
         courseCode: courseCode,

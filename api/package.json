@@ -9,6 +9,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
     "bcrypt": "^5.1.1",
+    "cloudinary": "^2.6.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -16,6 +17,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.1",
+    "multer": "^1.4.5-lts.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "node-mocks-http": "^1.16.2",
     "nodemailer": "^6.10.1",
     "nodemon": "^3.1.9",
