@@ -571,11 +571,11 @@ export default function AdminAnnouncements() {
             {error.response?.data?.message || "There was an error loading announcements. Please try again later."}
           </p>
           <Link
-            to="/acadAdmin/dashboard"
+            to="/profile"
             className="inline-flex items-center justify-center gap-2 bg-purple-500 text-white py-2 px-6 rounded-md font-medium hover:bg-purple-600 transition duration-300"
           >
             <FaArrowLeft className="text-sm" />
-            Return to Dashboard
+            Return to Profile
           </Link>
         </div>
       </div>
@@ -588,7 +588,7 @@ export default function AdminAnnouncements() {
       {/* Header with Back Button */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <Link to="/acadAdmin/dashboard" className="mr-4 text-purple-500 hover:text-purple-600">
+          <Link to="/profile" className="mr-4 text-purple-500 hover:text-purple-600">
             <FaArrowLeft className="text-xl" />
           </Link>
           <h1 className="text-3xl font-bold text-gray-800">Academic Announcements</h1>

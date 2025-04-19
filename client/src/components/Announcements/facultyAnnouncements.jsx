@@ -507,7 +507,7 @@ export default function FacultyCourseAnnouncements() {
                   <div className="flex items-center mr-4 mb-2">
                     <FaUserCircle className="mr-1" />
                     <span>
-                      {announcement.postedBy}
+                      {announcement.faculty.name}
                     </span>
                   </div>
                   <div className="flex items-center mr-4 mb-2">

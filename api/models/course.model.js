@@ -18,7 +18,7 @@ const courseSchema = new mongoose.Schema({
     students: [{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Student' 
-    }],
+    }], 
     credits: { type: Number, required: true, default: 6 },
     maxIntake:{type:Number,required:true,default:100},
     createdAt: { type: Date, default: Date.now },
