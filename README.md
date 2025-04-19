@@ -62,7 +62,7 @@ To run the backend server, use:
 
 ```bash
 cd api
-npm start
+npm run dev
 ```
 
 ### Frontend Client
@@ -120,8 +120,8 @@ npm run test
 
 - Node.js
 - Express.js
-- MongoDB or PostgreSQL (depending on configuration)
-- Mongoose or Sequelize ORM
+- MongoDB 
+- Mongoose 
 - JWT Authentication
 - Jest for testing
 

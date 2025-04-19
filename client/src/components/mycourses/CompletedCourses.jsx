@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import newRequest from '../../utils/newRequest';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { 
   FaBookOpen,
   FaCheckCircle,
@@ -8,7 +9,8 @@ import {
   FaRegChartBar,
   FaUniversity,
   FaBuilding,
-  FaClock
+  FaClock,
+  FaArrowLeft
 } from "react-icons/fa";
 
 function CompletedCourses() {
@@ -23,6 +25,7 @@ function CompletedCourses() {
       }),
   });
 
+  console.log("Completed Courses:", completedCourses);
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString();
@@ -30,6 +33,14 @@ function CompletedCourses() {
 
   return (
     <div className="p-6">
+      {/* Back to Courses Navigation */}
+      <div className="mb-4">
+        <Link to="/courses" className="flex items-center text-blue-600 hover:text-blue-800 font-medium">
+          <FaArrowLeft className="mr-2" />
+          Back to Courses
+        </Link>
+      </div>
+
       <h1 className="text-3xl font-bold mb-2 text-gray-800">Completed Courses</h1>
       <p className="text-gray-600 mb-6">Your academic history</p>
 

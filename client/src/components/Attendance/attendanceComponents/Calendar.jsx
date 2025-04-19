@@ -14,8 +14,6 @@ const localizer = momentLocalizer(moment);
 function MyCalendar({ selectedStudent }) { 
     const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
     const {email, userId} = userData.user;
-    console.log(email);
-    console.log(userData);
     const { isLoading, error, data } = useQuery({
         queryKey: [`${userId}`],
         queryFn: () =>
@@ -27,7 +25,7 @@ function MyCalendar({ selectedStudent }) {
     const { role } = useContext(RoleContext);
     const { id: courseId } = useParams();
     const [myEventsList, setMyEventsList] = useState([]);
-    const [view, setView] = useState(Views.WEEK);
+    const [view, setView] = useState(Views.MONTH);
     const [date, setDate] = useState(new Date());
     
     useEffect(() => {
@@ -49,7 +47,7 @@ function MyCalendar({ selectedStudent }) {
 
     const fetchEventData = async (rollNo) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/attendancelanding/student/${courseId}`, {
+            const response = await fetch(`https://ias-server-cpoh.onrender.com/api/attendancelanding/student/${courseId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -61,7 +59,6 @@ function MyCalendar({ selectedStudent }) {
 
             if (response.ok) {
                 setMyEventsList(dataRecieved.eventList || []);  // Ensure we always have an array
-                console.log('Updated events:', dataRecieved.eventList);  // Debug log
             } else {
                 console.error("Error fetching attendance data:", dataRecieved.error);
             }

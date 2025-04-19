@@ -16,13 +16,13 @@ const AttendanceApprovalDashboard = () => {
     const fetchData = async () => {
       try {
         // Fetch courses
-        const coursesResponse = await fetch('http://localhost:8000/api/attendancelanding/admin');
+        const coursesResponse = await fetch('https://ias-server-cpoh.onrender.com/api/attendancelanding/admin');
         if (!coursesResponse.ok) throw new Error('Failed to fetch courses');
         const coursesData = await coursesResponse.json();
         setCourses(coursesData.data || coursesData);
 
         // Fetch approval requests
-        const approvalsResponse = await fetch('http://localhost:8000/api/attendancelanding/admin/approval');
+        const approvalsResponse = await fetch('https://ias-server-cpoh.onrender.com/api/attendancelanding/admin/approval');
         if (!approvalsResponse.ok) throw new Error('Failed to fetch approval requests');
         const approvalsData = await approvalsResponse.json();
         setAttendanceRequests(approvalsData);
@@ -41,7 +41,7 @@ const AttendanceApprovalDashboard = () => {
   // Handle approval of attendance request - FIXED endpoint and state handling
   const handleApprove = async (request) => {
     try {
-      const response = await fetch('http://localhost:8000/api/attendancelanding/admin/approval', {
+      const response = await fetch('https://ias-server-cpoh.onrender.com/api/attendancelanding/admin/approval', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +56,6 @@ const AttendanceApprovalDashboard = () => {
       if (!response.ok) throw new Error('Approval failed');
       
       const result = await response.json();
-      console.log("Approval successful:", result);
 
       // Only update the specific approved item
       setAttendanceRequests(prev => 
@@ -78,7 +77,7 @@ const AttendanceApprovalDashboard = () => {
   const handleApproveAll = async () => {
     try {
       const approvalPromises = filteredRequests.map(request => 
-        fetch('http://localhost:8000/api/attendancelanding/admin/approval', {
+        fetch('https://ias-server-cpoh.onrender.com/api/attendancelanding/admin/approval', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -137,8 +136,6 @@ const AttendanceApprovalDashboard = () => {
 
   // Debug information in console
   useEffect(() => {
-    console.log("Current filtered requests:", filteredRequests);
-    console.log("All attendance requests:", attendanceRequests);
   }, [filteredRequests, attendanceRequests]);
 
   if (loading.courses || loading.approvals) {

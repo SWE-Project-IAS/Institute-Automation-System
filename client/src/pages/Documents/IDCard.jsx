@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import DocumentLayout from "../../components/documentSection/DocumentLayout";
 import PDFPreview from "../../components/documentSection/PDFPreview";
 import IDCardPDF from "../../components/documentSection/IDCardPDF";
@@ -24,23 +25,47 @@ const IDCardPage = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [pdfBlob, setPdfBlob] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [hasAccess, setHasAccess] = useState(false);
 
+  // Get user data first
+  const userData = JSON.parse(localStorage.getItem("currentUser"))?.data;
+  const userIdFromData = userData?.user?.userId;
 
-  // Get user data from localStorage
-  const { data: userData } = JSON.parse(localStorage.getItem("currentUser"));
-  const { userId } = userData.user;
-
-  // Fetch student data
-  const { isLoading, error, data: studentData } = useQuery({
-    queryKey: [`idcard-${userId}`],
-    queryFn: () =>
-      newRequest.get(`/student/${userId}`).then((res) => res.data),
+  // Use query hook before any conditionals
+  const { isLoading: isQueryLoading, error, data: studentData } = useQuery({
+    queryKey: [`idcard-${userIdFromData}`],
+    queryFn: () => userIdFromData ? newRequest.get(`/student/${userIdFromData}`).then((res) => res.data) : null,
+    enabled: !!userIdFromData
   });
 
-  // Show loading or error states
-  if (isLoading) {
+  useEffect(() => {
+    try {
+      if (userData?.user?.userId) {
+        setUserId(userData.user.userId);
+        // Fetch student details to check document access
+        const fetchAccess = async () => {
+          try {
+            const response = await newRequest.get(`/student/${userData.user.userId}`);
+            setHasAccess(response.data.documentAccess?.idCard ?? false);
+          } catch (error) {
+            console.error("Error fetching document access:", error);
+            toast.error("Error checking document access");
+          }
+        };
+        fetchAccess();
+      }
+    } catch (error) {
+      console.error("Error getting user data:", error);
+      toast.error("Please log in again");
+    }
+  }, [userData]);
+
+  // Show loading state while checking access
+  if (isQueryLoading) {
     return (
-      <DocumentLayout title="Bonafide Certificate">
+      <DocumentLayout title="ID Card">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
@@ -51,9 +76,10 @@ const IDCardPage = () => {
     );
   }
 
+  // Show error state
   if (error) {
     return (
-      <DocumentLayout title="Bonafide Certificate">
+      <DocumentLayout title="ID Card">
         <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
           <div className="flex">
             <div className="flex-shrink-0">
@@ -69,6 +95,20 @@ const IDCardPage = () => {
       </DocumentLayout>
     );
   }
+
+  // Show access restricted message
+  if (!hasAccess) {
+    return (
+      <div className="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold text-red-600 mb-4">Access Restricted</h2>
+        <p className="text-gray-700">
+          You do not currently have access to view or download your ID Card. 
+          Please contact the academic administration office for assistance.
+        </p>
+      </div>
+    );
+  }
+
   const fullStudent = {
     photo: studentData?.userId?.profilePicture || "https://via.placeholder.com/80",
     name: studentData?.userId?.name || "N/A",
@@ -106,7 +146,7 @@ const IDCardPage = () => {
     }
   };
 
-  if (isLoading) return <div>Loading student data...</div>;
+  if (isQueryLoading) return <div>Loading student data...</div>;
   if (error) return <div>Error fetching student data.</div>;
 
   // handleDownload can be simplified using the anchor tag directly

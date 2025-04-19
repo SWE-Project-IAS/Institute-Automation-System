@@ -36,18 +36,24 @@ const Faculty = () => {
 
                             </li>
 
-                            <li>
-                                <Link to="/feedbackReports" className="text-gray-700 hover:text-gray-900">Feedback</Link>
-                            </li>
+                            {/* <li>
+                                <Link to="/faculty/feedback" className="text-gray-700 hover:text-gray-900">Feedback</Link>
+                            </li> */}
                             <li>
                                 <Link to="/attendancelanding" className="text-gray-700 hover:text-gray-900">
                                 Attendance Tracking
                                 </Link>
                             </li>
 
-                            <li>Grades Submission</li>
+                            
+                            <li><Link to="/gradeLanding" className="text-gray-700 hover:text-gray-900">
+                            Grades Submission
+                            </Link></li>
                             <li><Link to="/assignmentlanding" className="text-gray-700 hover:text-gray-900">
                                 Assignment
+                                </Link></li>
+                            <li><Link to="/announcements" className="text-gray-700 hover:text-gray-900">
+                                Announcements
                                 </Link></li>
                         </ul>
                     )}
@@ -72,7 +78,11 @@ const Faculty = () => {
                 </span>
                 {expandedSections.profile && (
                     <ul className="pl-5">
-                        <li>View Profile</li>
+                        <li>
+                            <Link to="/profile" className="text-gray-700 hover:text-gray-900">
+                                View Profile
+                            </Link>
+                        </li>
                     </ul>
                 )}
                 </li>

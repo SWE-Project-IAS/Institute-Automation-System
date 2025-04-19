@@ -84,18 +84,7 @@ const viewableDocumentSchema = new mongoose.Schema({
   }
 });
 
-// Fee Details Schema
-const feeDetailsSchema = new mongoose.Schema({
-  viewableDocumentId: { type: mongoose.Schema.Types.ObjectId, ref: 'ViewableDocument', required: true },
-  semester: { type: Number, required: true },
-  academicYear: { type: String, required: true },
-  transactions: [{
-    amount: { type: Number, required: true },
-    feeType: { type: String, required: true },
-    paidDate: { type: Date, required: true },
-    transactionId: { type: String }
-  }]
-});
+
 
 // ID Card Schema
 const idCardSchema = new mongoose.Schema({
@@ -109,6 +98,5 @@ const idCardSchema = new mongoose.Schema({
 export const ApplicationDocument = mongoose.model('ApplicationDocument', applicationDocumentSchema);
 export const Bonafide = mongoose.model('Bonafide', bonafideSchema);
 export const ViewableDocument = mongoose.model('ViewableDocument', viewableDocumentSchema);
-export const FeeDetails = mongoose.model('FeeDetails', feeDetailsSchema);
 export const IDCard = mongoose.model('IDCard', idCardSchema);
 export const Passport = mongoose.model('Passport', passportSchema);

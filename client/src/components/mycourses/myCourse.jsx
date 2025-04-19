@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import newRequest from '../../utils/newRequest';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from "react-router-dom";
 import { 
   FaBookOpen, 
   FaClipboardList, 
@@ -14,10 +15,11 @@ import {
 
 function MyCourses() {
   // Get userId from localStorage just like in HostelLeaveStudent
+  const navigate = useNavigate();
   const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
   const {userId} = userData.user;
   
-  const [isFeedbackAvailable, setIsFeedbackAvailable] = useState(false);
+  // const [isFeedbackAvailable, setIsFeedbackAvailable] = useState(false);
 
   // console.log("User ID:", userId);
 
@@ -26,10 +28,21 @@ function MyCourses() {
     queryFn: () =>
       newRequest.get(`/student/${userId}/courses`).then((res) => {
         console.log("Course data received:", res.data);
-        setIsFeedbackAvailable(res.data.feedbackOpen || false);
+        // setIsFeedbackAvailable(res.data.feedbackOpen || false);
         return res.data.courses || [];
       }),
   });
+
+  console.log("Student Courses:", studentCourses);
+  const handleFeedback = (course) => {
+    navigate('/student/feedback/submit', {
+      state: {
+        courseId: course.id,         // or course.courseCode if that's the field
+        courseName: course.name,     // or course.courseName
+        credits: course.credits,
+      }
+    });
+  };
 
   // console.log("+++++++++++++++++++++++++++++++++++", studentCourses);
 
@@ -122,7 +135,7 @@ function MyCourses() {
                   </Link>
                   
                   <Link
-                    to={`/course/${course.id}/assignment`}
+                    to={`/course/${course.id}/assignments`}
                     className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200"
                   >
                     <FaClipboardList className="text-pink-400" />
@@ -130,40 +143,40 @@ function MyCourses() {
                   </Link>
                   
                   <Link
-                    to="/attendancelanding"
+                    to={`/attendancelanding/${course.id}`}    
                     className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200"
                   >
                     <FaCalendarAlt className="text-pink-400" />
                     <span>Attendance</span>
                   </Link>
                   
-                  {isFeedbackAvailable ? (
-                    <Link
-                      to={`/courseFeedback`}
-                      className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200"
-                    >
-                      <FaComments className="text-pink-400" />
-                      <span>Feedback</span>
-                    </Link>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2 bg-gray-100 border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-500 cursor-not-allowed">
-                      <FaLock className="text-gray-400" />
-                      <span>Feedback</span>
-                      <span className="bg-gray-200 text-gray-600 text-xs rounded-full py-1 px-2 ml-1">
-                        Closed
-                      </span>
-                    </div>
-                  )}
+              {course.feedbackOpen ? (// isFeedbackAvailable will be used here
+                  <button
+                    onClick={() => handleFeedback(course)}
+                    className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200"
+                  >
+                    <FaComments className="text-pink-400" />
+                    <span>Feedback</span>
+                  </button>
+                ) : (
+                  <div className="flex items-center justify-center gap-2 bg-gray-100 border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-500 cursor-not-allowed">
+                    <FaLock className="text-gray-400" />
+                    <span>Feedback</span>
+                    <span className="bg-gray-200 text-gray-600 text-xs rounded-full py-1 px-2 ml-1">
+                      Closed
+                    </span>
+                  </div>
+                )}
                 </div>
                 
                 <div className="mt-4">
-                  <Link 
+                  {/* <Link 
                     to={`/course/${course.id}`}
                     className="flex items-center justify-center gap-2 w-full bg-pink-50 text-pink-600 border border-pink-200 rounded-md p-2 text-sm font-medium hover:bg-pink-100 transition duration-200"
                   >
                     <span>View Course Details</span>
                     <FaExternalLinkAlt className="text-xs" />
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>
@@ -194,12 +207,12 @@ function MyCourses() {
     </div>
       
       
-      {/* Feedback availability notice */}
+      {/* Feedback availability notice
       {!isFeedbackAvailable && studentCourses.length > 0 && (
         <div className="mt-4 text-center text-sm text-gray-600">
           Course feedback is currently closed. Check back during the feedback period.
         </div>
-      )}
+      )} */}
     </div>
   );
 }

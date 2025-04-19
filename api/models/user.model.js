@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema({
   dateOfBirth: { type: Date },
   bloodGroup: { type: String },
   isVerified: { type: Boolean, default: false },
+  passwordResetToken: { type: String }, // Field for storing the reset token
+  passwordResetExpires: { type: Date }, // Field for storing the expiration time of the reset token
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

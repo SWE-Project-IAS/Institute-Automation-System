@@ -36,6 +36,11 @@ const Student = () => {
                                 </Link>
                             </li>
                             <li>
+                                <Link to="/announcements" className="text-gray-700 hover:text-gray-900">
+                                    Announcements
+                                </Link>
+                            </li>
+                            <li>
                                 <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('activeCourses')}>
                                     {expandedSections.activeCourses ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} 
                                     <Link to = "/courses" className="text-gray-700 hover:text-gray-900">
@@ -65,13 +70,8 @@ const Student = () => {
                                         </Link>
                                     </li>
                                     {/* <li>
-                                        <Link to="/course/:courseId/announcements" className="text-gray-700 hover:text-gray-900">
-                                            Announcements
-                                        </Link>
-                                    </li> */}
-                                    <li>
-                                        <Link to="/courseFeedback" className="text-gray-700 hover:text-gray-900">Feedback</Link>
-                                    </li>
+                                        <Link to="/student/feedback" className="text-gray-700 hover:text-gray-900">Feedback</Link>
+                                        </li> */}
                                 </ul>
                                 )}
                             </li>

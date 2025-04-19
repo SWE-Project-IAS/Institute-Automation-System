@@ -21,7 +21,7 @@ export default function EditAssignment() {
     }
 
     try {
-      const res = await fetch(`http://localhost:8000/api/assignment/${courseId}/${assignmentId}`, {
+      const res = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export default function EditAssignment() {
   useEffect(() => {
     const fetchAssignment = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/assignment/${courseId}/${assignmentId}`);
+        const res = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`);
         const data = await res.json();
   
         if (res.ok) {

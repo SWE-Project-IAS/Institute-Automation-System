@@ -15,8 +15,6 @@ import newRequest from "../../../utils/newRequest";
 export const CourseStats = () => {
   const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
     const {email, userId} = userData.user;
-    console.log(email);
-    console.log(userData);
     const { isLoading, error, data } = useQuery({
         queryKey: [`${userId}`],
         queryFn: () =>
@@ -28,7 +26,7 @@ export const CourseStats = () => {
   const { role } = useContext(RoleContext);  
   const navigateTo = useNavigate();
 
-  const [courseName, setCourseName] = useState(0);
+  const [courseName, setCourseName] = useState();
   const [courseId, setCourseId] = useState(id);
 
   const [attendanceAll, setAttendanceAll] = useState(0);
@@ -63,7 +61,6 @@ export const CourseStats = () => {
     }
   
     try {
-      console.log(1);
       const text = await file.text();
       parse(text, {
         header: true,
@@ -77,7 +74,6 @@ export const CourseStats = () => {
             alert("CSV must contain columns: rollno, date, status");
             return;
           }
-          console.log(2);
           // Process and validate each record
           const attendanceData = results.data.map((row, index) => {
             // Normalize data
@@ -88,13 +84,11 @@ export const CourseStats = () => {
             // Clean status (handle cases like "absent|")
             status = status.replace(/\|$/, ''); // Remove trailing pipe
             status = status === 'present' ? 'present' : 'absent'; // Normalize
-            console.log(3);
             // Validate
             const errors = [];
             if (!rollNo) errors.push("Missing roll number");
             if (!date) errors.push("Missing date");
             if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) errors.push("Invalid date format (use YYYY-MM-DD)");
-            console.log(4);
             return {
               rowNumber: index + 2, // +1 for header, +1 for 0-based index
               rollNo,
@@ -112,19 +106,16 @@ export const CourseStats = () => {
             alert("No valid records found in CSV file");
             return;
           }
-          console.log(5);
           // Prepare data for API
           const payload = validRecords.map(record => ({
             rollNo: record.rollNo,
             date: record.date,
             status: record.status
           }));
-          console.log(6);
           // Upload to server
-          console.log(payload)
           setSubmitted('loading');
           try {
-            const response = await fetch(`http://localhost:8000/api/attendancelanding/add/bulk/${courseId}`, {
+            const response = await fetch(`https://ias-server-cpoh.onrender.com/api/attendancelanding/add/bulk/${courseId}`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -137,14 +128,12 @@ export const CourseStats = () => {
             if (!response.ok) {
               throw new Error(result.message || 'Upload failed');
             }
-            console.log(7);
             setSubmitted('success');
             
             // Show detailed results
             let message = `Successfully uploaded ${result.results?.length || 0} records`;
             if (result.errors?.length > 0) {
               message += ` with ${result.errors.length} failures`;
-              console.log("Failed records:", result.errors);
             }
             alert(message);
             
@@ -168,7 +157,7 @@ export const CourseStats = () => {
   const fetchAttendance = async (rollNo) => {
     try {
 
-      const response = await fetch(`http://localhost:8000/api/attendancelanding/student/${courseId}`, {
+      const response = await fetch(`https://ias-server-cpoh.onrender.com/api/attendancelanding/student/${courseId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -177,7 +166,7 @@ export const CourseStats = () => {
       });
 
       const dataReceived = await response.json();
-      console.log(dataReceived);
+
       if (dataReceived?.stats) {
         setClassesMissed(dataReceived.stats.classesMissed || 0);
         setClassesAttended(dataReceived.stats.classesAttended || 0);
@@ -212,7 +201,7 @@ export const CourseStats = () => {
       <div className="frame">
         <div className="overlap-group">
           <div className="text-wrapper">{courseId}</div>
-          <div className="div">{courseName}</div>
+          {courseName && <div className="div">{courseName}</div>}
         </div>
       </div>
 

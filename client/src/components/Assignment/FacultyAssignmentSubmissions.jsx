@@ -11,7 +11,7 @@ export default function FacultyAssignmentSubmissions() {
     const fetchAssignment = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/assignment/${courseId}/${assignmentId}`
+          `https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`
         );
 
         const contentType = response.headers.get("content-type");

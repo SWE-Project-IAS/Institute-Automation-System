@@ -22,7 +22,7 @@ export default function AssignmentDetail() {
       if (!userId) return;
       
       try {
-        const response = await fetch(`http://localhost:8000/api/assignment/student/${userId}`);
+        const response = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/student/${userId}`);
         const data = await response.json();
         // console.log("Response from student data API:", data);
         // console.log("Student data:", data);
@@ -47,7 +47,7 @@ export default function AssignmentDetail() {
       
       try {
         console.log(userId)
-        const response = await fetch(`http://localhost:8000/api/assignment/${userId}`);
+        const response = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${userId}`);
         const data = await response.json();
         
         if (response.ok && data.user) {
@@ -55,7 +55,7 @@ export default function AssignmentDetail() {
           // console.log("Fetched user data:", data.user);
           // If we need student data as well
           if (data.user.role === 'student') {
-            const studentResponse = await fetch(`http://localhost:8000/api/assignment/student/${userId}`);
+            const studentResponse = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/student/${userId}`);
             const studentData = await studentResponse.json();
             // console.log("Fetched student data:", student);
             // console.log("Fetched user data:", user);
@@ -80,7 +80,7 @@ export default function AssignmentDetail() {
   useEffect(() => {
     const fetchAssignment = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/assignment/${courseId}/${assignmentId}`);
+        const response = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`);
         const data = await response.json();
         
         if (response.ok && data.assignment) {
@@ -136,7 +136,7 @@ export default function AssignmentDetail() {
     console.log(submissionData);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/assignment/${courseId}/${assignmentId}/submit`, {
+      const response = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submissionData),
@@ -157,7 +157,7 @@ export default function AssignmentDetail() {
 
   const handleUndo = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/assignment/${courseId}/${assignmentId}/undo/${student.rollNo}`, {
+      const response = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}/undo/${student.rollNo}`, {
         method: 'DELETE',
       });
 

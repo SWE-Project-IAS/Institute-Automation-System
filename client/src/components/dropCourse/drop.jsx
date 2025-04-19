@@ -25,7 +25,6 @@ export default function DropCourse() {
   // Get userId from localStorage just like in MyCourses
   const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
   const {userId} = userData.user;
-  
   const queryClient = useQueryClient();
 
   // Fetch enrolled courses

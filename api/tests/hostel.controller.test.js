@@ -1,6 +1,6 @@
 import { Student } from '../models/student.model';
 import { HostelLeave } from '../models/hostel.model';
-import { studentLeave, getStudentLeave, getAllLeaves,updateAnyLeave } from '../controllers/hostel.controller';
+import { studentLeave, getStudentLeave, getAllLeaves, updateAnyLeave } from '../controllers/hostel.controller';
 
 // Mock the models
 jest.mock('../models/student.model');

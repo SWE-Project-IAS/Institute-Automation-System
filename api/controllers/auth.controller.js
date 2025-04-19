@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { User } from '../models/user.model.js';
 import { Faculty } from '../models/faculty.model.js';
 import { Student } from '../models/student.model.js';
@@ -7,6 +8,8 @@ import { AcadAdmin } from '../models/acadAdmin.model.js';
 import { HostelAdmin } from '../models/hostelAdmin.model.js';
 import { validateAccessToken, validateRefreshToken } from '../middleware/auth.middleware.js';
 import { findUserByEmail, verifyRefreshTokenInDB } from '../middleware/auth.middleware.js';
+import { sendPasswordResetEmail } from '../utils/email.js';
+
 
 export const login = async (req, res) => {
     try {
@@ -64,7 +67,7 @@ export const login = async (req, res) => {
         // res.cookie('refreshToken', refreshToken, { httpOnly: false, sameSite: 'none' });
 
         return res.status(200)
-            .cookie('user', JSON.stringify({ email: user.email, userId: user._id }), { httpOnly: false, sameSite: 'none', maxAge: 1000 * 60 * 60 * 24, secure: true }) // Set cookie to expire in 1 day
+            .cookie('user', JSON.stringify({ email: user.email, userId: user._id, role:role }), { httpOnly: false, sameSite: 'none', maxAge: 1000 * 60 * 60 * 24, secure: true }) // Set cookie to expire in 1 day
             .cookie('refreshToken', refreshToken, { httpOnly: false, sameSite: 'none', maxAge: 1000 * 60 * 60 * 24, secure: true }) // Set cookie to expire in 1 day
             .cookie('accessToken', accessToken, { httpOnly: false, sameSite: 'none', maxAge: 1000 * 60 * 60 * 24, secure: true }) // Set cookie to expire in 1 hour
             .header('Authorization', accessToken)
@@ -112,3 +115,105 @@ export const logout = [
         }
     }
 ];
+
+// New forgotPassword function
+export const forgotPassword = async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      // Validate email
+      const emailRegex = /^[a-zA-Z.]+@iitg\.ac\.in$/;
+      if (!email || !emailRegex.test(email)) {
+        return res.status(400).json({ message: "Please provide a valid email address" });
+      }
+      
+      // Check if user exists
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Generate a reset token
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      
+      // Hash the token before saving
+      const hashedToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+      
+      // Save the token to the user document with expiration
+      user.passwordResetToken = hashedToken;
+      user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+      await user.save({ validateBeforeSave: false });
+      
+      // Create reset URL
+      const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
+      
+      // Send email with reset link
+      await sendPasswordResetEmail(user.email, resetURL);
+      
+      res.status(200).json({
+        status: 'success',
+        message: 'Password reset link sent to email'
+      });
+    } catch (error) {
+      console.error('Password reset error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to send password reset email'
+      });
+    }
+  };
+  
+  // New resetPassword function
+  export const resetPassword = async (req, res) => {
+    try {
+      // Get token from URL parameter
+      const { token } = req.params;
+      const { password } = req.body;
+      
+      // Hash the token from the URL to compare with stored hashed token
+      const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+      
+      // Find user with the token and check if token hasn't expired
+      const user = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: Date.now() }
+      });
+      
+      // If token is invalid or expired
+      if (!user) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Token is invalid or has expired'
+        });
+      }
+      
+      // Hash the new password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      
+      // Update user password
+      user.password = hashedPassword;
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      
+      // Save the user with the new password
+      await user.save();
+      
+      res.status(200).json({
+        status: 'success',
+        message: 'Password has been reset successfully'
+      });
+    } catch (error) {
+      console.error('Reset password error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to reset password'
+      });
+    }
+  };

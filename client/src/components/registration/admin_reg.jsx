@@ -1,206 +1,229 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { FaBook, FaSave } from 'react-icons/fa';
+import newRequest from '../../utils/newRequest';
 
 const CourseForm = () => {
-  const [courseData, setCourseData] = useState({
+  const [form, setForm] = useState({
     courseCode: '',
     courseName: '',
+    courseDepartment: '',
     maxIntake: '',
     faculty: '',
     slot: '',
     credits: '',
     year: '',
-    session: ''
-  });
-
-  const [config, setConfig] = useState({
+    session: '',
     program: '',
-    department: '',
+    mappingDepartment: '',
     semesters: [],
     type: ''
   });
 
-  const [configurations, setConfigurations] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleCourseChange = (e) => {
-    setCourseData({ ...courseData, [e.target.name]: e.target.value });
-  };
-
-  const handleConfigChange = (e) => {
+  // Handle all input changes
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setConfig({ ...config, [name]: value });
+    setForm((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
+  // Handle semester checkbox changes
   const handleSemesterChange = (e) => {
     const value = e.target.value;
     const isChecked = e.target.checked;
-
-    if (isChecked) {
-      setConfig({ ...config, semesters: [...config.semesters, value] });
-    } else {
-      setConfig({
-        ...config,
-        semesters: config.semesters.filter((s) => s !== value)
-      });
-    }
+    setForm((prev) => ({
+      ...prev,
+      semesters: isChecked
+        ? [...prev.semesters, value]
+        : prev.semesters.filter((s) => s !== value)
+    }));
   };
 
-  const addConfiguration = () => {
-    if (!config.program || !config.department || !config.semesters.length || !config.type) {
-      alert('Please fill all fields in configuration');
+  // Reset the form after submission
+  const resetForm = () => {
+    setForm({
+      courseCode: '',
+      courseName: '',
+      courseDepartment: '',
+      maxIntake: '',
+      faculty: '',
+      slot: '',
+      credits: '',
+      year: '',
+      session: '',
+      program: '',
+      mappingDepartment: '',
+      semesters: [],
+      type: ''
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // Basic validation
+    if (
+      !form.courseCode ||
+      !form.courseName ||
+      !form.courseDepartment ||
+      !form.program ||
+      !form.mappingDepartment ||
+      !form.semesters.length ||
+      !form.type
+    ) {
+      alert('Please fill all required fields.');
+      setIsSubmitting(false);
       return;
     }
 
-    setConfigurations([...configurations, config]);
-    setConfig({ program: '', department: '', semesters: [], type: '' });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    // Prepare payload as expected by backend
     const payload = {
-      ...courseData,
-      configurations
+      courseCode: form.courseCode,
+      courseName: form.courseName,
+      courseDepartment: form.courseDepartment,
+      maxIntake: form.maxIntake,
+      faculty: form.faculty,
+      slot: form.slot,
+      credits: form.credits,
+      year: form.year,
+      session: form.session,
+      configurations: [
+        {
+          program: form.program,
+          department: form.mappingDepartment,
+          semesters: form.semesters,
+          type: form.type
+        }
+      ]
     };
 
     try {
-        console.log(payload);
-      const res = await axios.post('http://localhost:8000/api/course/register-course', payload); // Change URL if needed
-      alert('Course registered successfully!');
-      setCourseData({
-        courseCode: '',
-        courseName: '',
-        maxIntake: '',
-        faculty: '',
-        slot: '',
-        credits: '',
-        year: '',
-        session: ''
-      });
-      setConfigurations([]);
+      const response = await newRequest.post('/course/create-course', payload);
+      if (response.status === 200) {
+        alert(response.data.message || 'Course registered successfully!');
+        resetForm();
+      } else {
+        alert('Unexpected response from the server.');
+      }
     } catch (err) {
-      console.error(err);
-      alert('Failed to register course');
+      console.error('Error:', err);
+      alert(err.response?.data?.message || 'Failed to register course. Please check the console for details.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Course Registration</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Course Details */}
-        {[
-          { name: 'courseCode', label: 'Course Code' },
-          { name: 'courseName', label: 'Course Name' },
-          {name:'courseDepartment', label:'Course Department'},
-          { name: 'faculty', label: 'Faculty ID' },
-          { name: 'maxIntake', label: 'Max Intake', type: 'number' },
-          { name: 'slot', label: 'Slot' },
-          { name: 'credits', label: 'Credits', type: 'number' },
-          { name: 'year', label: 'Academic Year (e.g., 2024)' },
-          { name: 'session', label: 'Session (e.g., Spring)' }
-        ].map((field) => (
-          <div key={field.name}>
-            <label className="block font-semibold">{field.label}</label>
-            <input
-              type={field.type || 'text'}
-              name={field.name}
-              value={courseData[field.name]}
-              onChange={handleCourseChange}
-              className="w-full border rounded p-2"
-              required
-            />
-          </div>
-        ))}
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+        <FaBook className="inline mr-2" />
+        Course Registration
+      </h2>
 
-        <hr className="my-4" />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Course Details Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { name: 'courseCode', label: 'Course Code', required: true },
+            { name: 'courseName', label: 'Course Name', required: true },
+            { name: 'courseDepartment', label: 'Department', required: true },
+            { name: 'maxIntake', label: 'Max Intake', type: 'number' },
+            { name: 'faculty', label: 'Faculty ID' },
+            { name: 'slot', label: 'Time Slot' },
+            { name: 'credits', label: 'Credits', type: 'number' },
+            { name: 'year', label: 'Academic Year' },
+            { name: 'session', label: 'Session' }
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {field.label}
+                {field.required && <span className="text-red-500">*</span>}
+              </label>
+              <input
+                type={field.type || 'text'}
+                name={field.name}
+                value={form[field.name]}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required={field.required}
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Mapping Section */}
-        <h3 className="text-lg font-semibold">Add Program Configuration</h3>
-
-        <div>
-          <label className="block font-semibold">Program</label>
-          <input
-            type="text"
-            name="program"
-            value={config.program}
-            onChange={handleConfigChange}
-            className="w-full border rounded p-2"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block font-semibold">Department</label>
-          <input
-            type="text"
-            name="department"
-            value={config.department}
-            onChange={handleConfigChange}
-            className="w-full border rounded p-2"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block font-semibold">Semester(s)</label>
-          <div className="grid grid-cols-3 gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
-              <label key={sem} className="flex items-center">
-                <input
-                  type="checkbox"
-                  value={sem}
-                  checked={config.semesters.includes(String(sem))}
-                  onChange={handleSemesterChange}
-                  className="mr-2"
-                />
-                {sem}
-              </label>
-            ))}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4">Program Mapping</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Program<span className="text-red-500">*</span></label>
+              <input
+                type="text"
+                name="program"
+                value={form.program}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Department<span className="text-red-500">*</span></label>
+              <input
+                type="text"
+                name="mappingDepartment"
+                value={form.mappingDepartment}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
           </div>
-        </div>
-
-        <div>
-          <label className="block font-semibold">Course Type</label>
-          <select
-            name="type"
-            value={config.type}
-            onChange={handleConfigChange}
-            className="w-full border rounded p-2"
-            required
-          >
-            <option value="">Select</option>
-            <option value="Core">Core</option>
-            <option value="Elective">Elective</option>
-          </select>
-        </div>
-
-        <button
-          type="button"
-          onClick={addConfiguration}
-          className="bg-blue-600 text-white px-4 py-2 rounded mt-2"
-        >
-          Add Configuration
-        </button>
-
-        {/* Display Configurations */}
-        {configurations.length > 0 && (
-          <div className="bg-gray-100 p-4 rounded mt-4">
-            <h4 className="font-bold mb-2">Added Configurations</h4>
-            <ul className="list-disc list-inside">
-              {configurations.map((cfg, index) => (
-                <li key={index}>
-                  Program: {cfg.program}, Dept: {cfg.department}, Semesters: [{cfg.semesters.join(', ')}], Type: {cfg.type}
-                </li>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700">Semesters<span className="text-red-500">*</span></label>
+            <div className="grid grid-cols-4 gap-2 mt-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
+                <label key={sem} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    value={String(sem)}
+                    checked={form.semesters.includes(String(sem))}
+                    onChange={handleSemesterChange}
+                    className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                  />
+                  <span className="ml-2 text-sm">Semester {sem}</span>
+                </label>
               ))}
-            </ul>
+            </div>
           </div>
-        )}
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700">Course Type<span className="text-red-500">*</span></label>
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              className="w-full mt-1 px-3 py-2 border rounded-md"
+              required
+            >
+              <option value="">Select Type</option>
+              <option value="Core">Core</option>
+              <option value="Elective">Elective</option>
+            </select>
+          </div>
+        </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          disabled={isSubmitting}
+          className="w-full bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 disabled:bg-gray-400 flex justify-center items-center"
         >
-          Submit Course
+          <FaSave className="mr-2" />
+          {isSubmitting ? 'Submitting...' : 'Create Course'}
         </button>
       </form>
     </div>

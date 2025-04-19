@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 });
 
 // Student Transcript PDF Component
-const TranscriptPDF = ({ student }) => {
+const TranscriptPDF = ({ student , spiCpi}) => {
     if (!student) {
         return (
             <Document>
@@ -80,20 +80,22 @@ const TranscriptPDF = ({ student }) => {
                 {/* Course List Table */}
                 <View style={styles.tableContainer}>
                     <View style={styles.tableHeader}>
-                        {['Course Code', 'Course Name', 'Credit/Audit', 'Year', 'Session', 'Grade'].map((header, index) => (
+                        {['Course Code', 'Course Name', 'Credit/Audit','Credits','Semester', 'Grade'].map((header, index) => (
                             <Text key={index} style={styles.tableCell}>{header}</Text>
                         ))}
                     </View>
-                    {student.courses && student.courses.length > 0 ? (
-                        student.courses.map((course, index) => (
-                            <View key={index} style={styles.tableRow}>
-                                <Text style={styles.tableCell}>{course.code || "N/A"}</Text>
-                                <Text style={styles.tableCell}>{course.name || "N/A"}</Text>
-                                <Text style={styles.tableCell}>{course.credit || "N/A"}</Text>
-                                <Text style={styles.tableCell}>{course.year || "N/A"}</Text>
-                                <Text style={styles.tableCell}>{course.session || "N/A"}</Text>
-                                <Text style={styles.tableCell}>{course.grade || "N/A"}</Text>
-                            </View>
+                    {student.grades && student.grades.length > 0 ? (
+    student.grades.map((course, index) => (
+
+        <View key={index} style={styles.tableRow}>
+        <Text style={styles.tableCell}>{course.courseCode || "N/A"}</Text>
+        <Text style={styles.tableCell}>{course.courseName || "N/A"}</Text>
+        <Text style={styles.tableCell}>{course.creditOrAudit || "N/A"}</Text>
+        <Text style={styles.tableCell}>{course.credits || "N/A"}</Text>
+        <Text style={styles.tableCell}>{course.semester || "N/A"}</Text>
+        <Text style={styles.tableCell}>{course.grade || "N/A"}</Text>
+    </View>
+    
                         ))
                     ) : (
                         <Text style={{ textAlign: "center", padding: 10 }}>No Courses Available</Text>
@@ -107,8 +109,8 @@ const TranscriptPDF = ({ student }) => {
                             <Text key={index} style={styles.tableCell}>{header}</Text>
                         ))}
                     </View>
-                    {student.spiCpi && student.spiCpi.length > 0 ? (
-                        student.spiCpi.map((entry, index) => (
+                    {spiCpi && spiCpi.length > 0 ? (
+                        spiCpi.map((entry, index) => (
                             <View key={index} style={styles.tableRow}>
                                 <Text style={styles.tableCell}>{entry.semester || "N/A"}</Text>
                                 <Text style={styles.tableCell}>{entry.spi || "N/A"}</Text>

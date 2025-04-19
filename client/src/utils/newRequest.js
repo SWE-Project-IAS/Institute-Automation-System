@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const newRequest=axios.create({
-    baseURL:"http://localhost:8000/api/",
+    baseURL:"https://ias-server-cpoh.onrender.com/api/",
     withCredentials:true,
 });
 

@@ -1,72 +1,84 @@
 import React, { useContext, useState } from 'react';
+import newRequest from '../../utils/newRequest';
+import { useQuery } from '@tanstack/react-query';
 
 const TimeTable = () => {
+    const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
+    const {userId} = userData.user;
+    const { isLoading, error, data: activeCourses = [] } = useQuery({
+        queryKey: ["courses"],
+        queryFn: () =>
+          newRequest.get(`/student/${userId}/courses`).then((res) => {
+            console.log("Course data received:", res.data);
+            return res.data.courses || [];
+          }),
+    });
     const timings = [
         "8:00 - 8:55", "9:00 - 9:55", "10:00 - 10:55", "11:00 - 11:55", "12:00 - 12:55", "1:00 - 1:55", "2:00 - 2:55", "3:00 - 3:55", "4:00 - 4:55", "5:00 - 5:55"
       ];
 
-    const [activeCourses] = useState([
-        {
-          id: "CS101",
-          name: "Introduction to Computer Science",
-          slot: "A",
-        },
-        {
-          id: "MATH202",
-          name: "Calculus II",
-          slot: "B",
-        },
-        {
-          id: "ENG105",
-          name: "Academic Writing",
-          slot: "C",
-        },
-        {
-          id: "PHYS101",
-          name: "Physics for Engineers",
-          slot: "D",
-        },
-        {
-            id: "PHYS102",
-            name: "Physics for Engineers",
-            slot: "E",
-          },
-          {
-            id: "PHYS103",
-            name: "Physics for Engineers",
-            slot: "F",
-          },
-          {
-            id: "PHYS104",
-            name: "Physics for Engineers",
-            slot: "G",
-          },
-          {
-            id: "PHYS105",
-            name: "Physics for Engineers",
-            slot: "AL1",
-          },
-          {
-            id: "PHYS106",
-            name: "Physics for Engineers",
-            slot: "AL2",
-          },
-          {
-            id: "PHYS107",
-            name: "Physics for Engineers",
-            slot: "AL3",
-          },
-          {
-            id: "PHYS108",
-            name: "Physics for Engineers",
-            slot: "AL4",
-          },
-          {
-            id: "PHYS109",
-            name: "Physics for Engineers",
-            slot: "AL5",
-          },
-      ]);
+    // const [activeCourses] = useState([
+    //     {
+    //       id: "CS101",
+    //       name: "Introduction to Computer Science",
+    //       slot: "A",
+    //     },
+    //     {
+    //       id: "MATH202",
+    //       name: "Calculus II",
+    //       slot: "B",
+    //     },
+    //     {
+    //       id: "ENG105",
+    //       name: "Academic Writing",
+    //       slot: "C",
+    //     },
+    //     {
+    //       id: "PHYS101",
+    //       name: "Physics for Engineers",
+    //       slot: "D",
+    //     },
+    //     {
+    //         id: "PHYS102",
+    //         name: "Physics for Engineers",
+    //         slot: "E",
+    //       },
+    //       {
+    //         id: "PHYS103",
+    //         name: "Physics for Engineers",
+    //         slot: "F",
+    //       },
+    //       {
+    //         id: "PHYS104",
+    //         name: "Physics for Engineers",
+    //         slot: "G",
+    //       },
+    //       {
+    //         id: "PHYS105",
+    //         name: "Physics for Engineers",
+    //         slot: "AL1",
+    //       },
+    //       {
+    //         id: "PHYS106",
+    //         name: "Physics for Engineers",
+    //         slot: "AL2",
+    //       },
+    //       {
+    //         id: "PHYS107",
+    //         name: "Physics for Engineers",
+    //         slot: "AL3",
+    //       },
+    //       {
+    //         id: "PHYS108",
+    //         name: "Physics for Engineers",
+    //         slot: "AL4",
+    //       },
+    //       {
+    //         id: "PHYS109",
+    //         name: "Physics for Engineers",
+    //         slot: "AL5",
+    //       },
+    //   ]);
     
     // const [activeCourses] = useState([
     //     {
@@ -138,6 +150,8 @@ const TimeTable = () => {
 
     return (
         <>
+        {isLoading? <p>Loading...</p> : error ? <p>Error: {error.message}</p> : 
+            <>
             <div className="flex justify-center py-6">
                 <h3 className="text-3xl font-bold text-gray-800">Time-Table</h3>
             </div>
@@ -305,6 +319,8 @@ const TimeTable = () => {
                     </table>
                 </div>
             </div>
+        </>
+        }
         </>
     );
 };

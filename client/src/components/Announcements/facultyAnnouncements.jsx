@@ -37,9 +37,11 @@ export default function FacultyCourseAnnouncements() {
   // Get current user data
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const userId = currentUser?.data?.user?.userId;
-  const facultyName = currentUser?.data?.user?.email;
-  const facultyNameWithoutDomain = facultyName?.split("@")[0];
-
+  // const facultyName = currentUser?.data?.user?.email;
+  // const facultyNameWithoutDomain = facultyName?.split("@")[0];
+  console.log("Current User ID:", userId);
+  console.log("Course ID:", courseId);
+  console.log("Current User: ", currentUser);
   // Fetch course data
   const { 
     isLoading, 
@@ -191,7 +193,7 @@ export default function FacultyCourseAnnouncements() {
     if (!validateForm()) return;
     const announcementData = {
       ...formData,
-      postedBy: facultyNameWithoutDomain,
+      postedBy: userId,
       // attachments: [] // Commented out
     };
     if (isEditing && editingAnnouncementId) {

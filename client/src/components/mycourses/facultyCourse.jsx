@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import newRequest from '../../utils/newRequest';
 import { useQuery } from '@tanstack/react-query';
@@ -9,17 +9,31 @@ import {
   FaCalendarAlt,
   FaUsers,
   FaExternalLinkAlt,
-  FaChartBar
+  FaChartBar,
+  FaChartLine,
+  FaCommentAlt,
+  FaStar
 } from "react-icons/fa";
 
 function FacultyCourses() {
+  const navigate = useNavigate();
+  const handleViewFeedback = (course) => {
+    console.log("Course ID:", course.id);
+    // Use course.id as courseCode if that's what your backend returns
+    navigate("/faculty/feedback/view", {
+      state: {
+        courseCode: course.id,
+        courseName: course.name,
+        department: course.department
+      }
+    }); 
+  };
+
   // Get userId from localStorage
   const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
   const {userId} = userData.user;
   
   const [isFeedbackAvailable, setIsFeedbackAvailable] = useState(false);
-
-//   console.log("Faculty ID:", userId);
 
   const { isLoading, error, data: facultyCourses = [] } = useQuery({
     queryKey: ["faculty-courses"],
@@ -30,9 +44,6 @@ function FacultyCourses() {
         return res.data.courses || [];
       }),
   });
-
-
-  // console.log("Faculty Courses============:", facultyCourses);
 
   return (
     <div className="p-6">
@@ -126,7 +137,7 @@ function FacultyCourses() {
                   </Link>
                   
                   <Link
-                    to={`/faculty/course/${course.id}/attendance`}
+                    to={`/attendancelanding/${course.id}`}
                     className="flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-md p-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200"
                   >
                     <FaCalendarAlt className="text-blue-400" />
@@ -142,26 +153,50 @@ function FacultyCourses() {
                   </Link>
                 </div>
                 
+                {/* Enhanced Feedback Report Section */}
                 {isFeedbackAvailable && (
                   <div className="mt-4">
-                    <Link 
-                      to={`/faculty/course/${course.id}/feedback`}
+                    {/* <div className="flex items-center mb-3">
+                      <div className="bg-blue-500 p-2 rounded-full mr-3">
+                        <FaChartBar className="text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-blue-700">Course Feedback Available</h3>
+                    </div> */}
+                    
+                    {/* <div className="grid grid-cols-3 gap-2 mb-4">
+                      <div className="flex flex-col items-center justify-center bg-white p-2 rounded shadow-sm">
+                        <FaStar className="text-yellow-400 mb-1" />
+                        <span className="text-xs text-gray-600">Ratings</span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center bg-white p-2 rounded shadow-sm">
+                        <FaCommentAlt className="text-blue-400 mb-1" />
+                        <span className="text-xs text-gray-600">Comments</span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center bg-white p-2 rounded shadow-sm">
+                        <FaChartLine className="text-green-400 mb-1" />
+                        <span className="text-xs text-gray-600">Analytics</span>
+                      </div>
+                    </div> */}
+                    
+                    <button
+                      onClick={() => handleViewFeedback(course)}
                       className="flex items-center justify-center gap-2 w-full bg-blue-50 text-blue-600 border border-blue-200 rounded-md p-2 text-sm font-medium hover:bg-blue-100 transition duration-200"
+                      // className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-md font-medium transition duration-300"
                     >
-                      <FaChartBar className="text-blue-500" />
-                      <span>View Feedback Reports</span>
-                    </Link>
+                      <FaChartBar />
+                      View Complete Feedback Report
+                    </button>
                   </div>
                 )}
-                
+
                 <div className="mt-4">
-                  <Link 
+                  {/* <Link 
                     to={`/faculty/course/${course.id}`}
                     className="flex items-center justify-center gap-2 w-full bg-blue-50 text-blue-600 border border-blue-200 rounded-md p-2 text-sm font-medium hover:bg-blue-100 transition duration-200"
                   >
                     <span>View Course Details</span>
                     <FaExternalLinkAlt className="text-xs" />
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>
@@ -170,7 +205,7 @@ function FacultyCourses() {
       )}
       
       {/* Course management links */}
-      <div className="mt-8 text-center">
+      {/* <div className="mt-8 text-center">
         <Link
           to="/faculty/course-requests"
           className="inline-flex items-center text-blue-600 hover:text-blue-700 mr-6"
@@ -186,12 +221,16 @@ function FacultyCourses() {
           View teaching schedule
           <FaExternalLinkAlt className="ml-1 text-xs" />
         </Link>
-      </div>
+      </div> */}
       
-      {/* Feedback availability notice */}
+      {/* Enhanced Feedback Unavailability Notice */}
       {!isFeedbackAvailable && facultyCourses.length > 0 && (
-        <div className="mt-4 text-center text-sm text-gray-600">
-          Course feedback is currently closed. Reports will be available when the feedback period opens.
+        <div className="mt-6 bg-gray-100 border border-gray-200 rounded-lg p-4 text-center">
+          <FaChartBar className="text-gray-400 text-xl mx-auto mb-2" />
+          <p className="text-gray-700 font-medium">Course Feedback Reports</p>
+          <p className="text-gray-600 text-sm">
+            Feedback collection is currently closed. Reports will be available when the feedback period opens.
+          </p>
         </div>
       )}
     </div>

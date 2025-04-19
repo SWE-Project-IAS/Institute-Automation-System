@@ -10,7 +10,8 @@ const AcadAdmin = () => {
     complaint: false,
     profile: false,
     feecontrol: false,
-    studentManagement: false
+    studentManagement: false,
+    facultycontrol: false
   });
 
   const toggleSection = (section) => {
@@ -29,7 +30,7 @@ const AcadAdmin = () => {
                     </span>
                     {expandedSections.course && (
                         <ul className="pl-5">
-                            <li>Registration</li>
+                            {/* <li>Registration</li> */}
                             <li>
                                 <Link to="/adminregistration" className="text-gray-700 hover:text-gray-900">
                                   Create course
@@ -42,9 +43,11 @@ const AcadAdmin = () => {
                                 <Link to="/dropcourseApprovals" className="text-gray-700 hover:text-gray-900">Drop Course</Link>
                             </li>
                             <li>
-                                <Link to="/feedbackConfiguration" className="text-gray-700 hover:text-gray-900">Feedback</Link>
+                                <Link to="/acadAdmin/feedback/view" className="text-gray-700 hover:text-gray-900">Feedback</Link>
                             </li>
-                            <li>Announcements</li>
+                            <li>
+                                <Link to="/announcements" className="text-gray-700 hover:text-gray-900">Announcements</Link>
+                            </li>
                         </ul>
                     )}
                 </li>
@@ -70,6 +73,11 @@ const AcadAdmin = () => {
           {expandedSections.studentManagement && (
             <ul className="pl-5">
               <li>
+                <Link to="/acadAdmin/add-students" className="text-gray-700 hover:text-gray-900 flex items-center gap-2">
+                  Add Students
+                </Link>
+              </li>
+              <li>
                 <Link to="/admin/documents/access" className="text-gray-700 hover:text-gray-900 flex items-center gap-2">
                   Update Student 
                 </Link>
@@ -94,6 +102,21 @@ const AcadAdmin = () => {
         </li>
 
         <li className="mt-2">
+          <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('facultycontrol')}>
+            {expandedSections.facultycontrol ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Faculty Management
+          </span>
+          {expandedSections.facultycontrol && (
+            <ul className="pl-5">
+              <li>
+                <Link to="/acadAdmin/facultyManagement" className="text-gray-700 hover:text-gray-900">
+                  Add Faculty
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        {/* <li className="mt-2">
           <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('complaint')}>
             {expandedSections.complaint ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Complaint
           </span>
@@ -102,7 +125,7 @@ const AcadAdmin = () => {
               <li>View Complaints</li>
             </ul>
           )}
-        </li>
+        </li> */}
 
         <li className="mt-2">
           <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('profile')}>
@@ -110,7 +133,11 @@ const AcadAdmin = () => {
           </span>
           {expandedSections.profile && (
             <ul className="pl-5">
-              <li>View Profile</li>
+              <li>
+                <Link to="/profile" className="text-gray-700 hover:text-gray-900">
+                  View Profile
+                </Link>
+              </li>
             </ul>
           )}
         </li>

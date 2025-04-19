@@ -3,75 +3,123 @@ import { Attendance } from '../models/attendance.model.js';
 import { FacultyCourse } from '../models/course.model.js';
 import { StudentCourse } from '../models/course.model.js';
 import { Student } from '../models/student.model.js';
-//Student side
+//Student Side
 
 export const getPercentages = async (req, res) => {
   const rollNo = req.headers['rollno'];
+  const role = req.headers['role'];
   if (!rollNo) {
     return res.status(400).json({ error: 'Roll number is required in headers' });
   }
-    try {
-      // Step 1: Total attendance entries grouped by courseCode
-      const totalRecords = await Attendance.aggregate([
-        { $match: { rollNo } },
-        {
-          $group: {
-            _id: "$courseCode",
-            totalDays: { $sum: 1 }
-          }
-        }
-      ]);
-  
-      // Step 2: Approved & present entries grouped by courseCode
-      const presentRecords = await Attendance.aggregate([
-        {
-          $match: {
-            rollNo,
-            isPresent: true,
-            isApproved: true
-          }
-        },
-        {
-          $group: {
-            _id: "$courseCode",
-            presentDays: { $sum: 1 }
-          }
-        }
-      ]);
-  
-      // Step 3: Map courseCode to presentDays
-      const presentMap = {};
-      presentRecords.forEach(({ _id, presentDays }) => {
-        presentMap[_id] = presentDays;
+
+  try {
+    // Step 1: Get the student's enrolled courses from studentCourseSchema
+    // Note: We're using courseId which is a string in your schema (not an ObjectId)
+    var studentCourses = []; 
+    if (role === 'student') {
+    studentCourses = await StudentCourse.find({ 
+      rollNo,
+      status: 'Approved',
+      isCompleted: false
+    });
+  }
+  else {
+    studentCourses = await StudentCourse.find({ 
+      rollNo,
+      status: 'Approved'
+    });
+  }
+    
+    if (studentCourses.length === 0) {
+      return res.json({
+        rollNo,
+        message: 'No approved courses found for this student',
+        attendance: []
       });
-  
-      // Step 4: Get courseNames from Course collection
-      const courseCodes = totalRecords.map(rec => rec._id);
-      const courses = await Course.find({ courseCode: { $in: courseCodes } });
-  
-      const courseNameMap = {};
-      courses.forEach(course => {
-        courseNameMap[course.courseCode] = course.courseName;
-      });
-  
-      // Step 5: Construct result
-      const result = totalRecords.map(({ _id, totalDays }) => {
-        const presentDays = presentMap[_id] || 0;
-        const percentage = (presentDays / totalDays) * 100;
-  
-        return {
-          courseCode: _id,
-          courseName: courseNameMap[_id] || 'Unknown',
-          percentage: parseFloat(percentage.toFixed(2))
-        };
-      });
-  
-      res.json({ rollNo, attendance: result });
-    } catch (error) {
-      console.error('Error calculating attendance percentages:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
     }
-  };
+    
+    // Step 2: Extract course IDs
+    const courseIds = studentCourses.map(course => course.courseId);
+    
+    // Step 3: Fetch course details to get courseCode and courseName
+    // We'll use a try-catch for each course to handle potential errors
+    const courseDetailsMap = {};
+    
+    for (const courseId of courseIds) {
+      try {
+        // Find by courseId NOT by _id
+        const course = await Course.findOne({ courseCode:courseId });
+        if (course) {
+          courseDetailsMap[courseId] = {
+            courseCode: course.courseCode,
+            courseName: course.courseName
+          };
+        } else {
+          // If course not found, use courseId as both code and name
+          courseDetailsMap[courseId] = {
+            courseCode: courseId,
+            courseName: courseId
+          };
+        }
+      } catch (courseError) {
+        console.log(`Error fetching course ${courseId}: ${courseError.message}`);
+        // Still add entry with courseId as fallback
+        courseDetailsMap[courseId] = {
+          courseCode: courseId,
+          courseName: courseId
+        };
+      }
+    }
+    
+    // Step 4: Calculate attendance for each course
+    const attendanceResults = [];
+    
+    for (const courseId of courseIds) {
+      const courseDetails = courseDetailsMap[courseId];
+      const courseCode = courseDetails.courseCode;
+      
+      // Get total days
+      const totalDays = await Attendance.countDocuments({ 
+        rollNo,
+        courseCode,
+        isApproved: true
+      });
+      
+      // Get present days
+      const presentDays = await Attendance.countDocuments({ 
+        rollNo,
+        courseCode,
+        isPresent: true,
+        isApproved: true
+      });
+      
+      // Calculate percentage
+      const percentage = totalDays > 0 ? (presentDays / totalDays) * 100 : 0;
+      
+      attendanceResults.push({
+        courseCode,
+        courseName: courseDetails.courseName,
+        percentage: parseFloat(percentage.toFixed(2)),
+        totalDays,
+        presentDays
+      });
+    }
+    
+    // Return the results
+    res.json({
+      rollNo,
+      attendance: attendanceResults
+    });
+    
+  } catch (error) {
+    console.error('Error calculating attendance percentages:', error);
+    res.status(500).json({ 
+      error: 'Internal Server Error', 
+      message: error.message,
+      stack: error.stack
+    });
+  }
+};
 
   export const getCourse = async (req, res) => {
     const { courseId } = req.params;
@@ -94,12 +142,8 @@ export const getPercentages = async (req, res) => {
       });
       
       // Calculate statistics
-      console.log("Attendance");
-      console.log(attendanceAll);
       const classesAttended = attendanceAll.filter(record => record.isPresent && record.isApproved).length;
-      console.log("Attended" + classesAttended);
       const classesMissed = attendanceAll.filter(record => record.isApproved).length - classesAttended;
-      console.log("Missed" + classesMissed);
       const percentage = ((classesAttended + classesMissed) ? 
         (classesAttended / (classesAttended + classesMissed)) * 100 : 0).toFixed(2);
       const reqClasses = Math.max(0, 3 * classesMissed - classesAttended);
@@ -148,16 +192,11 @@ export const getPercentages = async (req, res) => {
     }
   };
 
+  // Faculty Side
   export const createAttendanceRecord = async (req, res) => {
     // Extract data from request body
     const { courseCode, date, isPresent, isApproved } = req.body;
-    console.log(":TRTRT");
-    console.log(req.body)
-    console.log(courseCode);
-    console.log(date);
-    console.log(isPresent);
-  const rollNo = req.headers['rollno'];
-  console.log(rollNo);
+    const rollNo = req.headers['rollno'];
     try {
       // Validate required fields
       if (!courseCode || !rollNo) {
@@ -309,11 +348,10 @@ export const getPercentages = async (req, res) => {
         });
     }
 };
-//faculty side
+
 export const getFacultyCourses = async (req, res) => {
   try {
     const facultyId = req.headers['userid'];
-    console.log(facultyId)
     // Validate facultyId
     if (!facultyId) {
       return res.status(400).json({
@@ -323,7 +361,7 @@ export const getFacultyCourses = async (req, res) => {
     }
     
     // Find all courses taught by the faculty
-    const facultyCourses = await FacultyCourse.find({ facultyId });
+    const facultyCourses = await FacultyCourse.find({ facultyId, status: "Ongoing" });
     
     if (!facultyCourses.length) {
       return res.status(404).json({
@@ -335,31 +373,63 @@ export const getFacultyCourses = async (req, res) => {
     // Get course codes from faculty courses
     const courseCodes = facultyCourses.map(course => course.courseCode);
     
+    // Get course details for all course codes
+    const courseDetails = await Course.find({ courseCode: { $in: courseCodes } })
+      .select('courseCode courseName')
+      .lean();
+    
+    // Create a map of course codes to course names
+    const courseNameMap = {};
+    courseDetails.forEach(course => {
+      courseNameMap[course.courseCode] = course.courseName;
+    });
+    
     // For each course, calculate attendance percentage
     const coursesWithAttendance = await Promise.all(
       facultyCourses.map(async (course) => {
-        // Get all attendance records for this course
-        const attendanceRecords = await Attendance.find({
-          courseCode: course.courseCode
-        });
+        // First, get all students who have not completed this course
+        const activeStudents = await StudentCourse.find({
+          courseId: course.courseCode,
+          isCompleted: false
+        }).select('rollNo');
         
-        // If no attendance records found
-        if (!attendanceRecords.length) {
+        // Extract roll numbers of active students
+        const activeStudentRolls = activeStudents.map(student => student.rollNo);
+        
+        // If no active students found
+        if (!activeStudentRolls.length) {
           return {
             ...course.toObject(),
+            courseName: courseNameMap[course.courseCode] || 'Unknown Course',
             attendancePercentage: 0,
             totalStudents: 0
           };
         }
         
-        // Get unique student roll numbers
+        // Get all attendance records for this course for active students only
+        const attendanceRecords = await Attendance.find({
+          courseCode: course.courseCode,
+          rollNo: { $in: activeStudentRolls }
+        });
+        
+        // If no attendance records found for active students
+        if (!attendanceRecords.length) {
+          return {
+            ...course.toObject(),
+            courseName: courseNameMap[course.courseCode] || 'Unknown Course',
+            attendancePercentage: 0,
+            totalStudents: activeStudentRolls.length
+          };
+        }
+        
+        // Get unique student roll numbers from attendance records
         const uniqueStudents = [...new Set(attendanceRecords.map(record => record.rollNo))];
         const totalStudents = uniqueStudents.length;
         
         // Count total present attendance
         const totalPresent = attendanceRecords.filter(record => record.isPresent && record.isApproved).length;
         
-        // Total possible attendance (total records)
+        // Total possible attendance (total approved records)
         const totalAttendance = attendanceRecords.filter(record => record.isApproved).length;
         
         // Calculate percentage
@@ -369,6 +439,7 @@ export const getFacultyCourses = async (req, res) => {
         
         return {
           ...course.toObject(),
+          courseName: courseNameMap[course.courseCode] || 'Unknown Course',
           attendancePercentage: parseFloat(attendancePercentage.toFixed(2)),
           totalStudents
         };
@@ -391,77 +462,10 @@ export const getFacultyCourses = async (req, res) => {
   }
 };
 
-export const addFacultyCourse = async (req, res) => {
-  try {
-    const { facultyId, courseCode, year, session, status } = req.body;
-    
-    // Validate required fields
-    if (!facultyId || !courseCode || !year || !session) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing required fields. facultyId, courseCode, year, and session are required.'
-      });
-    }
-    
-    // Validate year format
-    if (!Number.isInteger(year) || year < 2000 || year > 2100) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid year format. Year must be a valid number between 2000 and 2100.'
-      });
-    }
-    
-    // Check if faculty course combination already exists for the given year and session
-    const existingCourse = await FacultyCourse.findOne({
-      facultyId,
-      courseCode,
-      year,
-      session
-    });
-    
-    if (existingCourse) {
-      return res.status(409).json({
-        success: false,
-        message: 'Faculty is already assigned to this course for the specified year and session.'
-      });
-    }
-    
-    // Create new faculty course
-    const newFacultyCourse = new FacultyCourse({
-      facultyId,
-      courseCode,
-      year,
-      session,
-      status: status || 'Ongoing', // Use provided status or default to 'Ongoing'
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    });
-    
-    // Save to database
-    await newFacultyCourse.save();
-    
-    return res.status(201).json({
-      success: true,
-      message: 'Faculty course added successfully',
-      data: newFacultyCourse
-    });
-    
-  } catch (error) {
-    console.error('Error in addFacultyCourse:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: error.message
-    });
-  }
-};
-
 export const getStudents = async (req, res) => {
   try {
     const { id } = req.params;
     const courseId = id
-    console.log("Course id")
-    console.log(courseId)
     if (!courseId) {
       return res.status(400).json({ message: 'Course ID is required' });
     }
@@ -469,7 +473,8 @@ export const getStudents = async (req, res) => {
     // Find all students who are enrolled (Approved status) in the given course
     const enrolledStudents = await StudentCourse.find({
       courseId,
-      status: 'Approved'
+      status: 'Approved',
+      isCompleted : false
     }).select('rollNo -_id'); // Only select rollNo, exclude _id
 
     // Extract roll numbers from the result
@@ -486,11 +491,6 @@ export const modifyAttendanceRecord = async (req, res) => {
   // Extract data from request body
   const { courseCode, date, isPresent, isApproved } = req.body;
   const rollNo = req.headers['rollno'];
-
-  console.log("🛠️ MODIFY ATTENDANCE");
-  console.log("Request Body:", req.body);
-  console.log("Roll No:", rollNo);
-
   try {
     // Validate required fields
     if (!courseCode || !rollNo || !date) {
@@ -589,7 +589,7 @@ export const getApprovalRequests = async (req, res) => {
   }
 };
 
-export const approveCourse = async (req, res) => {
+export const approveAttendance = async (req, res) => {
   try {
     const { courseCode, rollNo, date } = req.body;
 

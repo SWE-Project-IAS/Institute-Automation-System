@@ -37,7 +37,24 @@ const DocumentAccessControl = () => {
       });
 
       const response = await newRequest.get(`/acadadmin/students/document-access?${queryParams}`);
-      setStudents(response.data.students);
+      
+      // Fetch CPI for each student
+      const studentsWithCPI = await Promise.all(
+        response.data.students.map(async (student) => {
+          try {
+            const performanceData = await newRequest.get(`/student/${student.userId}/performance`);
+            const cpi = performanceData.data.performance?.length > 0 
+              ? performanceData.data.performance[performanceData.data.performance.length - 1].cpi 
+              : null;
+            return { ...student, cgpa: cpi };
+          } catch (error) {
+            console.error(`Error fetching CPI for student ${student.rollNo}:`, error);
+            return { ...student, cgpa: null };
+          }
+        })
+      );
+
+      setStudents(studentsWithCPI);
       setPagination({
         currentPage: parseInt(response.data.currentPage),
         totalPages: parseInt(response.data.totalPages),
@@ -170,26 +187,44 @@ const DocumentAccessControl = () => {
         semester: updatedData.semester
       });
 
-      // Fetch updated student data
-      const queryParams = new URLSearchParams({
-        page: pagination.currentPage,
-        limit: 10,
-        ...filters
-      });
-      
-      const response = await newRequest.get(`/acadadmin/students/document-access?${queryParams}`);
-      setStudents(response.data.students);
-      
-      // Update selected student with new data
-      const updatedStudent = response.data.students.find(s => s.id === selectedStudent.id);
-      if (updatedStudent) {
-        setSelectedStudent(updatedStudent);
-      }
+      // Fetch performance data to get latest CPI
+      const performanceData = await newRequest.get(`/student/${updatedData.userId}/performance`);
+      const cpi = performanceData.data.performance?.length > 0 
+        ? performanceData.data.performance[performanceData.data.performance.length - 1].cpi 
+        : null;
 
+      // Create updated student object with all the new data
+      const updatedStudent = {
+        ...updatedData,
+        cgpa: cpi,
+        name: updatedData.name,
+        email: updatedData.email,
+        contact: updatedData.contact,
+        hostel: updatedData.hostel,
+        roomNo: updatedData.roomNo,
+        branch: updatedData.branch,
+        program: updatedData.program,
+        semester: updatedData.semester
+      };
+
+      // Update the students list with the new data
+      setStudents(prevStudents => 
+        prevStudents.map(student => 
+          student.id === updatedData.id ? updatedStudent : student
+        )
+      );
+      
+      // Update selected student
+      setSelectedStudent(updatedStudent);
       setIsEditing(false);
       toast.success("Student information updated successfully");
+
+      // Refetch the entire list to ensure we have the latest data
+      fetchStudents();
+      
     } catch (error) {
       toast.error(error.response?.data?.message || "Error updating student information");
+      console.error("Error updating student:", error);
     }
   };
 
@@ -360,18 +395,7 @@ const DocumentAccessControl = () => {
                 </div>
                 <div>
                   <label className="block text-sm text-gray-600">CGPA</label>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      step="0.01"
-                      name="cgpa"
-                      value={editData.cgpa}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{student.cgpa}</p>
-                  )}
+                  <p className="text-gray-900">{student.cgpa || "Not available"}</p>
                 </div>
               </div>
             </div>
@@ -618,6 +642,7 @@ const DocumentAccessControl = () => {
                       <th className="border p-2">Transcript</th>
                       <th className="border p-2">ID Card</th>
                       <th className="border p-2">Fee Receipt</th>
+                      <th className="border p-2">CGPA</th>
                       <th className="border p-2">Actions</th>
                     </tr>
                   </thead>
@@ -666,6 +691,9 @@ const DocumentAccessControl = () => {
                               checked={student.access.feeReceipt}
                               onChange={() => handleToggleAccess(student.id, "feeReceipt")}
                             />
+                          </td>
+                          <td className="border p-2">
+                            {student.cgpa || "-"}
                           </td>
                           <td className="border p-2">
                             <button

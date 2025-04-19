@@ -149,8 +149,12 @@ function FacultyCourseStudents() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center mb-6">
-        <Link to={`/courses`} className="flex items-center text-blue-600 hover:text-blue-800 mr-4">
+      {/* Improved header section with better spacing and hierarchy */}
+      <div className="flex flex-col mb-6">
+        <Link 
+          to={`/courses`} 
+          className="flex items-center text-blue-600 hover:text-blue-800 mb-2 w-fit"
+        >
           <FaArrowLeft className="mr-1" /> Back to Course
         </Link>
         <h1 className="text-3xl font-bold text-gray-800">
@@ -442,12 +446,6 @@ function FacultyCourseStudents() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
-                          {/* <Link 
-                            to={`/faculty/course/${courseId}/student/${student.rollNo}`}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            View
-                          </Link> */}
                           <a 
                             href={`mailto:${student.email}`}
                             className="text-green-600 hover:text-green-900"
@@ -478,7 +476,5 @@ function FacultyCourseStudents() {
     </div>
   );
 }
-
-// Adding missing FaCalendarCheck icon import
 
 export default FacultyCourseStudents;

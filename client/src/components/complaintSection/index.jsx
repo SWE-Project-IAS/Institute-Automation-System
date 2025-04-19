@@ -1,93 +1,111 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useQuery } from '@tanstack/react-query';
-import NewComplaintForm from "./newComplaintForm.jsx";
-import ComplaintDetails from "./ComplaintDetails";
+import React, { useContext, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { RoleContext } from "../../context/Rolecontext.jsx";
 
-const ComplaintSection = () => {
-    const { role } = useContext(RoleContext);
-    const [category, setCategory] = useState("Computer & Comm. Centre");
-    const [subCategory, setSubCategory] = useState("");
-    const [showNewComplaintForm, setShowNewComplaintForm] = useState(false);
-    const [selectedComplaint, setSelectedComplaint] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
+// Import tab components
+import PendingComplaints from "./tabs/PendingComplaints.jsx";
+import InProgressComplaints from "./tabs/InProgressComplaints.jsx";
+import ResolvedComplaints from "./tabs/ResolvedComplaints.jsx";
+import MyComplaints from "./tabs/MyComplaints.jsx";
+import NewComplaintSelection from "./tabs/NewComplaintSelection.jsx";
+import SupportStaffManagement from "./supportStaff/SupportStaffManagement.jsx";
 
-    // Determine if the user is a student or faculty
+/**
+ * ComplaintSection component renders the complaint management interface.
+ * It displays different views based on the user's role and selected page.
+ * returns {JSX.Element} The rendered component.
+ */
+const ComplaintSection = () => {
+    // type {string} - The user's role (e.g., 'student', 'faculty', 'acadAdmin').
+    const { role } = useContext(RoleContext);
+
+    //Determines if the user is a student or faculty.
+    //type {boolean}
     const isStudentOrFaculty = role === "student" || role === "faculty";
 
-    // Default active page based on role
+    // Default active page based on the user's role.
+    // type {string}
     const defaultActivePage = isStudentOrFaculty ? "My Complaints" : "Pending";
+
+    // type {string} - Current active page in the complaint section.
     const [activePage, setActivePage] = useState(defaultActivePage);
 
-    const endpoint = (role==="student" || role === "faculty") ?"http://localhost:8000/api/complaints/":"http://localhost:8000/api/complaints/admin";
-    // Fetch complaint history
+    // For student/faculty view
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+
+    /**
+     * API endpoint for fetching complaints based on user role.
+     * type {string}
+     */
+
+    const endpoint = role === "student" || role === "faculty" ? "https://ias-server-cpoh.onrender.com/api/complaints/" : "https://ias-server-cpoh.onrender.com/api/complaints/admin";
+
+    /**
+     * Fetches complaint data using React Query.
+     * type {object} - Contains complaint data, loading state, error state, and refetch function.
+     */
     const {
-        data: complaintData = [],
+        data: responseData,
         isLoading,
         isError,
-        refetch
+        refetch,
     } = useQuery({
-        queryKey: ["complaints", role],
+        queryKey: ["complaints", role, isStudentOrFaculty ? page : null, isStudentOrFaculty ? limit : null],
         queryFn: async () => {
-            const response = await fetch(endpoint, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-                credentials: "include",
-            });
+            if (isStudentOrFaculty) {
+                // For students/faculty, fetch paginated data for "My Complaints"
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                    body: JSON.stringify({ page, limit }),
+                    credentials: "include",
+                });
 
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || "Failed to fetch complaints");
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.message || "Failed to fetch complaints");
+                }
+                return result;
+            } else {
+                // For admin, just fetch a small list to get counts for the tabs
+                // We won't display this data in the tabs as they'll fetch their own data
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                    body: JSON.stringify({ page: 1, limit: 1000 }), // Fetch a large number for counting
+                    credentials: "include",
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.message || "Failed to fetch complaints");
+                }
+                return result;
             }
-            return result.data || [];
         },
     });
 
-    // Categories for complaints
-    const categories = {
-        "Computer & Comm. Centre": ["Automation", "Email Services", "HPC Support", "Network", "PC & Peripherals", "Telephone", "Turnitin", "Web Services", "Other"],
-        "Hostel/Resident Complaints": ["Plumbing", "Room Servicing", "Electricity Issues", "Furniture Repair", "Cleaning Services", "Other"],
-        "Infrastructure Complaints": ["Gym", "Badminton Hall", "Table Tennis Court", "Ground", "Swimming Pool", "Food Court", "Other"],
+    // Derived state from responseData
+    const complaintData = responseData?.data || [];
+    const pagination = responseData?.pagination;
+
+    // Handle page change for student/faculty view
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
     };
 
-    // Filter complaints based on search query and active page
-    const filteredComplaints = complaintData.filter((complaint) =>
-        complaint.title?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        (isStudentOrFaculty ? activePage === "My Complaints" : complaint.status === activePage)
-    );
-
-    // Handle GO button click to show the NewComplaintForm
-    const handleGoClick = () => {
-        setShowNewComplaintForm(true);
+    // Handle page size change for student/faculty view
+    const handleLimitChange = (newLimit) => {
+        setLimit(newLimit);
+        setPage(1); // Reset to first page when changing limit
     };
-
-    // Handle Back button to hide the NewComplaintForm
-    const handleBackClick = (wasNewAdded) => {
-        setShowNewComplaintForm(false);
-        if (wasNewAdded) {
-            refetch();
-        }
-    };
-
-    // Handle View Details button click to show complaint details
-    const handleViewDetails = (complaint) => {
-        setSelectedComplaint(complaint);
-    };
-
-    // Handle Back button from ComplaintDetails
-    const handleBackFromDetails = (wasDeleted) => {
-        setSelectedComplaint(null);
-        if (wasDeleted) {
-            refetch();
-        }
-    };
-
-    useEffect(() => {
-        setSelectedComplaint(null);
-    }, [activePage]);
 
     // If the role is Academic Admin, don't show the complaint section
     if (role === "acadAdmin") {
@@ -95,141 +113,165 @@ const ComplaintSection = () => {
     }
 
     return (
-        <div className="flex flex-col h-[100%] border-1 w-[98%] m-2">
-            {/* Permanent Navbar */}
-            <div className="bg-gray-50 p-2 rounded-lg drop-shadow-md w-[98%] h-auto mb-4 m-auto">
-                <nav className="w-full text-white p-4 h-auto">
-                    <ul className="flex justify-start space-x-8">
+        <div className="flex flex-col border-1 w-[98%] m-2">
+            {/* Improved Navbar with better styling */}
+            <div className="bg-white p-2 rounded-lg shadow-md w-[98%] h-auto mb-4 m-auto">
+                <nav className="w-full p-4 h-auto">
+                    <ul className="flex justify-start space-x-4">
                         <li
-                            className={`text-white px-4 py-2 rounded-md p-2 cursor-pointer ${activePage === (isStudentOrFaculty ? "My Complaints" : "Pending") ? "bg-gray-800" : "bg-gray-600"}`}
+                            className={`px-4 py-2 rounded-md font-medium transition-all duration-200 cursor-pointer ${activePage === (isStudentOrFaculty ? "My Complaints" : "Pending") ? "bg-blue-600 text-white shadow-md" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
                             onClick={() => setActivePage(isStudentOrFaculty ? "My Complaints" : "Pending")}
                         >
                             {isStudentOrFaculty ? "My Complaints" : "Pending"}
+                            {!isStudentOrFaculty && complaintData.filter((c) => c.status === "Pending").length > 0 && <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">{complaintData.filter((c) => c.status === "Pending").length}</span>}
                         </li>
                         <li
-                            className={`text-white px-4 py-2 rounded-md p-2 cursor-pointer ${activePage === (isStudentOrFaculty ? "New Complaint" : "In Progress") ? "bg-gray-800" : "bg-gray-600"}`}
+                            className={`px-4 py-2 rounded-md font-medium transition-all duration-200 cursor-pointer ${activePage === (isStudentOrFaculty ? "New Complaint" : "In Progress") ? "bg-blue-600 text-white shadow-md" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
                             onClick={() => setActivePage(isStudentOrFaculty ? "New Complaint" : "In Progress")}
                         >
                             {isStudentOrFaculty ? "New Complaint" : "In Progress"}
+                            {!isStudentOrFaculty && complaintData.filter((c) => c.status === "In Progress").length > 0 && <span className="ml-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">{complaintData.filter((c) => c.status === "In Progress").length}</span>}
                         </li>
-                        <li
-                            className={`text-white px-4 py-2 rounded-md p-2 cursor-pointer ${activePage === (isStudentOrFaculty ? "Delete Complaint" : "Resolved") ? "bg-gray-800" : "bg-gray-600"}`}
-                            onClick={() => setActivePage(isStudentOrFaculty ? "Delete Complaint" : "Resolved")}
-                        >
-                            {isStudentOrFaculty ? "Delete Complaint" : "Resolved"}
-                        </li>
+
+                        {isStudentOrFaculty ? (
+                            ""
+                        ) : (
+                            <>
+                                <li
+                                    className={`px-4 py-2 rounded-md font-medium transition-all duration-200 cursor-pointer ${activePage === "Resolved" ? "bg-blue-600 text-white shadow-md" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                                    onClick={() => setActivePage("Resolved")}
+                                >
+                                    {"Resolved"}
+                                    {complaintData.filter((c) => c.status === "Resolved").length > 0 && <span className="ml-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">{complaintData.filter((c) => c.status === "Resolved").length}</span>}
+                                </li>
+                                <li
+                                    className={`px-4 py-2 rounded-md font-medium transition-all duration-200 cursor-pointer ${activePage === "Support Staff" ? "bg-blue-600 text-white shadow-md" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                                    onClick={() => setActivePage("Support Staff")}
+                                >
+                                    {"Support Staff"}
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </nav>
             </div>
 
-            {/* Main Content */}
-            <div className="bg-gray-50 p-6 rounded-lg drop-shadow-md w-[98%] min-h-full mb-4 m-auto">
-                {/* Loading and Error States */}
-                {isLoading && <p className="text-gray-600">Loading complaints...</p>}
-                {isError && <p className="text-red-600">Error fetching complaints.</p>}
-
-                {/* New Complaint Form Selection */}
-                {isStudentOrFaculty && activePage === "New Complaint" && !showNewComplaintForm && (
-                    <div className="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-                        <label className="block font-semibold mb-2">Register to:</label>
-                        <select
-                            className="w-full p-2 border rounded-md"
-                            value={category}
-                            onChange={(e) => {
-                                setCategory(e.target.value);
-                                setSubCategory("");
-                            }}
-                        >
-                            {Object.keys(categories).map((cat) => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
-
-                        <label className="block font-semibold mt-4 mb-2">Select Category</label>
-                        <select
-                            className="w-full p-2 border rounded-md"
-                            value={subCategory}
-                            onChange={(e) => setSubCategory(e.target.value)}
-                        >
-                            <option value="">--Select Category--</option>
-                            {categories[category]?.map((cat) => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
-
-                        <button
-                            className="bg-[#28a745] text-white px-4 py-2 rounded-md mt-3"
-                            onClick={handleGoClick}
-                            disabled={!subCategory}
-                        >
-                            GO
-                        </button>
+            {/* Main Content with improved styling */}
+            <div className="bg-white p-6 rounded-lg shadow-md w-[98%] min-h-screen mb-4 m-auto">
+                {/* Loading and Error States with better feedback */}
+                {isLoading && isStudentOrFaculty && (
+                    <div className="flex justify-center items-center h-40">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    </div>
+                )}
+                {isError && isStudentOrFaculty && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                        <span className="block sm:inline">Error fetching complaints. Please try again later.</span>
                     </div>
                 )}
 
-                {/* New Complaint Form */}
-                {isStudentOrFaculty && activePage === "New Complaint" && showNewComplaintForm && (
-                    <div className="relative">
-                        <button
-                            className="absolute top-4 left-4 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
-                            onClick={() => handleBackClick(false)}
-                        >
-                            Back
-                        </button>
-                        <NewComplaintForm
-                            subCategory={subCategory}
-                            category={category}
-                            onSubmit={() => handleBackClick(true)}
-                        />
-                    </div>
-                )}
+                {/* Render the appropriate component based on the active page */}
+                {((!isLoading && !isError) || !isStudentOrFaculty) && (
+                    <>
+                        {/* Student/Faculty Views */}
+                        {isStudentOrFaculty && activePage === "My Complaints" && (
+                            <>
+                                <MyComplaints
+                                    complaintData={complaintData}
+                                    isLoading={isLoading}
+                                    refetch={refetch}
+                                    role={role}
+                                />
 
-                {/* Complaint List View */}
-                {((isStudentOrFaculty && activePage === "My Complaints") || (!isStudentOrFaculty && (activePage === "Pending" || activePage === "In Progress" || activePage === "Resolved")) || (isStudentOrFaculty && activePage === "Delete Complaint")) && !selectedComplaint && (
-                    <div className="max-w-2xl mx-auto">
-                        <div className="flex justify-between items-center mb-4">
-                            <input
-                                type="text"
-                                placeholder="Search complaints..."
-                                className="w-full p-2 border rounded-md"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
+                                {/* Pagination Controls */}
+                                {pagination && (
+                                    <div className="mt-6 flex flex-col sm:flex-row justify-between items-center">
+                                        <div className="flex items-center mb-4 sm:mb-0">
+                                            <span className="mr-2 text-sm text-gray-600">Items per page:</span>
+                                            <select
+                                                className="border rounded p-1 text-sm"
+                                                value={limit}
+                                                onChange={(e) => handleLimitChange(Number(e.target.value))}
+                                            >
+                                                <option value={5}>5</option>
+                                                <option value={10}>10</option>
+                                                <option value={25}>25</option>
+                                                <option value={50}>50</option>
+                                            </select>
+                                            <span className="ml-4 text-sm text-gray-600">
+                                                Showing {(pagination.currentPage - 1) * pagination.pageSize + 1} - {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalItems)} of {pagination.totalItems}
+                                            </span>
+                                        </div>
 
-                        {/* Complaint List */}
-                        {!isLoading && filteredComplaints.length > 0 ? (
-                            filteredComplaints.map((complaint) => (
-                                <div
-                                    key={complaint.id}
-                                    className="flex justify-between items-center p-4 mb-2 border rounded-md"
-                                >
-                                    <div>
-                                        <h3 className="font-semibold">{complaint.title}</h3>
-                                        <p className="text-sm text-gray-600">Date: {new Date(complaint.date).toLocaleDateString()}</p>
-                                        <p className="text-sm text-gray-600">Status: {complaint.status}</p>
+                                        <div className="flex items-center">
+                                            <button
+                                                className="mx-1 px-2 py-1 rounded border bg-gray-100 disabled:opacity-50"
+                                                disabled={pagination.currentPage === 1}
+                                                onClick={() => handlePageChange(1)}
+                                            >
+                                                &laquo;
+                                            </button>
+                                            <button
+                                                className="mx-1 px-2 py-1 rounded border bg-gray-100 disabled:opacity-50"
+                                                disabled={pagination.currentPage === 1}
+                                                onClick={() => handlePageChange(pagination.currentPage - 1)}
+                                            >
+                                                &lt;
+                                            </button>
+
+                                            <span className="mx-2 text-sm">
+                                                Page {pagination.currentPage} of {pagination.totalPages}
+                                            </span>
+
+                                            <button
+                                                className="mx-1 px-2 py-1 rounded border bg-gray-100 disabled:opacity-50"
+                                                disabled={pagination.currentPage === pagination.totalPages}
+                                                onClick={() => handlePageChange(pagination.currentPage + 1)}
+                                            >
+                                                &gt;
+                                            </button>
+                                            <button
+                                                className="mx-1 px-2 py-1 rounded border bg-gray-100 disabled:opacity-50"
+                                                disabled={pagination.currentPage === pagination.totalPages}
+                                                onClick={() => handlePageChange(pagination.totalPages)}
+                                            >
+                                                &raquo;
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button
-                                        className="bg-[#5969ff] text-white px-4 py-2 rounded-md"
-                                        onClick={() => handleViewDetails(complaint)}
-                                    >
-                                        View Details
-                                    </button>
-                                </div>
-                            ))
-                        ) : (
-                            !isLoading && <p className="text-gray-600">No complaints found.</p>
+                                )}
+                            </>
                         )}
-                    </div>
-                )}
 
-                {/* Complaint Details */}
-                {((isStudentOrFaculty && (activePage === "My Complaints" || activePage === "Delete Complaint")) || (!isStudentOrFaculty && (activePage === "Pending" || activePage === "In Progress" || activePage === "Resolved"))) && selectedComplaint && (
-                    <ComplaintDetails
-                        complaint={selectedComplaint}
-                        onBack={handleBackFromDetails}
-                        role={role}
-                    />
+                        {isStudentOrFaculty && activePage === "New Complaint" && <NewComplaintSelection refetch={refetch} />}
+
+                        {/* Admin Views - Each tab now handles its own data fetching and pagination */}
+                        {!isStudentOrFaculty && activePage === "Pending" && (
+                            <PendingComplaints
+                                isLoading={isLoading}
+                                refetch={refetch}
+                                role={role}
+                            />
+                        )}
+
+                        {!isStudentOrFaculty && activePage === "In Progress" && (
+                            <InProgressComplaints
+                                isLoading={isLoading}
+                                refetch={refetch}
+                                role={role}
+                            />
+                        )}
+
+                        {!isStudentOrFaculty && activePage === "Resolved" && (
+                            <ResolvedComplaints
+                                isLoading={isLoading}
+                                refetch={refetch}
+                                role={role}
+                            />
+                        )}
+
+                        {!isStudentOrFaculty && activePage === "Support Staff" && <SupportStaffManagement />}
+                    </>
                 )}
             </div>
         </div>

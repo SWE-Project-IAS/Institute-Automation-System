@@ -14,7 +14,7 @@ const Navbar = () => {
         try {
             // await newRequest.post("/auth/logout");
 
-            const response = await axios.post("http://localhost:8000/api/auth/logout", {}, { withCredentials: true });
+            const response = await axios.post("https://ias-server-cpoh.onrender.com/api/auth/logout", {}, { withCredentials: true });
             localStorage.setItem("currentUser", null);
 
             if (response.status === 200) {
@@ -28,7 +28,6 @@ const Navbar = () => {
     }
 
     return (
-        <>
             <nav className="bg-white py-4 shadow-lg">
                 <div className="container mx-auto flex items-center justify-between px-8">
                     {/* Logo + Title */}
@@ -49,7 +48,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </nav>
-        </>
+    
 
 
     );

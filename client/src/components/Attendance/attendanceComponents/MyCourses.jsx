@@ -11,8 +11,6 @@ import newRequest from "../../../utils/newRequest";
 function MyCourses() {
     const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
     const {email, userId} = userData.user;
-    console.log(email);
-    console.log(userData);
 
     const { isLoading, error, data } = useQuery({
         queryKey: [`${userId}`],
@@ -32,8 +30,6 @@ function MyCourses() {
     const [showStats, setShowStats] = useState(false);
 
     const showStudentStats = (rollNo) => {
-        console.log("#$#$")
-        console.log(rollNo)
         setSelectedStudent(rollNo);
         fetchStudentCourses(rollNo); // Use the parameter directly
         setShowStats(true);
@@ -42,7 +38,7 @@ function MyCourses() {
     const fetchStudentCourses = async (rollNo) => {
 
         try {
-            const response = await fetch("http://localhost:8000/api/attendancelanding/student", {
+            const response = await fetch("https://ias-server-cpoh.onrender.com/api/attendancelanding/student", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -75,16 +71,16 @@ function MyCourses() {
 
                 if (role === "student") {
                     const rollNo =  data?.rollNo;
-                    console.log("Roll no." + rollNo);
                     if (!rollNo) {
                         throw new Error("Roll number not found in localStorage.");
                     }
 
-                    const response = await fetch("http://localhost:8000/api/attendancelanding/student", {
+                    const response = await fetch("https://ias-server-cpoh.onrender.com/api/attendancelanding/student", {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
-                            "rollno": rollNo
+                            "rollno": rollNo,
+                            "role":role
                         }
                     });
 
@@ -104,21 +100,14 @@ function MyCourses() {
                     // Check for any course with attendance below 75%
                     const hasLowAttendance = formattedCourses.some(course => course.percentage < 75);
                     setOverall(!hasLowAttendance);
-                    console.log("Savar");
-                    console.log(formattedCourses);
                     setCourses(formattedCourses);
                 } else if (role === "faculty") {
                     // Fetch faculty courses from the backend
-                    // const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        
-                    console.log("Savar");
-                    //console.log(currentUser);
-                    console.log(userId);
                     if (!userId) {
                         throw new Error("Faculty ID not found in localStorage.");
                     }
 
-                    const response = await fetch("http://localhost:8000/api/attendancelanding/faculty", {
+                    const response = await fetch("https://ias-server-cpoh.onrender.com/api/attendancelanding/faculty", {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
@@ -143,7 +132,6 @@ function MyCourses() {
                         averageAttendance: `${course.attendancePercentage}%`,
                         totalStudents: course.totalStudents
                     }));
-                    console.log(formattedCourses);
                     setCourses(formattedCourses);
                 }
             } catch (error) {
@@ -163,7 +151,7 @@ function MyCourses() {
         if (rollNumber) {
             setLoading(true);
             try {
-                const response = await fetch(`http://localhost:8000/api/attendancelanding/${rollNumber}`);
+                const response = await fetch(`https://ias-server-cpoh.onrender.com/api/attendancelanding/${rollNumber}`);
 
                 if (!response.ok) {
                     throw new Error(`Server responded with status: ${response.status}`);

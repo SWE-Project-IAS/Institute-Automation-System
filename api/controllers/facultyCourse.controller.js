@@ -6,7 +6,7 @@ import { Student } from '../models/student.model.js';
 import { StudentCourse } from '../models/course.model.js';
 
 
-export const getFacultyCourses = async (req, res) => {
+export const getFacultyCourses = async (req, res) => {    
   try {
     const {id}=req.params;
     console.log(id);
@@ -18,10 +18,8 @@ export const getFacultyCourses = async (req, res) => {
         message: 'User ID is required in headers'
       });
     }
-
     // Step 1: Find the faculty using the userId
     const faculty = await Faculty.findOne({ userId });
-
     if (!faculty) {
       return res.status(404).json({
         success: false,

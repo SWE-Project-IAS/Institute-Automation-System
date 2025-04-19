@@ -33,9 +33,7 @@ function UpdateAttendance({ selectedStudent }) {
         };
 
         try {
-            console.log("🔄 Updating attendance for:", courseCode, rollNo, date);
-            
-            const response = await fetch('http://localhost:8000/api/attendancelanding/update', {
+            const response = await fetch('https://ias-server-cpoh.onrender.com/api/attendancelanding/update', {
                 method: 'PUT', 
                 headers: {
                     'Content-Type': 'application/json',

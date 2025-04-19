@@ -5,7 +5,7 @@ const courseSchema = new mongoose.Schema({
     courseCode: { type: String, required: true, unique: true },
     courseName: { type: String, required: true },
     department: { type: String, required: true }, // enum?
-    slot: { type: String },
+    slot: { type: String, required: true },
     announcements: [{
         id: { type: mongoose.Schema.Types.ObjectId, auto: true },
         title: { type: String, required: true },
@@ -70,9 +70,19 @@ const programCourseMappingSchema = new mongoose.Schema({
 });
 
 
+const courseApprovalRequestSchema = new mongoose.Schema({
+    studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
+    courseCode: { type: String, required: true, ref: 'Course' },
+    courseType: { type: String, enum: ['Core', 'Elective', 'Audit'], required: true },
+    status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
+    createdAt: { type: Date, default: Date.now },
+});
+    
+
 
 export const Course = mongoose.model('Course', courseSchema);
 export const StudentCourse = mongoose.model('StudentCourse', studentCourseSchema);
 export const FacultyCourse = mongoose.model('FacultyCourse', facultyCourseSchema);
 export const CourseRegistration = mongoose.model('CourseRegistration', courseRegistrationSchema);
 export const ProgramCourseMapping = mongoose.model('ProgramCourseMapping', programCourseMappingSchema);
+export const CourseApprovalRequest = mongoose.model('CourseApprovalRequest', courseApprovalRequestSchema);

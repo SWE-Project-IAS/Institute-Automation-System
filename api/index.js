@@ -3,17 +3,27 @@ import { connectDB } from "./database/mongoDb.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import mongoose from "mongoose";
+import path from "path";
 import authRoute from "../api/routes/auth.route.js";
 import hostelRoute from "../api/routes/hostel.route.js";
 import studentRoute from "../api/routes/student.route.js";
+import complaintsRouter from "../api/routes/complaints.route.js";
 import createCourseRoute from "../api/routes/createCourse.route.js";
 import acadAdminRoute from "../api/routes/acadAdmin.route.js";
+import facultyRoute from "../api/routes/faculty.route.js";
+import feedbackRoute from "../api/routes/feedback.route.js";
+import { fillFacultyCourse, seedStudentCourses, seedCourses, removeAllStudentsFromCourse } from "../api/scripts/seedDb.js";
+// import {fillFacultyCourse, seedDatabase, seedStudentCourses, seedCourses, seedFacultyCourses, fillFacultyCourse } from "../api/scripts/seedDb.js";
+// import { fillFacultyCourse, seedStudentCourses, seedCourses, seedFacultyCourses } from "../api/scripts/seedDb.js";
+import seedSupportStaff from "./scripts/seedSupportStaff.js";
 import attendanceRoute from "../api/routes/attendance.route.js"
 import assignmentRoute from "../api/routes/assignment.route.js"
+import gradeRoute from "../api/routes/grade.route.js";
 
 import Razorpay from "razorpay";
 import crypto from "crypto"; // Needed for signature verification (production)
+
+const __dirname = path.resolve(); // Get the current directory name
 
 const app = express();
 dotenv.config(); // Load environment variables first
@@ -22,31 +32,45 @@ dotenv.config(); // Load environment variables first
 // const cors = require("cors");
 
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
-app.use(express.json());
+app.use(cors({
+  origin: "http://localhost:3000", 
+  credentials: true, 
+  exposedHeaders: ['Authorization'] // This explicitly exposes the Authorization header
+}));
+app.use(express.json({ limit: "5mb" }));
 app.use(cookieParser());
+
+app.use('/uploads/complaints', express.static(path.join(process.cwd(), 'uploads/complaints')));
 
 app.use("/api/auth",authRoute);
 app.use("/api/hostel",hostelRoute);
 app.use("/api/student",studentRoute);
 app.use("/api/course",createCourseRoute);
+app.use("/api/faculty",facultyRoute);
+app.use("/api/acadadmin", acadAdminRoute);
+app.use("/api/feedback", feedbackRoute);
+app.use("/api/course",createCourseRoute);
 
 app.use("/api/acadadmin", acadAdminRoute);
 app.use("/api/attendancelanding", attendanceRoute);
 app.use("/api/assignment", assignmentRoute);
+app.use("/api/grades", gradeRoute);
+app.use('/api/complaints', complaintsRouter);
  
-const port = process.env.PORT || 8000;
 
 // --- Middleware ---
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true,limit: '5mb' }));
+
+// app.use(express.static(path.join(__dirname, "/client/dist")));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "client","dist","index.html"));
+// });
 
 // --- Initialize Razorpay ---
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
-
-// --- Routes ---
 
 // Endpoint to create a Razorpay order
 app.post("/api/payment/create-order", async (req, res) => {
@@ -115,7 +139,11 @@ app.post("/api/payment/verify", (req, res) => {
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(8000, () => {
+    
+    // Seed support staff data
+    // await seedSupportStaff();
+    
+    app.listen(process.env.PORT ||8000, () => {
       console.log(`Backend server is running on port ${8000}`);
       if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
         console.warn(
@@ -130,3 +158,20 @@ const startServer = async () => {
 };
 
 startServer();
+
+export {app}
+
+// const runSeeds = async () => {
+//   try {
+//     await fillFacultyCourse();
+//     // await seedStudentCourses();
+//     // await seedCourses();
+//     // seedFacultyCourses();
+//     // removeAllStudentsFromCourse();
+//     console.log("All seeding completed successfully!");
+//   } catch (error) {
+//     console.error("Error during seeding:", error);
+//   }
+// };
+
+// runSeeds();

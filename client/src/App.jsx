@@ -4,18 +4,24 @@ import ComplaintSection from './components/complaintSection';
 import HostelLeave from './components/HostelLeave/HostelLeave';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar/Sidebar';
-import CourseRegistration from './components/CourseRegistration';
+import CourseRegistration from './components/registration/courseRegistration';
 import AttendanceLandingPage from './components/Attendance/AttendanceLandingPage';
 import AttendanceCoursePage from './components/Attendance/AttendanceCoursePage';
-import CourseFeedbackSelection from './components/courseFeedback/courseFeedbackSelection.jsx';
-import CourseFeedbackForm from './components/courseFeedback/courseFeedbackForm.jsx';
-import FeedbackConfiguration from './components/courseFeedback/feedbackConfiguration.jsx';
-import FeedbackReports from './components/courseFeedback/feedbackReports.jsx';
+import FeedbackAdmin from './components/courseFeedback/feedbackadmin.jsx';
+import FeedbackFaculty from './components/courseFeedback/feedbackfaculty.jsx';
+import FeedbackStudent from './components/courseFeedback/feedbackstudent.jsx';
+import FeedbackAdminSelect from './components/courseFeedback/feedbackadminSelect.jsx';
+import FeedbackFacultySelect from './components/courseFeedback/feedbackfacultySelect.jsx';
+import FeedbackStudentSelect from './components/courseFeedback/feedbackstudentSelect.jsx';
 import Mess from './components/HostelMess/Mess.jsx';
 import StudentSubscriptionForm from './components/HostelMess/StudentSubscriptionForm.jsx';
 import AdminSubscriptionRequests from './components/HostelMess/AdminSubscriptionRequests.jsx';
 import { Navigate } from "react-router-dom";
-import CourseRegistrationFaculty from './components/registration/faculty_reg_dashboard.jsx';
+import FacultyDashboard from './components/registration/faculty_reg_dashboard.jsx';
+import CourseRegistrationFaculty from './components/registration/faculty_registration_page.jsx';
+import FacultyGradeLanding from './components/Grades/facultyGradeLanding.jsx';
+import SubmitGrades from './components/Grades/sumbitGrades.jsx';
+
 
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -35,6 +41,7 @@ import CreateAssignment from "./components/Assignment/CreateAssignment.jsx";
 import EditAssignment from "./components/Assignment/EditAssignment.jsx";
 import FacultyAssignmentSubmissions from "./components/Assignment/FacultyAssignmentSubmissions.jsx";
 import LoginPage from "./components/LoginPage/Login.jsx";
+import ResetPasswordPage from './components/LoginPage/ResetPasswordPage.jsx';
 import DropCourse from "./components/dropCourse/drop.jsx";
 import CourseAnnouncements from "./components/Announcements/studentAnnouncements.jsx";
 import MyCourses from "./components/mycourses/myCourse.jsx";
@@ -45,7 +52,6 @@ import AdminFeeControl from "./pages/Documents/admin/AdminFeeControl.jsx";
 import { RoleProvider } from './context/Rolecontext.jsx';
 import StudentProfile from './pages/ProfilePage.jsx';
 import TimeTable from './components/TimeTable/timetable.jsx';
-import FacultyDashboard from "./components/registration/faculty_registration_page.jsx";  // New Course Selection Page
 import HostelTransfer from './components/HostelTransfer/HostelTransfer.jsx';
 //import CourseRegistration from "./pages/CourseRegistration";  // New Registration Page
 import { Toaster } from 'react-hot-toast';
@@ -58,6 +64,15 @@ import AnnouncementWrapper from './components/Announcements/announcementWrapper.
 import FacultyCourseStudents from './components/courseStudents/courseStudent.jsx';
 // import CourseStudents from './components/courseStudents/courseStudent.jsx';
 import CompletedCourses from './components/mycourses/CompletedCourses.jsx';
+import DropCourseWrapper from './components/dropCourse/dropCourseWrapper.jsx';
+import NotFound from './pages/Notfound.jsx';
+
+import AddStudents from './components/AddStudents/addStudents.jsx';
+import AddFaculty from './components/AddFaculty/addFaculty.jsx';
+
+import AllAnnouncements from './components/Announcements/AllAnnouncements.jsx';
+import SideAnnouncementWrapper from './components/Announcements/wrapperAnn.jsx';
+
 
 const queryClient = new QueryClient()
 function App() {
@@ -99,6 +114,10 @@ function App() {
         {
             path: "/login",
             element: <LoginPage/>,
+        },
+        {
+            path: "/reset-password/:token",
+            element: <ResetPasswordPage/>,
         },
         {
             path: "/",
@@ -155,6 +174,14 @@ function App() {
                     element: <AssignmentLanding/>
                 },
                 {
+                    path:"/gradeLanding",
+                    element: <FacultyGradeLanding/>
+                },
+                {
+                    path: "/course/:courseID/submitGrades",
+                    element: <SubmitGrades/>
+                },
+                {
                     path:"/course/:courseId/assignments/",
                     element: <AssignmentList/>
                 },
@@ -185,7 +212,7 @@ function App() {
                 },
                 {
                     path:"/dropcourse",
-                    element: <DropCourse/>
+                    element: <DropCourseWrapper/>
                 },
                 {
                     path:"/dropcourseApprovals",
@@ -194,6 +221,10 @@ function App() {
                 {
                     path:"/course/:courseId/announcements",
                     element: <AnnouncementWrapper/>
+                },
+                {
+                    path:"/announcements",
+                    element: <SideAnnouncementWrapper/>
                 },
                 {
                     path:"/courses",
@@ -242,20 +273,28 @@ function App() {
                     ]
                 },
                 {
-                    path: "/courseFeedback",
-                    element: <CourseFeedbackSelection/>
+                    path: "/student/feedback",
+                    element: <FeedbackStudentSelect/>
                 },
                 {
-                    path: "/courseFeedback/selectedCourse",
-                    element: <CourseFeedbackForm/>
+                    path: "/student/feedback/submit",
+                    element: <FeedbackStudent/>
                 },
                 {
-                    path: "/feedbackConfiguration",
-                    element: <FeedbackConfiguration/>
+                    path: "/acadAdmin/feedback",
+                    element: <FeedbackAdminSelect/>
                 },
                 {
-                    path: "/feedbackReports",
-                    element: <FeedbackReports/>
+                    path: "/acadAdmin/feedback/view",
+                    element: <FeedbackAdmin/>
+                },
+                {
+                    path: "/faculty/feedback",
+                    element: <FeedbackFacultySelect/>
+                },
+                {
+                    path: "/faculty/feedback/view",
+                    element: <FeedbackFaculty/>
                 },
                 {
                     path: "/profile",
@@ -280,9 +319,21 @@ function App() {
                 {
                     path:"/acadAdmin/feeManagement",
                     element : <AdminFeeControl/>,
+                },
+                {
+                    path:"/acadAdmin/add-students",
+                    element : <AddStudents/>,
+                },
+                {
+                    path:"/acadAdmin/facultyManagement",
+                    element : <AddFaculty/>,
                 }
             ],
         },
+        {
+            path: "*",
+            element: <NotFound/>
+        }
     ]);
     return (
         <RoleProvider>
