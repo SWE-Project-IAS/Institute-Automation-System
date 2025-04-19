@@ -6,6 +6,7 @@ import { User } from '../models/user.model.js';
 import { CourseApprovalRequest } from "../models/course.model.js";
 import { GlobalFeedbackConfig } from '../models/feedback.model.js';
 import { Attendance } from '../models/attendance.model.js';
+import { Assignment }  from '../models/assignment.model.js';
 
 // Get basic faculty info
 export const getFaculty = async (req, res) => {
@@ -163,6 +164,11 @@ try {
           ? ((totalPresent / totalAttendance) * 100).toFixed(2)
           : 0;
         const avgAttendance = attendancePercentage;
+
+
+        // Count assignments for this course from Assignment schema
+          // Count documents matching the course code
+          const assignmentCounter = await Assignment.countDocuments({ courseCode: courseDetails.courseCode });
        
         return {
             id: courseDetails.courseCode,
@@ -170,7 +176,7 @@ try {
             department: courseDetails.department,
             credits: courseDetails.credits,
             students: studentCount,
-            assignments: assignmentCount,
+            assignments: assignmentCounter,
             avgAttendance: avgAttendance,
             announcements: courseDetails.announcements ? courseDetails.announcements.length : 0,
             year: course.year,
