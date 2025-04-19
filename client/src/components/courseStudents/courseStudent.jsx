@@ -206,7 +206,7 @@ function FacultyCourseStudents() {
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
+            {/* <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500">Average Attendance</p>
@@ -216,7 +216,7 @@ function FacultyCourseStudents() {
                   <FaCalendarCheck className="text-blue-500 text-xl" />
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Search and Filter Bar */}
@@ -368,7 +368,7 @@ function FacultyCourseStudents() {
                         )}
                       </div>
                     </th>
-                    <th 
+                    {/* <th 
                       scope="col" 
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                       onClick={() => toggleSort("attendance")}
@@ -381,7 +381,7 @@ function FacultyCourseStudents() {
                             <FaSortAlphaUp className="ml-1" />
                         )}
                       </div>
-                    </th>
+                    </th> */}
                     <th 
                       scope="col" 
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
@@ -427,7 +427,7 @@ function FacultyCourseStudents() {
                           {student.registrationStatus}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="flex items-center">
                           <div className="w-16 bg-gray-200 rounded-full h-2">
                             <div 
@@ -440,7 +440,7 @@ function FacultyCourseStudents() {
                           </div>
                           <span className="ml-2">{student.attendance}%</span>
                         </div>
-                      </td>
+                      </td> */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {student.grade || "-"}
                       </td>
