@@ -5,6 +5,7 @@ import { Assignment } from "../models/assignment.model.js";
 import { Student } from "../models/student.model.js";
 import { StudentCourse } from "../models/course.model.js";
 import { User } from "../models/user.model.js";
+// import { Submission } from "../models/submission.model.js";
 
 export const getFacultyCourses = async (req, res) => {
     const {userId} = req.params;
@@ -371,4 +372,41 @@ export const getUser = async (req, res) => {
             error: error.message
         });
     }
+};
+
+export const submitGrades = async (req, res) => {
+  try {
+    const { courseId,assignmentId,submissionId, marks } = req.body;
+
+    if (!courseId||!assignmentId||!submissionId || typeof marks !== "number" || marks < 0 || marks > 100) {
+      return res.status(400).json({ success: false, message: "Invalid submission ID or marks" });
+    }
+    const assignment = await Assignment.findOne({assignmentNumber : assignmentId,courseCode:courseId});
+    if (!assignment) {
+      console.log("Assignment not found:", courseId); // Debugging line
+      return res.status(404).json({ success: false, message: "Assignment not found" });
+    }
+
+    const submission = assignment.submissions.find(
+      (sub) => sub.studentRollNo === submissionId
+    );
+
+    if (!submission) {
+      return res.status(404).json({ success: false, message: "Submission not found for this student" });
+    }
+
+    // Update marks
+    submission.marks = marks;
+
+    await assignment.save();
+    console.log("Marks updated:", submission); // Debugging line
+    return res.status(200).json({
+      success: true,
+      message: "Marks submitted successfully",
+      // submission: updated,
+    });
+  } catch (error) {
+    console.error("Error submitting marks:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
 };
