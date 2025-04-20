@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
     
     try {
       // Fixed: Added quotes around the URL
-      const response = await axios.post(`https://ias-server-cpoh.onrender.com/api/auth/reset-password/${token}`, {
+      const response = await axios.post(`process.env.REACT_APP_API_URL/auth/reset-password/${token}`, {
         password
       });
       

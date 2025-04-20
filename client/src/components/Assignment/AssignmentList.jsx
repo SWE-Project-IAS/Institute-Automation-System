@@ -19,7 +19,7 @@ export default function AssignmentList() {
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        const res = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/course/${courseId}/assignments`);
+        const res = await fetch(`process.env.REACT_APP_API_URL/assignment/course/${courseId}/assignments`);
         const data = await res.json();
 
         if (res.ok) {
@@ -42,7 +42,7 @@ export default function AssignmentList() {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/course/${courseId}`);
+        const res = await fetch(`process.env.REACT_APP_API_URL/assignment/course/${courseId}`);
         const data = await res.json();
         if (res.ok) {
           setCourse(data.data);
@@ -65,7 +65,7 @@ export default function AssignmentList() {
     try {
       console.log("Deleting assignment...", { courseId, assignmentId });
   
-      const res = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`, {
+      const res = await fetch(`process.env.REACT_APP_API_URL/assignment/${courseId}/${assignmentId}`, {
         method: "DELETE",
       });
   
