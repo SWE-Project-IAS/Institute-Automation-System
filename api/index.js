@@ -23,7 +23,7 @@ import gradeRoute from "../api/routes/grade.route.js";
 import Razorpay from "razorpay";
 import crypto from "crypto"; // Needed for signature verification (production)
 
-const __dirname = path.resolve(); // Get the current directory name
+// const __dirname = path.resolve(); // Get the current directory name
 
 const app = express();
 dotenv.config(); // Load environment variables first
@@ -33,8 +33,9 @@ dotenv.config(); // Load environment variables first
 
 
 app.use(cors({
-  origin: "http://localhost:3000", 
+  origin: `${process.env.CLIENT_URL}`, 
   credentials: true, 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   exposedHeaders: ['Authorization'] // This explicitly exposes the Authorization header
 }));
 app.use(express.json({ limit: "5mb" }));

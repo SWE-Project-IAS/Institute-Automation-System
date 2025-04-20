@@ -91,7 +91,7 @@ const HostelLeaveStudent = () => {
                 reason: formData.reason,
             };
             await newRequest.post('/hostel/leave', newReq);
-            await refetch(); // <-- Add this line
+            await refetch();
             setResponseMessage('Leave request submitted successfully.');
             setShowForm(false);
             setFormData({ startDate: '', endDate: '', reason: '' }); // Clear form after success

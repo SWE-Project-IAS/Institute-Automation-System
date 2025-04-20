@@ -6,8 +6,6 @@ import mongoose from "mongoose";
 
 export const studentLeave = async (req, res) => {
   try {
-    // console.log("Hello");
-    // console.log(req.body);
     const { startDate, endDate, email, reason } = req.body;
 
     if (!startDate || !endDate) {
@@ -188,7 +186,7 @@ export const updateTransferRequest = async (req, res) => {
     // Make a GET request to fetch the userId using the rollNo
     let userId;
     try {
-      const response = await axios.get(`https://ias-server-cpoh.onrender.com/api/student/${rollNo}/rollno`);
+      const response = await axios.get(`${process.env.SERVER_URL}/student/${rollNo}/rollno`);
       if (response.status === 200) {
         userId = response.data.userId;
       } else {
@@ -204,7 +202,7 @@ export const updateTransferRequest = async (req, res) => {
     if (status === 'Approved') {
       try {
         // Make a PUT request to update the student's profile
-        const response = await axios.put(`https://ias-server-cpoh.onrender.com/api/student/${userId}/profile`, {
+        const response = await axios.put(`${process.env.SERVER_URL}/student/${userId}/profile`, {
           hostel: newHostel
         });
 

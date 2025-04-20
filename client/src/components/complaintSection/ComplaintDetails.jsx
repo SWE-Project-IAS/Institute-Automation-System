@@ -74,7 +74,7 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
     const deleteMutation = useMutation({
         mutationFn: async () => {
 
-            const res = await fetch("https://ias-server-cpoh.onrender.com/api/complaints/delete", {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/complaints/delete`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -100,7 +100,7 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
     const markAsDoneMutation = useMutation({
         mutationFn: async () => {
 
-            const res = await fetch("https://ias-server-cpoh.onrender.com/api/complaints/admin/updateStatus", {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/complaints/admin/updateStatus`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -133,7 +133,7 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
             };
 
             
-            const res = await fetch("https://ias-server-cpoh.onrender.com/api/complaints/admin/assign", {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/complaints/admin/assign`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

@@ -27,7 +27,7 @@ function AddAttendance({ selectedStudent }) {
         };
 
         try {
-            const response = await fetch('https://ias-server-cpoh.onrender.com/api/attendancelanding/add', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

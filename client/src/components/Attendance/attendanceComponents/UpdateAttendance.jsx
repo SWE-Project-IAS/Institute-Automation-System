@@ -33,7 +33,7 @@ function UpdateAttendance({ selectedStudent }) {
         };
 
         try {
-            const response = await fetch('https://ias-server-cpoh.onrender.com/api/attendancelanding/update', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/update`, {
                 method: 'PUT', 
                 headers: {
                     'Content-Type': 'application/json',

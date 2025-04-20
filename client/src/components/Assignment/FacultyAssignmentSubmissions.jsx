@@ -13,7 +13,7 @@ export default function FacultyAssignmentSubmissions() {
     const fetchAssignment = async () => {
       try {
         const response = await fetch(
-          `https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`
+          `${process.env.REACT_APP_API_URL}/assignment/${courseId}/${assignmentId}`
         );
 
         const contentType = response.headers.get("content-type");
@@ -55,7 +55,7 @@ export default function FacultyAssignmentSubmissions() {
 
     setSubmitting((prev) => ({ ...prev, [submissionId]: true }));
     try {
-      const response = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/assignment/${courseId}/${assignmentId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

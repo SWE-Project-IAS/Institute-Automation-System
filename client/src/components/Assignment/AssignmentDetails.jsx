@@ -21,7 +21,7 @@
 
     useEffect(() => {
       const fetchStudent = async () => {
-        const res = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/student/${userId}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/assignment/student/${userId}`);
         const data = await res.json();
         if (res.ok) setStudent(data.student);
       };
@@ -31,7 +31,7 @@
 
     useEffect(() => {
       const fetchUser = async () => {
-        const res = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${userId}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/assignment/${userId}`);
         const data = await res.json();
         if (res.ok) setUser(data.user);
       };
@@ -41,7 +41,7 @@
 
     useEffect(() => {
       const fetchAssignment = async () => {
-        const res = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/assignment/${courseId}/${assignmentId}`);
         const data = await res.json();
         if (res.ok) {
           const dueDate = new Date(data.assignment.dueDate);
@@ -79,7 +79,7 @@
 
       try {
         const res = await fetch(
-          `https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}/submit`,
+          `${process.env.REACT_APP_API_URL}/assignment/${courseId}/${assignmentId}/submit`,
           {
             method: "POST",
             body: formData,
@@ -100,7 +100,7 @@
 
     const handleUndo = async () => {
       const res = await fetch(
-        `https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}/undo/${student.rollNo}`,
+        `${process.env.REACT_APP_API_URL}/assignment/${courseId}/${assignmentId}/undo/${student.rollNo}`,
         { method: "DELETE" }
       );
       if (res.ok) {

@@ -19,7 +19,7 @@ const StaffComplaintsModal = ({ staff, onClose }) => {
         }
 
         const token = localStorage.getItem("accessToken");
-        const response = await fetch("https://ias-server-cpoh.onrender.com/api/complaints/admin/details", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/complaints/admin/details`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
