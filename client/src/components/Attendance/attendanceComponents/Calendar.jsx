@@ -47,7 +47,7 @@ function MyCalendar({ selectedStudent }) {
 
     const fetchEventData = async (rollNo) => {
         try {
-            const response = await fetch(`process.env.REACT_APP_API_URL/attendancelanding/student/${courseId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/student/${courseId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

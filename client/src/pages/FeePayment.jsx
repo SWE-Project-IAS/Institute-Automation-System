@@ -197,7 +197,7 @@ const FeePayment = () => {
         return;
       }
 
-      const backendUrl = "process.env.REACT_APP_API_URL/payment/create-order";
+      const backendUrl = `${process.env.REACT_APP_API_URL}/payment/create-order`;
       const orderPayload = { amount: payableAmount, currency: "INR" };
 
       console.log("Sending to backend:", orderPayload);

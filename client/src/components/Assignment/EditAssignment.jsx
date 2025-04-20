@@ -21,7 +21,7 @@ export default function EditAssignment() {
     }
 
     try {
-      const res = await fetch(`process.env.REACT_APP_API_URL/assignment/${courseId}/${assignmentId}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/assignment/${courseId}/${assignmentId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export default function EditAssignment() {
   useEffect(() => {
     const fetchAssignment = async () => {
       try {
-        const res = await fetch(`process.env.REACT_APP_API_URL/assignment/${courseId}/${assignmentId}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/assignment/${courseId}/${assignmentId}`);
         const data = await res.json();
   
         if (res.ok) {

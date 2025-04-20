@@ -15,7 +15,7 @@ function SearchableStudentDropdown({ courseId, onStudentSelect }) {
             setLoading(true);
             try {
                 if (role === "faculty") {
-                    const response = await fetch(`process.env.REACT_APP_API_URL/attendancelanding/faculty/${courseId}`);
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/faculty/${courseId}`);
                     const data = await response.json();
                     
                     if (data?.rollNumbers) {
@@ -26,7 +26,7 @@ function SearchableStudentDropdown({ courseId, onStudentSelect }) {
                         setStudents(students);
                     }
                 } else if (role === 'acadAdmin') {
-                    const response = await fetch('process.env.REACT_APP_API_URL/attendancelanding/admin/student');
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/admin/student`);
                     const data = await response.json();
                     
                     if (data?.data) {

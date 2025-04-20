@@ -27,7 +27,7 @@ const PendingComplaints = ({ isLoading: initialLoading, refetch: refetchAll, rol
   } = useQuery({
     queryKey: ["pendingComplaints", page, limit],
     queryFn: async () => {
-      const response = await fetch("process.env.REACT_APP_API_URL/complaints/admin/status", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/complaints/admin/status`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

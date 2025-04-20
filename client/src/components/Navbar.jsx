@@ -14,7 +14,7 @@ const Navbar = () => {
         try {
             // await newRequest.post("/auth/logout");
 
-            const response = await axios.post("process.env.REACT_APP_API_URL/auth/logout", {}, { withCredentials: true });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/logout`, {}, { withCredentials: true });
             localStorage.setItem("currentUser", null);
 
             if (response.status === 200) {

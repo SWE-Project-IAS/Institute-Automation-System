@@ -32,7 +32,7 @@ export default function LoginPage() {
         role: role
       }
 
-      const response = await axios.post("process.env.REACT_APP_API_URL/auth/login", user, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, user, {
         withCredentials: true,
       });
 
@@ -67,7 +67,7 @@ export default function LoginPage() {
   
     try {
       // Send password reset request to the server
-      const response = await axios.post("process.env.REACT_APP_API_URL/auth/forgot-password", {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/forgot-password`, {
         email: resetEmail
       });
   

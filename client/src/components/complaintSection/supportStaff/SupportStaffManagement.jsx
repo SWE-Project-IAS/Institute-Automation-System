@@ -70,7 +70,7 @@ const SupportStaffManagement = () => {
     } = useQuery({
         queryKey: ["supportStaff"],
         queryFn: async () => {
-            const response = await fetch("process.env.REACT_APP_API_URL/complaints/admin/supportStaff", {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/complaints/admin/supportStaff`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -162,7 +162,7 @@ const SupportStaffManagement = () => {
         }
 
         try {
-            const response = await fetch("process.env.REACT_APP_API_URL/complaints/admin/supportStaff", {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/complaints/admin/supportStaff`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -203,7 +203,7 @@ const SupportStaffManagement = () => {
     // Handler for deleting a support staff
     const handleDeleteStaff = async (staffId) => {
         try {
-            const response = await fetch("process.env.REACT_APP_API_URL/complaints/admin/supportStaff", {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/complaints/admin/supportStaff`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

@@ -24,7 +24,7 @@ export default function AssignmentLanding() {
       try {
         console.log(userId)
         const response = await fetch(
-          `process.env.REACT_APP_API_URL/assignment/${role}/${userId}/courses`
+          `${process.env.REACT_APP_API_URL}/assignment/${role}/${userId}/courses`
         );
         const data = await response.json();
         if (response.ok) {

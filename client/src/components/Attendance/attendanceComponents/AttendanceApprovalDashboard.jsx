@@ -16,13 +16,13 @@ const AttendanceApprovalDashboard = () => {
     const fetchData = async () => {
       try {
         // Fetch courses
-        const coursesResponse = await fetch('process.env.REACT_APP_API_URL/attendancelanding/admin');
+        const coursesResponse = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/admin`);
         if (!coursesResponse.ok) throw new Error('Failed to fetch courses');
         const coursesData = await coursesResponse.json();
         setCourses(coursesData.data || coursesData);
 
         // Fetch approval requests
-        const approvalsResponse = await fetch('process.env.REACT_APP_API_URL/attendancelanding/admin/approval');
+        const approvalsResponse = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/admin/approval`);
         if (!approvalsResponse.ok) throw new Error('Failed to fetch approval requests');
         const approvalsData = await approvalsResponse.json();
         setAttendanceRequests(approvalsData);
@@ -41,7 +41,7 @@ const AttendanceApprovalDashboard = () => {
   // Handle approval of attendance request - FIXED endpoint and state handling
   const handleApprove = async (request) => {
     try {
-      const response = await fetch('process.env.REACT_APP_API_URL/attendancelanding/admin/approval', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/admin/approval`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const AttendanceApprovalDashboard = () => {
   const handleApproveAll = async () => {
     try {
       const approvalPromises = filteredRequests.map(request => 
-        fetch('process.env.REACT_APP_API_URL/attendancelanding/admin/approval', {
+        fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/admin/approval`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

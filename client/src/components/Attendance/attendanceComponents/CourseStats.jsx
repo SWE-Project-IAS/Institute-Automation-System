@@ -115,7 +115,7 @@ export const CourseStats = () => {
           // Upload to server
           setSubmitted('loading');
           try {
-            const response = await fetch(`process.env.REACT_APP_API_URL/attendancelanding/add/bulk/${courseId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/add/bulk/${courseId}`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -157,7 +157,7 @@ export const CourseStats = () => {
   const fetchAttendance = async (rollNo) => {
     try {
 
-      const response = await fetch(`process.env.REACT_APP_API_URL/attendancelanding/student/${courseId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/attendancelanding/student/${courseId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

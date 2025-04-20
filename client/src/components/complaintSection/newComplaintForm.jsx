@@ -23,7 +23,7 @@ const NewComplaintForm = ({ category, subCategory, onBack }) => {
     const submitComplaint = async (formData) => {
         const accessToken = localStorage.getItem("accessToken");
 
-        const res = await fetch("process.env.REACT_APP_API_URL/complaints/create", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/complaints/create`, {
 
             method: "POST",
             headers: {
