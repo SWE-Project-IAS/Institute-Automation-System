@@ -6,7 +6,7 @@ import { Course, FacultyCourse, ProgramCourseMapping } from '../models/course.mo
 import { Faculty } from '../models/faculty.model.js';
 import { User } from '../models/user.model.js';
 
-const TEST_DB_URI = 'mongodb+srv://kevintj916:VvLxpm85TJLuxr0B@institutionautomationcl.bn7xvyp.mongodb.net/?retryWrites=true&w=majority&appName=institutionAutomationclu';
+const TEST_DB_URI = process.env.TEST_DB_URI;
 const agent = request(app);
 
 // Connect to test database before all tests
@@ -19,13 +19,11 @@ afterAll(async () => {
     await mongoose.connection.db.dropDatabase();
     await closeDB();
 });
-// ... (previous imports remain same)
 
 describe('POST /api/course/create-course', () => {
     let testUser;
     let testFaculty;
 
-    // Setup remains same
     beforeEach(async () => {
         testUser = new User({
             name: 'Test Faculty',
@@ -65,7 +63,7 @@ describe('POST /api/course/create-course', () => {
             slot: 'B',
             courseDepartment: 'Computer Science',
             credits: 4,
-            faculty: testFaculty._id,
+            faculty: testUser._id,
             year: 2025,
             session: 'Winter Semester', // Updated to match enum
             configurations: [
@@ -146,7 +144,7 @@ describe('POST /api/course/create-course', () => {
             slot: 'B',
             courseDepartment: 'Computer Science',
             credits: 4,
-            faculty: testFaculty._id,
+            faculty: testUser._id,
             year: 2025,
             session: 'Winter Semester', // Updated to match enum
             configurations: [
