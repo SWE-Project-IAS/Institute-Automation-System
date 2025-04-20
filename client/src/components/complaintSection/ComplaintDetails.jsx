@@ -479,7 +479,7 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
                         <div className="mb-3 bg-gray-100 rounded-lg overflow-hidden flex justify-center">
                             <img
 
-                                src={`https://ias-server-cpoh.onrender.com/uploads/complaints/${complaint.imageUrls[activeImageIndex]}`}
+                                src={complaint.imageUrls[activeImageIndex]}
                                 alt={`Complaint ${activeImageIndex + 1}`}
                                 className="max-h-80 object-contain"
                             />
@@ -496,7 +496,7 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
                                     >
                                         <img
 
-                                            src={`https://ias-server-cpoh.onrender.com/uploads/complaints/${url}`}
+                                            src={url}
                                             alt={`Thumbnail ${index + 1}`}
                                             className="h-16 w-16 object-cover"
                                         />
