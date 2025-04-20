@@ -35,7 +35,7 @@ dotenv.config(); // Load environment variables first
 app.use(cors({
   origin: "http://localhost:3000", 
   credentials: true, 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   exposedHeaders: ['Authorization'] // This explicitly exposes the Authorization header
 }));
 app.use(express.json({ limit: "5mb" }));
