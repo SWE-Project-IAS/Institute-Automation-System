@@ -266,7 +266,6 @@ const HostelLeaveAdmin = () => {
     setRequests(requests.map(req => req.id === id ? { ...req, status: newStatus } : req));
     newRequest.put(`/hostel/leaves/${id}`, { status: newStatus })
       .then(() => {
-        // Optionally, refetch or update state
       })
       .catch(() => {
         setRequests(requests); // revert on error

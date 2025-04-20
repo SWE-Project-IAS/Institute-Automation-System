@@ -6,8 +6,6 @@ import mongoose from "mongoose";
 
 export const studentLeave = async (req, res) => {
   try {
-    // console.log("Hello");
-    // console.log(req.body);
     const { startDate, endDate, email, reason } = req.body;
 
     if (!startDate || !endDate) {
