@@ -215,10 +215,11 @@ describe('Student API Routes', () => {
     describe('GET /api/student/:id/completed-courses', () => {
         it('should fetch completed courses successfully', async () => {
             // First, create a completed course
-            const completedCourse = new Course({
+             const completedCourse = new Course({
                 courseCode: 'CS100',
                 courseName: 'Computer Programming',
                 department: 'Computer Science',
+                slot:'A',
                 credits: 3,
                 maxIntake: 80
             });
