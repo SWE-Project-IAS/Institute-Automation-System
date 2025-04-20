@@ -27,7 +27,7 @@ const InProgressComplaints = ({ isLoading: initialLoading, refetch: refetchAll, 
   } = useQuery({
     queryKey: ["inProgressComplaints", page, limit],
     queryFn: async () => {
-      const response = await fetch("http://localhost:8000/api/complaints/admin/status", {
+      const response = await fetch("https://ias-server-cpoh.onrender.com/api/complaints/admin/status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

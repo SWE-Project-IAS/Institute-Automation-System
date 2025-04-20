@@ -5,6 +5,171 @@ import { User } from '../models/user.model.js';
 import { CourseDropRequest } from '../models/courseDropRequest.model.js';
 import { Course, StudentCourse} from '../models/course.model.js';
 import { FeeBreakdown } from "../models/fees.model.js";
+import bcrypt from "bcrypt";
+import { Faculty } from "../models/faculty.model.js";
+
+// Add new faculty
+export const addFaculty = async (req, res) => {
+  const {
+    name,
+    email,
+    contactNo,
+    address,
+    dateOfBirth,
+    bloodGroup,
+    department,
+    designation,
+    yearOfJoining,
+    specialization,
+    qualifications,
+    experience,
+    publications,
+    achievements,
+    conferences,
+  } = req.body;
+
+  try {
+    // Check for an existing user with this email.
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new Error("User with this email already exists.");
+    }
+
+    const hashedPassword = await bcrypt.hash(email, 10);
+
+    // Create new user document.
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      refreshToken: "abc", // dummy string as a refresh token for testing. 
+      contactNo,
+      address,
+      dateOfBirth,
+      bloodGroup,
+    });
+
+    const savedUser = await newUser.save();
+
+    // Create new faculty document linked to the user.
+    const newFaculty = new Faculty({
+      userId: savedUser._id,
+      email,
+      department,
+      designation,
+      yearOfJoining,
+      specialization,
+      qualifications,
+      experience,
+      publications,
+      achievements,
+      conferences,
+    });
+
+    const savedFaculty = await newFaculty.save();
+
+    return res.status(201).json({
+      message: "Faculty added successfully.",
+    });
+  } catch (error) {
+    console.error("Error in addFaculty:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Add students in bulk
+export const addStudents = async (req, res) => {
+  try {
+    const studentsData = req.body;
+
+    if (!Array.isArray(studentsData) || studentsData.length === 0) {
+      return res.status(400).json({ message: 'No student data provided' });
+    }
+
+    const insertedStudents = [];
+
+    for (const student of studentsData) {
+      const {
+        name,
+        email,
+        contactNo,
+        address,
+        dateOfBirth,
+        bloodGroup,
+        rollNo,
+        fatherName,
+        motherName,
+        department,
+        semester,
+        batch,
+        program,
+        hostel,
+        roomNo,
+      } = student;
+
+      // Skip if required fields are missing
+      if (
+        !name || !email || !rollNo || !fatherName || !motherName ||
+        !department || !batch || !program || !hostel || !roomNo
+      ) {
+        console.warn(`Skipping incomplete student entry: ${email || rollNo}`);
+        continue;
+      }
+
+      // Check for existing user/student
+      const existingUser = await User.findOne({ email });
+      const existingStudent = await Student.findOne({ rollNo });
+
+      if (existingUser || existingStudent) {
+        console.warn(`Skipping duplicate student: ${email}`);
+        continue;
+      }
+
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(rollNo, saltRounds);
+
+      // Create user
+      const newUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+        refreshToken: "abc", // dummy string as a refresh token for testing. 
+        contactNo,
+        address,
+        dateOfBirth,
+        bloodGroup,
+      });
+
+      const savedUser = await newUser.save();
+
+      // Create student
+      const newStudent = new Student({
+        userId: savedUser._id,
+        email,
+        rollNo,
+        fatherName,
+        motherName,
+        department,
+        semester,
+        batch,
+        program,
+        hostel,
+        roomNo,
+      });
+
+      const savedStudent = await newStudent.save();
+      insertedStudents.push({ student: savedStudent, user: savedUser });
+    }
+
+    return res.status(201).json({
+      message: `${insertedStudents.length} students added successfully`,
+      data: insertedStudents,
+    });
+  } catch (error) {
+    console.error('Error adding students:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 // Get all applications with pagination
 export const getAllApplications = async (req, res) => {
@@ -283,7 +448,7 @@ export const addComment = async (req, res) => {
 
 export const addFeeStructure = async (req, res) => {
   try {
-    console.log("Received request body:", req.body);
+    // console.log("Received request body:", req.body);
 
     const processedData = {
       ...req.body,
@@ -487,37 +652,37 @@ export const updateDropRequestStatus = async (req, res) => {
     try {
         const { requestId } = req.params;
         const { status, remarks } = req.body;
-        console.log("Step 1: Received params:", { requestId, status, remarks });
+        // console.log("Step 1: Received params:", { requestId, status, remarks });
 
         const request = await CourseDropRequest.findById(requestId);
-        console.log("Step 2: Fetched drop request:", request);
+        // console.log("Step 2: Fetched drop request:", request);
 
         if (!request) {
-            console.log("Step 2.1: Drop request not found");
+            // console.log("Step 2.1: Drop request not found");
             return res.status(404).json({ message: 'Drop request not found' });
         }
 
         request.status = status;
         request.remarks = remarks;
         await request.save();
-        console.log("Step 3: Updated request status and remarks, saved request");
+        // console.log("Step 3: Updated request status and remarks, saved request");
 
         if (status === 'Approved') {
             // Get student's rollNo from the request
             const student = await Student.findOne({ rollNo: request.rollNo })
-            console.log("Step 4: Fetched student:", student);
+            // console.log("Step 4: Fetched student:", student);
 
             if (!student) {
-                console.log("Step 4.1: Student not found");
+                // console.log("Step 4.1: Student not found");
                 return res.status(404).json({ message: 'Student not found' });
             }
 
             // Get course code from the course ID
             const course = await Course.findOne({ courseCode: request.courseId });
-            console.log("Step 5: Fetched course:", course);
+            // console.log("Step 5: Fetched course:", course);
 
             if (!course) {
-                console.log("Step 5.1: Course not found");
+                // console.log("Step 5.1: Course not found");
                 return res.status(404).json({ message: 'Course not found' });
             }
 
@@ -526,14 +691,14 @@ export const updateDropRequestStatus = async (req, res) => {
                 rollNo: student.rollNo,
                 courseId: course.courseCode
             });
-            console.log("Step 6: StudentCourse deletion result:", deletionResult);
+            // console.log("Step 6: StudentCourse deletion result:", deletionResult);
 
             if (deletionResult.deletedCount === 0) {
-                console.log("Step 6.1: Student course enrollment not found");
+                // console.log("Step 6.1: Student course enrollment not found");
                 return res.status(404).json({
                     message: 'Student course enrollment not found'
                 });
-            }
+            }``
 
             // delete the student from the student array of course
             const courseUpdateResult = await Course.updateOne(
@@ -542,12 +707,11 @@ export const updateDropRequestStatus = async (req, res) => {
             );
 
             if(courseUpdateResult.modifiedCount === 0) {
-                console.log("Step 6.2: Course enrollment not found");
+                // console.log("Step 6.2: Course enrollment not found");
                 return res.status(404).json({
                     message: 'Course enrollment not found'
                 });
             }
-
         }
 
         // console.log("Step 8: Drop request update process completed successfully");
@@ -652,7 +816,7 @@ export const updateStudentDocumentAccess = async (req, res) => {
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
-    console.log(student);
+    // console.log(student);
     const enrichedStudent = {
       id: student._id,
       name: student.userId.name,

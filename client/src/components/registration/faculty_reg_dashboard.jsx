@@ -23,10 +23,10 @@ function FacultyDashboard(){
           <Link
             key={course.id}
             to={`/facultyregistration/${course.code}`}
-            state={{ courseName: course.name }}
+            state={{ courseName: course.code }}
             className="block p-4 border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition"
           >
-            <h3 className="text-lg font-semibold">{course.name}</h3>
+            <h3 className="text-lg font-semibold">{course.code}</h3>
             <p className="text-sm text-gray-600">{course.code}</p>
           </Link>
         ))}

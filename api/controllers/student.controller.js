@@ -8,13 +8,14 @@ import { FeeBreakdown, FeeDetails } from "../models/fees.model.js";
 import mongoose from "mongoose";
 import { Feedback , GlobalFeedbackConfig } from '../models/feedback.model.js';
 import { Attendance } from '../models/attendance.model.js';
+import { Assignment } from '../models/assignment.model.js';
 
 // Get basic student info
 export const getStudent = async (req, res) => {
   try {
     const studentId = req.params.id;
     // console.log(studentId);
-    console.log(studentId);
+    // console.log(studentId);
     const user = await Student.findOne({ userId: studentId }).populate(
       "userId"
     );
@@ -146,12 +147,12 @@ export const getStudentCourses = async (req, res) => {
         }
 
         console.log("Found student with roll number:", student.rollNo);
-  
+ 
         // Get current academic session
         const now = new Date();
         const year = now.getFullYear();
         let session;
-        
+       
         if (now.getMonth() >= 0 && now.getMonth() <= 4) {
             session = 'Spring Semester';
         } else if (now.getMonth() >= 5 && now.getMonth() <= 7) {
@@ -159,17 +160,17 @@ export const getStudentCourses = async (req, res) => {
         } else {
             session = 'Winter Semester';
         }
-        
+       
         const semester = `${session} ${year}`;
         // console.log("Current academic session:", semester);
         // console.log(student.rollNo);
-        
+       
         // Find approved courses for this student
         const studentCourses = await StudentCourse.find({rollNo: student.rollNo, status: 'Approved', isCompleted: false})
         // console.log(`Found ${studentCourses.length} enrolled courses for student`);
-        
+       
         if (!studentCourses || studentCourses.length === 0) {
-            return res.status(200).json({ 
+            return res.status(200).json({
                 courses: [],
                 feedbackOpen: false
             });
@@ -181,7 +182,7 @@ export const getStudentCourses = async (req, res) => {
         console.log("Global feedback active status:", globalFeedbackActive);
 
         // console.log(`Courses enrolled by student:`, studentCourses);
-        
+       
         // Get course details and faculty information
         const courses = await Promise.all(
             studentCourses.map(async (sc) => {
@@ -197,10 +198,10 @@ export const getStudentCourses = async (req, res) => {
                 });
                 console.log("Faculty course details fetched:", facultyCourse);
                 // .populate('facultyId', 'name');
-                
+                const facultyUser = await User.findById(facultyCourse.facultyId);
                                 // Added feedback active logic here
                 let feedbackOpen = false;
-                
+               
                 if (globalFeedbackActive && facultyCourse && facultyCourse.facultyId) {
                     // Get the faculty document to use the correct ObjectId
                     const faculty = await Faculty.findOne({userId: facultyCourse.facultyId});
@@ -220,13 +221,13 @@ export const getStudentCourses = async (req, res) => {
                     }
                 }
 
-                const totalDays = await Attendance.countDocuments({ 
+                const totalDays = await Attendance.countDocuments({
                   rollNo: student.rollNo ,
                   courseCode: sc.courseId,
                   isApproved: true
                 });
 
-                const presentDays = await Attendance.countDocuments({ 
+                const presentDays = await Attendance.countDocuments({
                   rollNo: student.rollNo ,
                   courseCode: sc.courseId,
                   isPresent: true,
@@ -235,13 +236,16 @@ export const getStudentCourses = async (req, res) => {
 
                 const percentage = totalDays > 0 ? ((presentDays / totalDays) * 100 ).toFixed(2): 0;
 
+                // Get the count of assignments for this course
+                const assignmentCounter = await Assignment.countDocuments({ courseCode: course.courseCode });
+
                 // Use placeholder values for some fields
                 return {
                     id: course.courseCode,
                     name: course.courseName,
-                    // instructor: facultyCourse?.facultyId?.name || 'TBA',
+                    instructor: facultyUser.name,
                     credits: course.credits,
-                    assignments: 8, // Placeholder
+                    assignments: assignmentCounter, // Placeholder
                     announcements: course.announcements.length,
                     attendance: percentage,
                     feedbackOpen: feedbackOpen,
@@ -255,14 +259,14 @@ export const getStudentCourses = async (req, res) => {
         // Filter out null value    s (courses that weren't found)
         const validCourses = courses.filter(course => course !== null);
         console.log(`Returning ${validCourses.length} valid courses`);
-        
+       
         // Determine if feedback is available (implement your logic)
         const isFeedbackAvailable = false; // Placeholder
-        
+       
         res.status(200).json({
             courses: validCourses
         });
-        
+       
     } catch (error) {
         console.log("Error fetching student courses:", error);
         res.status(500).json({ message: "Failed to fetch courses" });
@@ -293,22 +297,34 @@ export const getCourseAnnouncements = async (req, res) => {
         course.announcements.map((announcement) => announcement.postedBy)
       ),
     ];
+    
+    console.log("Faculty IDs found:", facultyIds);
 
     // Find all faculty members who posted announcements
     const facultyMembers = await Faculty.find({
-      facultyId: { $in: facultyIds },
+      userId: { $in: facultyIds },
     });
+
+    console.log("Faculty members found1:", facultyMembers);
+    
+    const facultyUsers = await User.find({
+      _id: { $in: facultyMembers.map((faculty) => faculty.userId) },
+    });
+
+    console.log("Faculty members found:", facultyUsers);  
 
     // Create a lookup object for faculty
     const facultyLookup = {};
-    facultyMembers.forEach((faculty) => {
-      facultyLookup[faculty.facultyId] = {
+    facultyUsers.forEach((faculty) => {
+      facultyLookup[faculty._id] = {
         name: faculty.name,
         email: faculty.email,
-        department: faculty.department,
-        designation: faculty.designation,
+        // department: faculty.department,
+        // designation: faculty.designation,
       };
     });
+
+    console.log("Faculty lookup object:", facultyLookup);
 
     // Add faculty details to each announcement
     const announcementsWithFaculty = course.announcements.map(
@@ -321,7 +337,7 @@ export const getCourseAnnouncements = async (req, res) => {
         };
       }
     );
-
+    console.log("Announcements with faculty details:", announcementsWithFaculty);
     // Sort announcements by date (most recent first)
     announcementsWithFaculty.sort(
       (a, b) => new Date(b.date) - new Date(a.date)
@@ -1227,13 +1243,16 @@ export const getAvailableCourses = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    console.log("2", student.program);
-    console.log("2", student.department);
+    // console.log("fjdshfkjhdskufhdskghfkdjgfkjgfjkgjhfgjhewrfhk");
+    // console.log("2", student.program);
+    // console.log("2", student.department);
+    // console.log("2", student.semester);
 
     // Retrieve courses for the student's program and semester
     const courses = await ProgramCourseMapping.find({
-      // program: student.program,
-      // department: student.department,
+      program: student.program,
+      department: student.department,
+      semester: student.semester,
     });
 
     console.log("3", courses);
@@ -1453,4 +1472,3 @@ export const getPerformance = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-

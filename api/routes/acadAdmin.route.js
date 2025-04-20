@@ -14,6 +14,8 @@ import {
   getStudentsWithDocumentAccess,
   updateStudentDocumentAccess,
   bulkUpdateDocumentAccess,
+  addStudents,
+  addFaculty,
   getAllDepartments,
 } from "../controllers/acadAdmin.controller.js";
 import { addAnnouncement, deleteAnnouncement, getAdminAnnouncements, updateAnnouncement } from "../controllers/announcements.controller.js";
@@ -44,6 +46,11 @@ router.get("/students/document-access", getStudentsWithDocumentAccess);
 router.patch("/students/:id/document-access", updateStudentDocumentAccess);
 router.post("/students/bulk-document-access", bulkUpdateDocumentAccess);
 
+// Student management routes
+router.post("/students/add-students", addStudents);
+// Faculty management routes
+router.post("/faculty/add-faculty", addFaculty);
+
 // Announcement routes
 router.get("/announcements", getAdminAnnouncements); 
 router.post("/announcements/add", addAnnouncement);
@@ -52,4 +59,5 @@ router.delete("/announcements/:announcementId/delete", deleteAnnouncement);
 
 // get departments
 router.get("/departments", getAllDepartments);
+
 export default router;

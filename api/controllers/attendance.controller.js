@@ -48,7 +48,7 @@ export const getPercentages = async (req, res) => {
     for (const courseId of courseIds) {
       try {
         // Find by courseId NOT by _id
-        const course = await Course.findOne({ courseId });
+        const course = await Course.findOne({ courseCode:courseId });
         if (course) {
           courseDetailsMap[courseId] = {
             courseCode: course.courseCode,
@@ -142,11 +142,8 @@ export const getPercentages = async (req, res) => {
       });
       
       // Calculate statistics
-      console.log(attendanceAll);
       const classesAttended = attendanceAll.filter(record => record.isPresent && record.isApproved).length;
-      console.log("Attended" + classesAttended);
       const classesMissed = attendanceAll.filter(record => record.isApproved).length - classesAttended;
-      console.log("Missed" + classesMissed);
       const percentage = ((classesAttended + classesMissed) ? 
         (classesAttended / (classesAttended + classesMissed)) * 100 : 0).toFixed(2);
       const reqClasses = Math.max(0, 3 * classesMissed - classesAttended);
@@ -376,6 +373,17 @@ export const getFacultyCourses = async (req, res) => {
     // Get course codes from faculty courses
     const courseCodes = facultyCourses.map(course => course.courseCode);
     
+    // Get course details for all course codes
+    const courseDetails = await Course.find({ courseCode: { $in: courseCodes } })
+      .select('courseCode courseName')
+      .lean();
+    
+    // Create a map of course codes to course names
+    const courseNameMap = {};
+    courseDetails.forEach(course => {
+      courseNameMap[course.courseCode] = course.courseName;
+    });
+    
     // For each course, calculate attendance percentage
     const coursesWithAttendance = await Promise.all(
       facultyCourses.map(async (course) => {
@@ -392,6 +400,7 @@ export const getFacultyCourses = async (req, res) => {
         if (!activeStudentRolls.length) {
           return {
             ...course.toObject(),
+            courseName: courseNameMap[course.courseCode] || 'Unknown Course',
             attendancePercentage: 0,
             totalStudents: 0
           };
@@ -407,6 +416,7 @@ export const getFacultyCourses = async (req, res) => {
         if (!attendanceRecords.length) {
           return {
             ...course.toObject(),
+            courseName: courseNameMap[course.courseCode] || 'Unknown Course',
             attendancePercentage: 0,
             totalStudents: activeStudentRolls.length
           };
@@ -429,6 +439,7 @@ export const getFacultyCourses = async (req, res) => {
         
         return {
           ...course.toObject(),
+          courseName: courseNameMap[course.courseCode] || 'Unknown Course',
           attendancePercentage: parseFloat(attendancePercentage.toFixed(2)),
           totalStudents
         };

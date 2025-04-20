@@ -3,6 +3,7 @@ import { Course, FacultyCourse } from '../models/course.model.js';
 import { Faculty } from '../models/faculty.model.js';
 import { Student } from '../models/student.model.js';
 import { User } from '../models/user.model.js';
+import { AcadAdminAnnouncement } from '../models/acadAdminAnnouncements.model.js';
 
 // Feedback section structure (corrected typo)
 const feedback_section = [
@@ -397,43 +398,210 @@ export const getCourseDetails = async (req, res) => {
 };
 
 
-export const getGlobalstatus = async (req, res) => {
-    console.log("qwertyu");
-    try {
-      console.log("yaha ");  
-      const config = await GlobalFeedbackConfig.getConfig();
-      res.status(200).json({ isActive: config.isActive });
-    } catch (error) {
-      res.status(500).json({ 
-        message: 'Failed to fetch feedback status',
-        error: error.message 
+// export const getGlobalstatus = async (req, res) => {
+//     // console.log("qwertyu");
+//     try {
+//       // console.log("yaha ");  
+//       const config = await GlobalFeedbackConfig.getConfig();
+//       res.status(200).json({ isActive: config.isActive });
+//     } catch (error) {
+//       res.status(500).json({ 
+//         message: 'Failed to fetch feedback status',
+//         error: error.message 
+//       });
+//     }
+//   };
+  
+//   export const setGlobalstatus = async (req, res) => {
+//     try {
+//       const { active } = req.body;
+//       const config = await GlobalFeedbackConfig.getConfig();
+      
+//       if (typeof active !== 'boolean') {
+//         return res.status(400).json({ 
+//           message: 'Invalid request: active must be a boolean' 
+//         });
+//       }
+
+//       const currentDate = new Date();
+//       const currentYear = currentDate.getFullYear();
+//       const currentMonth = currentDate.getMonth();
+    
+//       // // Determine current session based on month
+//       let currentSession;
+//       if (currentMonth >= 0 && currentMonth <= 4) {
+//           currentSession = 'Winter Semester';
+//       } else if (currentMonth >= 5 && currentMonth <= 7) {
+//           currentSession = 'Summer Course';
+//       } else {
+//           currentSession = 'Spring Semester';
+//       }
+//       const title = "Feedback "+ (active ? "Open" : "Closed") + " for all courses";
+//       // const content = "Feedback is now " + (active ? "open" : "closed") + " for all courses.";
+//       const content = "This is to inform you that the online course feedback module for your feedback of registered courses of " + currentSession + " is activated. It will be active only till " + endDate + " end. Please provide your feedback for the courses you have registered for. Your feedback is valuable to us and will help us improve the quality of education and services provided by the university. Thank you for your cooperation.";
+//       const importance = "High";
+//       const targetEmails = []; // Add logic to fetch emails if needed
+//       const targetGroups = {
+//         allUniversity: true,
+//         students: true,
+//         faculty: true,
+//         departments: [],
+//         programs: [],
+//         semester: "",
+//         specificEmails: ""
+//       };
+      
+//       const newAnnouncement = new AcadAdminAnnouncement({
+//         title,
+//         content,
+//         importance,
+//         targetEmails,
+//         date: new Date(),
+//         postedBy: "Admin",
+//         targetGroups,
+//         createdAt: new Date(),
+//         updatedAt: new Date()
+//       });
+
+//       console.log("Announcement created:", newAnnouncement);
+//       await newAnnouncement.save();
+  
+//       config.isActive = active;
+//       await config.save();
+      
+//       res.status(200).json({ 
+//         message: 'Feedback status updated',
+//         isActive: config.isActive 
+//       });
+//     } catch (error) {
+//       res.status(500).json({ 
+//         message: 'Failed to update feedback status',
+//         error: error.message 
+//       });
+//     }
+//   };
+  
+export const setGlobalstatus = async (req, res) => {
+  try {
+    const { active, endDate } = req.body;
+    const config = await GlobalFeedbackConfig.getConfig();
+    
+    if (typeof active !== 'boolean') {
+      return res.status(400).json({ 
+        message: 'Invalid request: active must be a boolean' 
       });
     }
-  };
-  
-  export const setGlobalstatus = async (req, res) => {
-    try {
-      const { active } = req.body;
-      const config = await GlobalFeedbackConfig.getConfig();
-      
-      if (typeof active !== 'boolean') {
+
+    // Validate end date when activating feedback
+    if (active) {
+      if (!endDate) {
         return res.status(400).json({ 
-          message: 'Invalid request: active must be a boolean' 
+          message: 'End date is required to activate feedback' 
         });
       }
-  
-      config.isActive = active;
-      await config.save();
+
+      const selectedEndDate = new Date(endDate);
+      const currentDate = new Date();
       
-      res.status(200).json({ 
-        message: 'Feedback status updated',
-        isActive: config.isActive 
-      });
-    } catch (error) {
-      res.status(500).json({ 
-        message: 'Failed to update feedback status',
-        error: error.message 
-      });
+      if (isNaN(selectedEndDate.getTime())) {
+        return res.status(400).json({ 
+          message: 'Invalid end date format' 
+        });
+      }
+
+      if (selectedEndDate <= currentDate) {
+        return res.status(400).json({ 
+          message: 'End date must be in the future' 
+        });
+      }
+
+      config.endDate = selectedEndDate;
     }
-  };
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
   
+    // Determine current session based on month
+    let currentSession;
+    if (currentMonth >= 0 && currentMonth <= 4) {
+      currentSession = 'Winter Semester';
+    } else if (currentMonth >= 5 && currentMonth <= 7) {
+      currentSession = 'Summer Course';
+    } else {
+      currentSession = 'Spring Semester';
+    }
+
+    const title = "Feedback " + (active ? "Open" : "Closed") + " for all courses";
+    
+    // Format the end date for the announcement
+    const formattedEndDate = new Date(endDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const content = active 
+      ? `This is to inform you that the online course feedback module for your feedback of registered courses of ${currentSession} is activated. It will be active only till ${formattedEndDate}. Please provide your feedback for the courses you have registered for. Your feedback is valuable to us and will help us improve the quality of education and services provided by the university. Thank you for your cooperation.`
+      : "Feedback collection is now closed for all courses. Thank you for your participation.";
+    
+    const importance = "High";
+    const targetEmails = []; // Add logic to fetch emails if needed
+    const targetGroups = {
+      allUniversity: true,
+      students: true,
+      faculty: true,
+      departments: [],
+      programs: [],
+      semester: "",
+      specificEmails: ""
+    };
+    
+    const newAnnouncement = new AcadAdminAnnouncement({
+      title,
+      content,
+      importance,
+      targetEmails,
+      date: new Date(),
+      postedBy: "Admin",
+      targetGroups,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    console.log("Announcement created:", newAnnouncement);
+    await newAnnouncement.save();
+
+    config.isActive = active;
+    await config.save();
+    
+    res.status(200).json({ 
+      message: 'Feedback status updated',
+      isActive: config.isActive,
+      endDate: config.endDate
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Failed to update feedback status',
+      error: error.message 
+    });
+  }
+};
+
+// Also add the updated status endpoint to return the endDate
+
+export const getGlobalstatus = async (req, res) => {
+  try {
+    const config = await GlobalFeedbackConfig.getConfig();
+    
+    res.status(200).json({ 
+      isActive: config.isActive,
+      endDate: config.endDate
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Failed to get feedback status',
+      error: error.message 
+    });
+  }
+};

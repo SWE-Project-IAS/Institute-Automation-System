@@ -12,12 +12,21 @@ const submissionSchema = new mongoose.Schema({
     required: true
   },
   content: {
-    type: String,
-    required: true
+    type: String, // 👈 optional, only if text is provided
+  },
+  fileUrl: {
+    type: String, // 👈 optional, only if file is uploaded
+  },
+  fileName: {
+    type: String, // 👈 optional, only if file is uploaded
   },
   submittedAt: {
     type: Date,
     default: Date.now
+  },
+  marks: {
+    type: Number,
+    default: null
   }
 }, { _id: false });
 

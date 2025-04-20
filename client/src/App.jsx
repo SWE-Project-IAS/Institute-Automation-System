@@ -66,8 +66,13 @@ import FacultyCourseStudents from './components/courseStudents/courseStudent.jsx
 import CompletedCourses from './components/mycourses/CompletedCourses.jsx';
 import DropCourseWrapper from './components/dropCourse/dropCourseWrapper.jsx';
 import NotFound from './pages/Notfound.jsx';
+
+import AddStudents from './components/AddStudents/addStudents.jsx';
+import AddFaculty from './components/AddFaculty/addFaculty.jsx';
+
 import AllAnnouncements from './components/Announcements/AllAnnouncements.jsx';
 import SideAnnouncementWrapper from './components/Announcements/wrapperAnn.jsx';
+
 
 const queryClient = new QueryClient()
 function App() {
@@ -314,6 +319,14 @@ function App() {
                 {
                     path:"/acadAdmin/feeManagement",
                     element : <AdminFeeControl/>,
+                },
+                {
+                    path:"/acadAdmin/add-students",
+                    element : <AddStudents/>,
+                },
+                {
+                    path:"/acadAdmin/facultyManagement",
+                    element : <AddFaculty/>,
                 }
             ],
         },

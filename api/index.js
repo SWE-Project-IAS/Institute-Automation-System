@@ -12,7 +12,7 @@ import createCourseRoute from "../api/routes/createCourse.route.js";
 import acadAdminRoute from "../api/routes/acadAdmin.route.js";
 import facultyRoute from "../api/routes/faculty.route.js";
 import feedbackRoute from "../api/routes/feedback.route.js";
-import { fillFacultyCourse, seedStudentCourses, seedCourses, removeAllStudentsFromCourse } from "../api/scripts/seedDb.js";
+// import { fillFacultyCourse, seedStudentCourses, seedCourses, removeAllStudentsFromCourse } from "../api/scripts/seedDb.js";
 // import {fillFacultyCourse, seedDatabase, seedStudentCourses, seedCourses, seedFacultyCourses, fillFacultyCourse } from "../api/scripts/seedDb.js";
 // import { fillFacultyCourse, seedStudentCourses, seedCourses, seedFacultyCourses } from "../api/scripts/seedDb.js";
 import seedSupportStaff from "./scripts/seedSupportStaff.js";
@@ -163,7 +163,7 @@ export {app}
 
 // const runSeeds = async () => {
 //   try {
-//     await fillFacultyCourse();
+//     await seedCourses();
 //     // await seedStudentCourses();
 //     // await seedCourses();
 //     // seedFacultyCourses();

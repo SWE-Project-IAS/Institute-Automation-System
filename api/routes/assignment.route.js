@@ -9,10 +9,12 @@ import {
     deleteAssignmentDetails,
     editAssignmentDetails,
     submitAssignment,
+    submitGrades,
     undoSubmission,
     getStudent,
     getUser
 } from '../controllers/assignment.controller.js';
+import { upload } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
@@ -26,8 +28,10 @@ router.get("/course/:courseCode", getCourse);
 router.post("/course/:courseId/assignments", createAssignment);
 router.get("/:courseId/:assignmentId", getAssignmentDetails);
 router.delete("/:courseId/:assignmentId",deleteAssignmentDetails); 
+router.post("/:courseId/:assignmentId", submitGrades);
 router.put("/:courseId/:assignmentId", editAssignmentDetails);
-router.post('/:courseCode/:assignmentId/submit', submitAssignment);
+router.post('/:courseCode/:assignmentId/submit', upload.single('file'), submitAssignment);
 router.delete('/:courseCode/:assignmentId/undo/:rollNo', undoSubmission);
+
 
 export default router;

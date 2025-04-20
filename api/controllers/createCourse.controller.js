@@ -1,4 +1,5 @@
 import { Course, FacultyCourse, ProgramCourseMapping } from "../models/course.model.js";
+import { Faculty } from "../models/faculty.model.js";
 
 export const createCourse = async (req, res) => {
   try {
@@ -47,6 +48,14 @@ export const createCourse = async (req, res) => {
         continue; // Skip invalid configurations
       }
       
+        // Find the faculty document
+        const facultyDoc = await Faculty.findOne({ userId: faculty });
+        if (!facultyDoc) {
+          return res.status(404).json({ message: "Faculty not found" });
+        }
+
+        // console.log("fdkfhdjfhdhfkuhfkuh");
+        // console.log("Faculty document found:", facultyDoc);
 
       // Create mappings for each semester
       for (const semester of semesters) {
@@ -60,7 +69,25 @@ export const createCourse = async (req, res) => {
           session
         });
         await facultyCourse.save();
-        
+
+        // facultyDoc.courses.push({
+        //   facultyId: faculty,
+        //   courseCode,
+        //   program,
+        //   semester,
+        //   year,
+        //   session
+        // });
+        const updateResult = await Faculty.findByIdAndUpdate(
+          facultyDoc._id,
+          { 
+            $push: {
+              courses: facultyCourse.toObject() // Convert to plain object before pushing
+            },
+            updatedAt: new Date()
+          },
+          { new: true } // Return the updated document
+        );
 
         // Create program-course mapping
         const programMapping = new ProgramCourseMapping({
@@ -74,7 +101,7 @@ export const createCourse = async (req, res) => {
         await programMapping.save();
       }
     }
-    console.log("Mappings created successfully");
+    // console.log("Mappings created successfully");
 
     return res.status(200).json({
       message: "Course and mappings created successfully",

@@ -23,21 +23,25 @@ export const getCourseAnnouncements = async (req, res) => {
       
       // Get all faculty IDs from announcements
       const facultyIds = [...new Set(course.announcements.map(announcement => announcement.postedBy))];
-      
+      console.log("Faculty IDs found:", facultyIds);
       // Find all faculty members who posted announcements
-      const facultyMembers = await Faculty.find({ facultyId: { $in: facultyIds } });
-      
+      const facultyMembers = await Faculty.find({ userId: { $in: facultyIds } });
+      const facultyUsers = await User.find({
+        _id: { $in: facultyMembers.map((faculty) => faculty.userId) },
+      });
+      // console.log("Faculty members found:", facultyMembers);
+      // console.log("Faculty users found:", facultyUsers);
       // Create a lookup object for faculty
       const facultyLookup = {};
-      facultyMembers.forEach(faculty => {
-        facultyLookup[faculty.facultyId] = {
+      facultyUsers.forEach((faculty) => {
+        facultyLookup[faculty._id] = {
           name: faculty.name,
           email: faculty.email,
-          department: faculty.department,
-          designation: faculty.designation
+          // department: faculty.department,
+          // designation: faculty.designation,
         };
       });
-      
+      // console.log("Faculty lookup object:", facultyLookup);
       // Add faculty details to each announcement
       const announcementsWithFaculty = course.announcements.map(announcement => {
         const faculty = facultyLookup[announcement.postedBy] || null;
@@ -73,7 +77,7 @@ export const getCourseAnnouncements = async (req, res) => {
       try {
         const { courseId } = req.params;
         const { title, content, importance, postedBy } = req.body;
-  
+        console.log("Adding announcement to course ID:", postedBy);
         console.log("Adding announcement to course ID:", courseId);
         // Validate request
         if (!title || !content || !postedBy) {
@@ -108,9 +112,9 @@ export const getCourseAnnouncements = async (req, res) => {
           content,
           importance: importance || 'Medium',
           date: new Date(),
-          postedBy: facultyUser.name
+          postedBy
         };
-        
+        console.log("New Announcement:", newAnnouncement);
         // Add announcement to course
         course.announcements.push(newAnnouncement);
         await course.save();
@@ -273,7 +277,36 @@ export const getAllAnnouncements = async (req, res) => {
         allAnnouncements = [...allAnnouncements, ...courseAnnouncements];
       }
     });
+
+    const facultyIds = [
+      ...new Set(
+        allAnnouncements.map((announcement) => announcement.postedBy)
+      ),
+    ];
+    console.log("Faculty IDs found:", facultyIds);
+
+    // Find all faculty members who posted announcements
+    const facultyMembers = await Faculty.find({
+      userId: { $in: facultyIds },
+    });
+
+    console.log("Faculty members found1:", facultyMembers);
     
+    const facultyUsers = await User.find({
+      _id: { $in: facultyMembers.map((faculty) => faculty.userId) },
+    });
+
+    allAnnouncements.forEach((announcement) => {
+      const faculty = facultyUsers.find(
+        (faculty) => faculty._id.toString() === announcement.postedBy.toString()
+      );
+      if (faculty) {
+        announcement.postedBy = faculty.name;
+      }
+    }
+  );
+  
+    console.log("All Course Announcements:", allAnnouncements);
     // console.log("All Announcements:", allAnnouncements);
     // Get academic admin announcements
     const acadAdminAnnouncements = await AcadAdminAnnouncement.find({
@@ -297,7 +330,12 @@ export const getAllAnnouncements = async (req, res) => {
                 { 'targetGroups.programs': { $in: [student.program] } }
               ]
             },
-            { 'targetGroups.semester': String(student.semester) }
+            {
+              $or: [
+                { 'targetGroups.semester': { $in: ['all'] } },
+                { 'targetGroups.semester': { $in: [student.semester] } },
+              ]
+            }
           ]
         }
       ]
@@ -515,30 +553,21 @@ export const getFacultyAnnouncements = async (req, res) => {
     let allAnnouncements = [];
 
     const acadAdminAnnouncements = await AcadAdminAnnouncement.find({
-      // filter it by
-      // either my email is in the targetEmails array or allUniversity of targetGroups is true
-      // $or: [
-      //   {targetEmails: {$in: [student.email]}},
-      //   {'targetGroups.allUniversity': true},
-      //   {
-      //     'targetGroups.students': true,
-      //     $and: [
-      //       {
-      //         $or: [
-      //           { 'targetGroups.departments': { $in: ['all'] } },
-      //           { 'targetGroups.departments': { $in: [student.department] } }
-      //         ]
-      //       },
-      //       {
-      //         $or: [
-      //           { 'targetGroups.programs': { $in: ['all'] } },
-      //           { 'targetGroups.programs': { $in: [student.program] } }
-      //         ]
-      //       },
-      //       { 'targetGroups.semester': String(student.semester) }
-      //     ]
-      //   }
-      // ]
+      $or: [
+        {targetEmails: {$in: [faculty.email]}},
+        {'targetGroups.allUniversity': true},
+        {
+          'targetGroups.faculty': true,
+          $and: [
+            {
+              $or: [
+                { 'targetGroups.departments': { $in: ['all'] } },
+                { 'targetGroups.departments': { $in: [faculty.department] } }
+              ]
+            },
+          ]
+        }
+      ]
     });
     console.log("Academic Admin Announcements:", acadAdminAnnouncements);
     // // Process academic admin announcements

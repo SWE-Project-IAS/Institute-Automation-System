@@ -56,7 +56,6 @@ const AttendanceApprovalDashboard = () => {
       if (!response.ok) throw new Error('Approval failed');
       
       const result = await response.json();
-      console.log("Approval successful:", result);
 
       // Only update the specific approved item
       setAttendanceRequests(prev => 
@@ -137,8 +136,6 @@ const AttendanceApprovalDashboard = () => {
 
   // Debug information in console
   useEffect(() => {
-    console.log("Current filtered requests:", filteredRequests);
-    console.log("All attendance requests:", attendanceRequests);
   }, [filteredRequests, attendanceRequests]);
 
   if (loading.courses || loading.approvals) {

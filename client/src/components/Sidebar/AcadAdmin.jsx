@@ -10,7 +10,8 @@ const AcadAdmin = () => {
     complaint: false,
     profile: false,
     feecontrol: false,
-    studentManagement: false
+    studentManagement: false,
+    facultycontrol: false
   });
 
   const toggleSection = (section) => {
@@ -72,6 +73,11 @@ const AcadAdmin = () => {
           {expandedSections.studentManagement && (
             <ul className="pl-5">
               <li>
+                <Link to="/acadAdmin/add-students" className="text-gray-700 hover:text-gray-900 flex items-center gap-2">
+                  Add Students
+                </Link>
+              </li>
+              <li>
                 <Link to="/admin/documents/access" className="text-gray-700 hover:text-gray-900 flex items-center gap-2">
                   Update Student 
                 </Link>
@@ -89,6 +95,21 @@ const AcadAdmin = () => {
               <li>
                 <Link to="/acadAdmin/feeManagement" className="text-gray-700 hover:text-gray-900">
                   Fee Control
+                </Link>
+              </li>
+            </ul>
+          )}
+        </li>
+
+        <li className="mt-2">
+          <span className="font-bold text-gray-800 cursor-pointer flex items-center" onClick={() => toggleSection('facultycontrol')}>
+            {expandedSections.facultycontrol ? <IoMdArrowDropdown /> : <IoMdArrowDropright />} Faculty Management
+          </span>
+          {expandedSections.facultycontrol && (
+            <ul className="pl-5">
+              <li>
+                <Link to="/acadAdmin/facultyManagement" className="text-gray-700 hover:text-gray-900">
+                  Add Faculty
                 </Link>
               </li>
             </ul>

@@ -27,8 +27,6 @@ function AddAttendance({ selectedStudent }) {
         };
 
         try {
-            console.log("COURSECODFE")
-            console.log(courseCode)
             const response = await fetch('https://ias-server-cpoh.onrender.com/api/attendancelanding/add', {
                 method: 'POST',
                 headers: {
@@ -37,8 +35,6 @@ function AddAttendance({ selectedStudent }) {
                 },
                 body: JSON.stringify(formData)
             });
-            console.log("RESPOPNSE")
-            console.log(response)
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error);

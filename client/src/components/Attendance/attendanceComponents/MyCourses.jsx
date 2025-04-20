@@ -11,8 +11,6 @@ import newRequest from "../../../utils/newRequest";
 function MyCourses() {
     const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
     const {email, userId} = userData.user;
-    console.log(email);
-    console.log(userData);
 
     const { isLoading, error, data } = useQuery({
         queryKey: [`${userId}`],
@@ -32,8 +30,6 @@ function MyCourses() {
     const [showStats, setShowStats] = useState(false);
 
     const showStudentStats = (rollNo) => {
-        console.log("#$#$")
-        console.log(rollNo)
         setSelectedStudent(rollNo);
         fetchStudentCourses(rollNo); // Use the parameter directly
         setShowStats(true);
@@ -75,7 +71,6 @@ function MyCourses() {
 
                 if (role === "student") {
                     const rollNo =  data?.rollNo;
-                    console.log("Roll no." + rollNo);
                     if (!rollNo) {
                         throw new Error("Roll number not found in localStorage.");
                     }
@@ -105,16 +100,9 @@ function MyCourses() {
                     // Check for any course with attendance below 75%
                     const hasLowAttendance = formattedCourses.some(course => course.percentage < 75);
                     setOverall(!hasLowAttendance);
-                    console.log("Savar");
-                    console.log(formattedCourses);
                     setCourses(formattedCourses);
                 } else if (role === "faculty") {
                     // Fetch faculty courses from the backend
-                    // const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        
-                    console.log("Savar");
-                    //console.log(currentUser);
-                    console.log(userId);
                     if (!userId) {
                         throw new Error("Faculty ID not found in localStorage.");
                     }
@@ -144,7 +132,6 @@ function MyCourses() {
                         averageAttendance: `${course.attendancePercentage}%`,
                         totalStudents: course.totalStudents
                     }));
-                    console.log(formattedCourses);
                     setCourses(formattedCourses);
                 }
             } catch (error) {

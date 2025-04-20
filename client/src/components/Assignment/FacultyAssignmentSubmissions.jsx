@@ -6,6 +6,8 @@ export default function FacultyAssignmentSubmissions() {
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [grades, setGrades] = useState({});
+  const [submitting, setSubmitting] = useState({});
 
   useEffect(() => {
     const fetchAssignment = async () => {
@@ -35,10 +37,83 @@ export default function FacultyAssignmentSubmissions() {
         setLoading(false);
       }
     };
-
     fetchAssignment();
   }, [courseId, assignmentId]);
 
+  const handleGradeChange = (submissionId, value) => {
+    // console.log("Grade changed:", submissionId, value,courseId);
+    setGrades((prev) => ({ ...prev, [submissionId]: value }));
+  };
+
+  const submitGrade = async (submissionId) => {
+    console.log(submissionId);
+    const marks = grades[submissionId];
+    if (marks === undefined || marks === "" || isNaN(marks)) {
+      alert("Please enter valid marks before submitting.");
+      return;
+    }
+
+    setSubmitting((prev) => ({ ...prev, [submissionId]: true }));
+    try {
+      const response = await fetch(`https://ias-server-cpoh.onrender.com/api/assignment/${courseId}/${assignmentId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseId,
+          assignmentId,
+          submissionId,
+          marks: Number(marks),
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Failed to submit marks");
+      }
+
+      alert("Marks submitted successfully!");
+      window.location.reload(); // Reload the page to see updated marks
+    } catch (error) {
+      console.error("Error submitting marks:", error);
+      alert("Failed to submit marks.");
+    } finally {
+      setSubmitting((prev) => ({ ...prev, [submissionId]: false }));
+    }
+  };
+  const downloadFile = async (url, rollNo, originalFileName) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+  
+      let extension = "";
+      if (originalFileName) {
+        const dotIndex = originalFileName.lastIndexOf(".");
+        if (dotIndex !== -1) {
+          extension = originalFileName.substring(dotIndex); // e.g., .zip
+        }
+      }
+  
+      const finalFileName = `${rollNo}${extension || ''}`;
+  
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = finalFileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Failed to download file", err);
+      alert("Could not download file.");
+    }
+  };
+  
+  
+  
   if (loading) return <p className="text-center py-6">Loading assignment...</p>;
   if (error) return <p className="text-red-500 text-center py-6">❌ {error}</p>;
   if (!assignment) return <p className="text-red-500 text-center py-6">❌ Assignment not found.</p>;
@@ -60,7 +135,6 @@ export default function FacultyAssignmentSubmissions() {
 
       <div>
         <h3 className="text-xl font-semibold mb-2">📥 Student Submissions</h3>
-        {console.log("Assignment data:", assignment)}
         {assignment.submissions.length === 0 ? (
           <p className="text-gray-500">No submissions yet.</p>
         ) : (
@@ -72,26 +146,75 @@ export default function FacultyAssignmentSubmissions() {
                   <th className="p-3 border border-gray-300 text-left">Roll No</th>
                   <th className="p-3 border border-gray-300 text-left">Submitted At</th>
                   <th className="p-3 border border-gray-300 text-left">Answer</th>
+                  <th className="p-3 border border-gray-300 text-left">Marks (out of 100)</th>
+                  <th className="p-3 border border-gray-300 text-left">Action</th>
+                  <th className="p-3 border border-gray-300 text-left">File</th>
                 </tr>
               </thead>
               <tbody>
                 {assignment.submissions.map((submission, idx) => {
-                  console.log("Submission data:", submission);
+                  const fileUrl = submission.fileUrl;
+                  const fileName = fileUrl ? fileUrl.split("/").pop() : null;
+
                   return (
                     <tr key={idx} className="hover:bg-gray-50 text-sm">
                       <td className="p-3 border border-gray-300">{submission.studentName}</td>
                       <td className="p-3 border border-gray-300">{submission.studentRollNo}</td>
                       <td className="p-3 border border-gray-300">
-                      {submission.submittedAt
-                      ? new Date(submission.submittedAt).toLocaleString("en-IN", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })
-                      : "N/A"}
+                        {submission.submittedAt
+                          ? new Date(submission.submittedAt).toLocaleString("en-IN", {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            })
+                          : "N/A"}
                       </td>
-                      <td className="p-3 border border-gray-300 whitespace-pre-line text-gray-700">
-                        {submission.content}
+                      <td className="p-3 border border-gray-300 whitespace-pre-line text-gray-700 space-y-1">
+                        {submission.content && (
+                          <div className="mb-1">{submission.content}</div>
+                        )}
+                        {!submission.content && !fileUrl && (
+                          <span className="text-gray-400 italic">No answer provided</span>
+                        )}
                       </td>
+                      <td className="p-3 border border-gray-300">
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={grades[submission.studentRollNo] || ""}
+                        onChange={(e) => handleGradeChange(submission.studentRollNo, e.target.value)}
+                        className="border border-gray-300 rounded px-2 py-1 text-sm w-24"
+                      />
+                      {submission.marks !== undefined && submission.marks !== null && (
+                      <p className="text-gray-600 text-xs">Given marks: {submission.marks}/100</p>
+                      )}      
+                    </td>
+                    <td className="p-3 border border-gray-300">
+                      <button
+                        onClick={() => submitGrade(submission.studentRollNo)}
+                        disabled={submitting[submission.studentRollNo]}
+                        className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {submitting[submission.studentRollNo] ? "Submitting..." : "Submit Marks"}
+                      </button>
+                    </td>
+                      <td className="p-3 border border-gray-300">
+                        {fileUrl ? (
+                          <a
+                            href={fileUrl}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              downloadFile(fileUrl, submission.studentRollNo, submission.fileName);
+                            }}
+                            className="text-blue-600 underline"
+                          >
+                            📎 submission_file
+                          </a>
+                        ) : (
+                          <span className="text-gray-400 italic">No file</span>
+                        )}
+                      </td>
+
                     </tr>
                   );
                 })}

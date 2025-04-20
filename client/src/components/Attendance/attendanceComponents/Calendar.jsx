@@ -14,8 +14,6 @@ const localizer = momentLocalizer(moment);
 function MyCalendar({ selectedStudent }) { 
     const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
     const {email, userId} = userData.user;
-    console.log(email);
-    console.log(userData);
     const { isLoading, error, data } = useQuery({
         queryKey: [`${userId}`],
         queryFn: () =>
@@ -61,7 +59,6 @@ function MyCalendar({ selectedStudent }) {
 
             if (response.ok) {
                 setMyEventsList(dataRecieved.eventList || []);  // Ensure we always have an array
-                console.log('Updated events:', dataRecieved.eventList);  // Debug log
             } else {
                 console.error("Error fetching attendance data:", dataRecieved.error);
             }
@@ -84,6 +81,33 @@ function MyCalendar({ selectedStudent }) {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: 350 }}
+                eventPropGetter={(event) => {
+                    let backgroundColor = "";
+                    switch (event.title.toLowerCase()) {
+                        case "present":
+                            backgroundColor = "#a0e7a0"; // light green
+                            break;
+                        case "absent":
+                            backgroundColor = "#f8a5a5"; // light red
+                            break;
+                        case "pending approval":
+                            backgroundColor = "#fce38a"; // light yellow
+                            break;
+                        default:
+                            backgroundColor = "#d3d3d3"; // default gray
+                    }
+                    return {
+                        style: {
+                            backgroundColor,
+                            borderRadius: "5px",
+                            opacity: 0.9,
+                            color: "black",
+                            border: "none",
+                            fontWeight: "bold",
+                            textTransform: "capitalize"
+                        },
+                    };
+                }}
             />
         </div>
     );
