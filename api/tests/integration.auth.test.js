@@ -9,7 +9,7 @@ import { AcadAdmin } from '../models/acadAdmin.model.js';
 import { HostelAdmin } from '../models/hostelAdmin.model.js';
 import bcrypt from 'bcrypt';
 
-const TEST_DB_URI = 'mongodb+srv://kevintj916:VvLxpm85TJLuxr0B@institutionautomationcl.bn7xvyp.mongodb.net/?retryWrites=true&w=majority&appName=institutionAutomationclu';
+const TEST_DB_URI = process.env.TEST_DB_URI;
 const agent = request(app);
 
 // Connect to test database before all tests

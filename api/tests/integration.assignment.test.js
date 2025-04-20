@@ -8,7 +8,7 @@ import { Student } from '../models/student.model.js';
 import { User } from '../models/user.model.js';
 import { Assignment } from '../models/assignment.model.js';
 
-const TEST_DB_URI = 'mongodb+srv://kevintj916:VvLxpm85TJLuxr0B@institutionautomationcl.bn7xvyp.mongodb.net/?retryWrites=true&w=majority&appName=institutionAutomationclu';
+const TEST_DB_URI = process.env.TEST_DB_URI;
 const agent = request(app);
 
 // Connect to test database before all tests
