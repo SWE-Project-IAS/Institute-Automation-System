@@ -405,7 +405,7 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-500">Address</p>
-                                    <p className="font-medium">Room {complaint.address} Hostel</p>
+                                    <p className="font-medium">{complaint.address}</p>
                                 </div>
                                 {complaint.timeAvailability && (
                                     <div>
