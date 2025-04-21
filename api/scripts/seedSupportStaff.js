@@ -18,14 +18,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 9876543210",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Automation"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Priya Sharma",
         phone: "+91 8765432109",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Automation"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Email Services
       {
@@ -33,14 +35,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 7654321098",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Email Services"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Meena Gupta",
         phone: "+91 6543210987",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Email Services"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // HPC Support
       {
@@ -48,14 +52,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 5432109876",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["HPC Support"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Neha Joshi",
         phone: "+91 4321098765",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["HPC Support"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Network
       {
@@ -63,14 +69,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 3210987654",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Network"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Aarti Singh",
         phone: "+91 2109876543",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Network"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // PC & Peripherals
       {
@@ -78,14 +86,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 1098765432",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["PC & Peripherals"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Sunita Rao",
         phone: "+91 9087654321",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["PC & Peripherals"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Telephone
       {
@@ -93,14 +103,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 8907654321",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Telephone"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Geeta Reddy",
         phone: "+91 7890654321",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Telephone"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Turnitin
       {
@@ -108,14 +120,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 6789054321",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Turnitin"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Anjali Nair",
         phone: "+91 5678904321",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Turnitin"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Web Services
       {
@@ -123,14 +137,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 4567890321",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Web Services"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Kavita Menon",
         phone: "+91 3456789021",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Web Services"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Other (Computer & Comm. Centre)
       {
@@ -138,14 +154,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 2345678901",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Other"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Lakshmi Pillai",
         phone: "+91 1234567890",
         categories: ["Computer & Comm. Centre"],
         subCategories: ["Other"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
     ];
 
@@ -157,14 +175,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 9876512340",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Plumbing"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Raju Sharma",
         phone: "+91 8765123490",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Plumbing"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Room Servicing
       {
@@ -172,14 +192,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 7651234980",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Room Servicing"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Maya Devi",
         phone: "+91 6512349870",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Room Servicing"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Electricity Issues
       {
@@ -187,14 +209,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 5123498760",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Electricity Issues"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Manoj Electrician",
         phone: "+91 4123987650",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Electricity Issues"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Furniture Repair
       {
@@ -202,14 +226,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 3129876540",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Furniture Repair"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Kamal Woodworker",
         phone: "+91 2198765430",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Furniture Repair"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Cleaning Services
       {
@@ -217,14 +243,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 1987654320",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Cleaning Services"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Reena Cleaning Staff",
         phone: "+91 9876543210",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Cleaning Services"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Other (Hostel/Resident)
       {
@@ -232,14 +260,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 8765432190",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Other"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Anita Support Staff",
         phone: "+91 7654321980",
         categories: ["Hostel/Resident Complaints"],
         subCategories: ["Other"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
     ];
 
@@ -251,14 +281,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 6543219870",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Gym"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Deepak Gym Manager",
         phone: "+91 5432198760",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Gym"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Badminton Hall
       {
@@ -266,14 +298,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 4321987650",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Badminton Hall"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Komal Sports Manager",
         phone: "+91 3219876540",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Badminton Hall"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Table Tennis Court
       {
@@ -281,14 +315,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 2198765430",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Table Tennis Court"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Sheela TT Coordinator",
         phone: "+91 1987654320",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Table Tennis Court"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Ground
       {
@@ -296,14 +332,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 9876543210",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Ground"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Vinod Ground Staff",
         phone: "+91 8765432109",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Ground"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Swimming Pool
       {
@@ -311,14 +349,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 7654321098",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Swimming Pool"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Sneha Pool Maintenance",
         phone: "+91 6543210987",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Swimming Pool"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Food Court
       {
@@ -326,14 +366,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 5432109876",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Food Court"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Meera Cafeteria Manager",
         phone: "+91 4321098765",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Food Court"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       // Other (Infrastructure)
       {
@@ -341,14 +383,16 @@ export const seedSupportStaff = async () => {
         phone: "+91 3210987654",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Other"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
       {
         name: "Pooja Infrastructure Staff",
         phone: "+91 2109876543",
         categories: ["Infrastructure Complaints"],
         subCategories: ["Other"],
-        assignedComplaints: []
+        assignedComplaints: [],
+        resolvedComplaints: []
       },
     ];
 
