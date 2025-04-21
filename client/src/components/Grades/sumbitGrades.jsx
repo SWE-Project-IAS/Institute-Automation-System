@@ -1,6 +1,6 @@
 import React, { useState, useEffect,useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { RoleContext } from "../../context/Rolecontext";
+import { RoleContext } from "../../context/Rolecontext.jsx";
 import * as XLSX from 'xlsx';
 
 const SubmitGrades = () => {

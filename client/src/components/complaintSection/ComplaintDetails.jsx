@@ -479,8 +479,8 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
                         <div className="mb-3 bg-gray-100 rounded-lg overflow-hidden flex justify-center">
                             <img
 
-                                src={`${process.env.BASE_URL}/uploads/complaints/${complaint.imageUrls[activeImageIndex]}`}
-                                alt={`Complaint Image ${activeImageIndex + 1}`}
+                                src={complaint.imageUrls[activeImageIndex]}
+                                alt={`Complaint ${activeImageIndex + 1}`}
                                 className="max-h-80 object-contain"
                             />
                         </div>
@@ -496,7 +496,7 @@ const ComplaintDetails = ({ complaint, onBack, role }) => {
                                     >
                                         <img
 
-                                            src={`process.env.BASE_URL/uploads/complaints/${url}`}
+                                            src={url}
                                             alt={`Thumbnail ${index + 1}`}
                                             className="h-16 w-16 object-cover"
                                         />
