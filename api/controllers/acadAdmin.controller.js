@@ -139,7 +139,6 @@ export const addStudents = async (req, res) => {
       dateOfBirth,
       bloodGroup,
       address,
-      dateOfBirth,
     });
 
       const savedUser = await newUser.save();
