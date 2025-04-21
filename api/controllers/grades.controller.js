@@ -62,28 +62,23 @@ export const getStudentsinCourse = async (req, res) => {
         return res.status(404).json({ message: 'Course not found' });
     }
 
-    // Extract student ObjectIds from the course's students array
-    // const studentIds = course.students;
-    // // Find students by their ObjectIds
-    // const enrolledStudents = await Student.find({
-    //     _id: { $in: studentIds }
-    // }).select('rollNo email'); // Select rollNo and email
-    // console.log("Enrolled Students");
-    // console.log(enrolledStudents);
-
+    
 
     //   Find all students who are enrolled (Approved status) in the given course
     const enrolledStudents = await StudentCourse.find({
       courseId,
       status: 'Approved'
-    }).select('rollNo email'); // Select rollNo and email
-  
+    }) // Select rollNo and email
     
+    // Extract roll numbers, emails, and names from the result
+    const studentDetails = await Promise.all(enrolledStudents.map(async student => {
 
-    // Extract roll numbers and emails from the result
-    const studentDetails = enrolledStudents.map(student => ({
+      const user = await User.findById(student.userId).select('name');
+      return {
       rollNumber: student.rollNo,
-      name: student.email
+      name: user ? user.name : 'Unknown',
+      email: student.email
+      };
     }));
     
 
