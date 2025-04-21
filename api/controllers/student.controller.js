@@ -1313,7 +1313,7 @@ export const getPendingRequests = async (req, res) => {
     console.log("Fetching pending requests for student ID:", id);
     const requests = await CourseApprovalRequest.find({
       studentId: id,
-      status: "Pending",
+      // status: "Pending", // now we will receive all kinds of requests on the frontend
     });
     res.status(200).json(requests);
   } catch (error) {
