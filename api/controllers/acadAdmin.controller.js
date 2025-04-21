@@ -126,19 +126,21 @@ export const addStudents = async (req, res) => {
       }
 
       const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(rollNo, saltRounds);
+      const hashedPassword = await bcrypt.hash(email, saltRounds);
 
       // Create user
-      const newUser = new User({
-        name,
-        email,
-        password: hashedPassword,
-        refreshToken: "abc", // dummy string as a refresh token for testing. 
-        contactNo,
-        address,
-        dateOfBirth,
-        bloodGroup,
-      });
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      refreshToken: Date.now().toString(), // Using timestamp as unique refresh token
+      contactNo,
+      address,
+      dateOfBirth,
+      bloodGroup,
+      address,
+      dateOfBirth,
+    });
 
       const savedUser = await newUser.save();
 

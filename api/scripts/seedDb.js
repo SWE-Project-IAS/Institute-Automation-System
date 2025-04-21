@@ -296,50 +296,50 @@ const seedDatabase = async () => {
     
     // Generate a salt
     const saltRounds = 10; // You can adjust this number for more or less security (higher is more secure but slower)
-    const hashedPassword = await bcrypt.hash(facultyData.password, saltRounds);
-    // Create user with the hashed password
-    const createdFacultyUser = await User.create({
-      ...facultyData, // Spread the existing facultyData
-      password: hashedPassword, // Override the plain text password with the hashed one
-    });
-    console.log("User created:", createdFacultyUser.name, "with email:", createdFacultyUser.email);
-    // Create a faculty with the same email
-    const faculty = await Faculty.create({
-      userId: createdFacultyUser._id,
-      email: facultyData.email,
-      department: facultyData.department,
-      designation: facultyData.designation,
-      courses: facultyData.courses,
-          specialization: facultyData.specialization,
-          qualifications: facultyData.qualifications,
-          status: facultyData.status,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        });
-        console.log("Faculty created with designation:", faculty.designation);
-        console.log("Faculty is linked to user with email:", createdFacultyUser.email);
+    // const hashedPassword = await bcrypt.hash(facultyData.password, saltRounds);
+    // // Create user with the hashed password
+    // const createdFacultyUser = await User.create({
+    //   ...facultyData, // Spread the existing facultyData
+    //   password: hashedPassword, // Override the plain text password with the hashed one
+    // });
+    // console.log("User created:", createdFacultyUser.name, "with email:", createdFacultyUser.email);
+    // // Create a faculty with the same email
+    // const faculty = await Faculty.create({
+    //   userId: createdFacultyUser._id,
+    //   email: facultyData.email,
+    //   department: facultyData.department,
+    //   designation: facultyData.designation,
+    //   courses: facultyData.courses,
+    //       specialization: facultyData.specialization,
+    //       qualifications: facultyData.qualifications,
+    //       status: facultyData.status,
+    //       createdAt: new Date(),
+    //       updatedAt: new Date()
+    //     });
+    //     console.log("Faculty created with designation:", faculty.designation);
+    //     console.log("Faculty is linked to user with email:", createdFacultyUser.email);
         
-        // const hashedPassword = await bcrypt.hash(acadAdminData.password, saltRounds);
+        const hashedPassword = await bcrypt.hash(acadAdminData.password, saltRounds);
         
-        // // Create user with the hashed password
-        // const createdAcadAdminUser = await User.create({
-        //     ...acadAdminData, // Spread the existing acadAdminData
-        //     password: hashedPassword, // Override the plain text password with the hashed one
-        //   });
-        //   console.log("User created:", createdAcadAdminUser.name, "with email:", createdAcadAdminUser.email);
+        // Create user with the hashed password
+        const createdAcadAdminUser = await User.create({
+            ...acadAdminData, // Spread the existing acadAdminData
+            password: hashedPassword, // Override the plain text password with the hashed one
+          });
+          console.log("User created:", createdAcadAdminUser.name, "with email:", createdAcadAdminUser.email);
           
-        //   // Create an academic admin with the same email
-        //   const acadAdmin = await AcadAdmin.create({
-        //           userId: createdAcadAdminUser._id,
-        //           email: acadAdminData.email,
-        //           designation: acadAdminData.designation,
-        //           qualifications: acadAdminData.qualifications,
-        //           status: acadAdminData.status,
-        //           createdAt: new Date(),
-        //           updatedAt: new Date()
-        //         });
-        //         console.log("Academic Admin created with designation:", acadAdmin.designation);
-        //         console.log("Academic Admin is linked to user with email:", createdAcadAdminUser.email);
+          // Create an academic admin with the same email
+          const acadAdmin = await AcadAdmin.create({
+                  userId: createdAcadAdminUser._id,
+                  email: acadAdminData.email,
+                  designation: acadAdminData.designation,
+                  qualifications: acadAdminData.qualifications,
+                  status: acadAdminData.status,
+                  createdAt: new Date(),
+                  updatedAt: new Date()
+                });
+                console.log("Academic Admin created with designation:", acadAdmin.designation);
+                console.log("Academic Admin is linked to user with email:", createdAcadAdminUser.email);
             
             // const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
             
@@ -806,3 +806,4 @@ const seedStudentCourses = async () => {
   }
 
   export {fixFeedbackIndexes, seedDatabase, seedStudentCourses, seedCourses, removeAllStudentsFromCourse, seedFacultyCourses, fillFacultyCourse };
+seedDatabase()
