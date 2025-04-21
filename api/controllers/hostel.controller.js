@@ -61,7 +61,7 @@ export const getStudentLeave = async (req, res) => {
   
       const leaves = await HostelLeave.find({ rollNo: student.rollNo });
       console.log(leaves)
-      if (!leaves || leaves.length === 0) {
+      if (!leaves) {
         return res.status(404).json({ message: "No leaves found for this student" });
       }
   

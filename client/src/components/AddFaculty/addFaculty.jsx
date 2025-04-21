@@ -14,10 +14,10 @@ const AddFaculty = () => {
     designation: "",
     yearOfJoining: "",
     specialization: "",
-    qualifications: [""],
-    experience: [""],
-    publications: [""],
-    achievements: [""],
+    qualifications: [],
+    experience: [],
+    publications: [],
+    achievements: [],
     conferences: [{ name: "", year: "", role: "" }],
   });
 
