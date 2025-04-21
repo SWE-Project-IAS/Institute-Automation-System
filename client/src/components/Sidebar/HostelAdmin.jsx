@@ -67,7 +67,14 @@ const HostelAdmin = () => {
                     </span>
                     {expandedSections.profile && (
                         <ul className="pl-5">
-                            <li>View Profile</li>
+                            <li>
+                                <Link
+                                    to="/profile"
+                                    className="text-gray-700 hover:text-gray-900"
+                                >
+                                    View Profile
+                                </Link>
+                            </li>
                         </ul>
                     )}
                 </li>
