@@ -30,6 +30,11 @@ const complaintSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  address: {
+    type: String,
+    required: false,
+    default: ""
+  },
   imageUrls: {
     type: [String],
     required: false,
