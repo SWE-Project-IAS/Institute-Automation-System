@@ -76,16 +76,25 @@ export const getStudentsinCourse = async (req, res) => {
     const enrolledStudents = await StudentCourse.find({
       courseId,
       status: 'Approved'
-    }).select('rollNo email'); // Select rollNo and email
+    }) // Select rollNo and email
   
-    
-
     // Extract roll numbers and emails from the result
-    const studentDetails = enrolledStudents.map(student => ({
-      rollNumber: student.rollNo,
-      name: student.email
-    }));
-    
+    const studentDetails = await Promise.all(
+      enrolledStudents.map(async (student) => {
+      const studentData = await Student.findOne({ rollNo: student.rollNo });
+      if (!studentData) {
+        return {
+        rollNumber: student.rollNo,
+        name: 'Unknown'
+        };
+      }
+      const user = await User.findById(studentData.userId).select('name');
+      return {
+        rollNumber: student.rollNo,
+        name: user ? user.name : 'Unknown'
+      };
+      })
+    );
 
     res.status(200).json({ students: studentDetails });
 
