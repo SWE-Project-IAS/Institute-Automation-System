@@ -59,20 +59,20 @@ function FacultyCourses() {
         <div className="bg-red-100 p-8 rounded-lg text-center">
           <p className="text-red-700 text-lg mb-4">{error.message || "Failed to fetch courses"}</p>
           <Link
-            to="/dashboard"
+            to="/profile"
             className="bg-blue-500 text-white py-2 px-6 rounded-md font-medium hover:bg-blue-600 transition duration-300"
           >
-            Return to Dashboard
+            Return to Profile
           </Link>
         </div>
       ) : facultyCourses.length === 0 ? (
         <div className="bg-gray-100 p-8 rounded-lg text-center">
           <p className="text-gray-700 text-lg mb-4">You are not assigned to any courses this semester.</p>
           <Link
-            to="/dashboard"
+            to="/profile"
             className="bg-blue-500 text-white py-2 px-6 rounded-md font-medium hover:bg-blue-600 transition duration-300"
           >
-            Return to Dashboard
+            Return to Profile
           </Link>
         </div>
       ) : (

@@ -547,23 +547,42 @@ const seedStudentCourses = async () => {
       //console.log("Connected to MongoDB, starting faculty courses seed process...");
       
       // Check if faculty courses already exist
-      const existingFacultyCourses = await FacultyCourse.find({});
-      //console.log("Existing faculty courses found:", existingFacultyCourses);
-      if (existingFacultyCourses) {
-        //console.log(`Found existing faculty courses. Deleting them before re-seeding.`);
-        await FacultyCourse.deleteMany({});
+      // const existingFacultyCourses = await FacultyCourse.find({});
+      // console.log("Existing faculty courses found:", existingFacultyCourses);
+      // if (existingFacultyCourses) {
+      //   console.log(`Found existing faculty courses. Deleting them before re-seeding.`);
+      //   await FacultyCourse.deleteMany({});
+      // }
+      
+      // // Insert the faculty courses
+      // // const result = await FacultyCourse.insertMany(facultyCoursesData);
+      
+      // console.log(`Successfully added ${result.length} faculty courses for ${facultyData.facultyId}:`);
+      // result.forEach(course => {
+      //   console.log(`- ${course.courseCode} (${course.year}, ${course.session}) - Status: ${course.status}`);
+      // });
+      
+      // console.log("Faculty courses seeded successfully!");
+      // process.exit(0);
+
+      const res = await FacultyCourse.deleteMany({});
+      console.log(`Deleted ${res.deletedCount} existing faculty courses.`);
+
+      // clear the courses array in faculty model
+      const faculty = await Faculty.find({email:"r.inkulu@iitg.ac.in"});
+      console.log("Faculty found:", faculty);
+      if (!faculty) {
+        console.log("Faculty not found!");
+        process.exit(1);
       }
-      
-      // Insert the faculty courses
-      const result = await FacultyCourse.insertMany(facultyCoursesData);
-      
-      //console.log(`Successfully added ${result.length} faculty courses for ${facultyData.facultyId}:`);
-      result.forEach(course => {
-        //console.log(`- ${course.courseCode} (${course.year}, ${course.session}) - Status: ${course.status}`);
+
+      const update = await Faculty.updateMany({
+        email: "r.inkulu@iitg.ac.in",
+        // courses: { $exists: true } // Check if the courses field exists
+      }, {
+        $set: { courses: [] } // Set courses to an empty array
       });
-      
-      //console.log("Faculty courses seeded successfully!");
-      process.exit(0);
+
     } catch (error) {
       console.error("Error seeding faculty courses:", error);
       process.exit(1);
@@ -806,4 +825,3 @@ const seedStudentCourses = async () => {
   }
 
   export {fixFeedbackIndexes, seedDatabase, seedStudentCourses, seedCourses, removeAllStudentsFromCourse, seedFacultyCourses, fillFacultyCourse };
-seedDatabase()

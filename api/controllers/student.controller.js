@@ -1254,10 +1254,25 @@ export const getAvailableCourses = async (req, res) => {
       department: student.department,
       semester: student.semester,
     });
+    
+    // console.log("2", courses);
+    const courseCodes = courses.map((course) => course.courseCode);
+    const courseDetails = await Course.find({
+      courseCode: { $in: courseCodes },
+    }).lean();
 
-    //console.log("3", courses);
+    // console.log("3", courseDetails);
+    
+    // for every object in courseDetails, add a new field called courseType
+    const coursesWithType = courseDetails.map((course) => {
+      const type = courses.find(
+        (c) => c.courseCode === course.courseCode
+      )?.type;
+      return { ...course, type };
+    });
 
-    res.status(200).json(courses);
+    // console.log("4", coursesWithType);
+    res.status(200).json(coursesWithType);
   } catch (error) {
     console.error("Error fetching available courses:", error);
     res.status(500).json({ message: "Failed to fetch available courses" });
@@ -1345,14 +1360,14 @@ export const getStudentFromRollNumber = async (req, res) => {
 
 export const getPerformance = async (req, res) => {
   try {
-    //console.log("====== CALCULATING SPI/CPI ======");
-    //console.log("Student ID:", req.params.id);
+    // console.log("====== CALCULATING SPI/CPI ======");
+    // console.log("Student ID:", req.params.id);
 
     // Fetch student
     const user = await Student.findOne({ userId: req.params.id }).populate(
       "userId"
     );
-    //console.log("Student found:", user ? "Yes" : "No", user?.rollNo);
+    // console.log("Student found:", user ? "Yes" : "No", user?.rollNo);
 
     if (!user) {
       //console.log("Student not found for ID:", req.params.id);
@@ -1369,10 +1384,10 @@ export const getPerformance = async (req, res) => {
       creditOrAudit: "Credit",
     }).lean();
 
-    //console.log("Found completed courses:", studentCourses.length);
+    // console.log("Found completed courses:", studentCourses.length);
 
     if (studentCourses.length === 0) {
-      //console.log("No completed courses found for student");
+      // console.log("No completed courses found for student");
       return res.status(200).json({ performance: performanceResult });
     }
 
@@ -1382,7 +1397,7 @@ export const getPerformance = async (req, res) => {
       courseCode: { $in: courseIds },
     }).lean();
 
-    //console.log("Found course details:", courseDetails.length);
+    // console.log("Found course details:", courseDetails.length);
 
     // Create course lookup map
     const courseMap = {};

@@ -133,7 +133,7 @@ export const submitGrades = async (req, res) => {
       // Save the updated StudentCourse entry
       await studentCourse.save();
 
-      //console.log(`Updated grade for rollNo: ${rollNumber} to ${grade}`);
+      // console.log(`Updated grade for rollNo: ${rollNumber} to ${grade}`);
     }
     
 

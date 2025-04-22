@@ -23,7 +23,7 @@ export const getCourseAnnouncements = async (req, res) => {
       
       // Get all faculty IDs from announcements
       const facultyIds = [...new Set(course.announcements.map(announcement => announcement.postedBy))];
-    //   console.log("Faculty IDs found:", facultyIds);
+      // console.log("Faculty IDs found:", facultyIds);
       // Find all faculty members who posted announcements
       const facultyMembers = await Faculty.find({ userId: { $in: facultyIds } });
       const facultyUsers = await User.find({
@@ -196,7 +196,7 @@ export const getCourseAnnouncements = async (req, res) => {
     try {
   
       const { courseId, announcementId } = req.params;
-    //   console.log("Deleting announcement from course ID:", courseId);
+      // console.log("Deleting announcement from course ID:", courseId);
       // Find course
       const course = await Course.findOne({ courseCode: courseId });
       
@@ -390,6 +390,7 @@ export const getAdminAnnouncements = async (req, res) => {
     //     message: 'Access denied. Only academic administrators can access this resource'
     //   });
     // }
+    // console.log("ehheere");
     // Get all announcements sorted by date (most recent first)
     const announcements = await AcadAdminAnnouncement.find({})
       .sort({ date: -1 });

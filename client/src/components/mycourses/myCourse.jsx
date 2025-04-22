@@ -190,7 +190,7 @@ function MyCourses() {
           to="/dropcourse"
           className="inline-flex items-center text-pink-600 hover:text-pink-700"
         >
-          Need to drop a course? Click here
+          Want to drop a course? Click here
           <FaExternalLinkAlt className="ml-1 text-xs" />
         </Link>
       </div>

@@ -15,7 +15,7 @@ const CourseForm = () => {
     session: '',
     program: '',
     mappingDepartment: '',
-    semesters: [],
+    semester: '', // Changed from semesters array to single semester
     type: ''
   });
 
@@ -27,18 +27,6 @@ const CourseForm = () => {
     setForm((prev) => ({
       ...prev,
       [name]: value
-    }));
-  };
-
-  // Handle semester checkbox changes
-  const handleSemesterChange = (e) => {
-    const value = e.target.value;
-    const isChecked = e.target.checked;
-    setForm((prev) => ({
-      ...prev,
-      semesters: isChecked
-        ? [...prev.semesters, value]
-        : prev.semesters.filter((s) => s !== value)
     }));
   };
 
@@ -56,7 +44,7 @@ const CourseForm = () => {
       session: '',
       program: '',
       mappingDepartment: '',
-      semesters: [],
+      semester: '', // Changed from semesters array to single semester
       type: ''
     });
   };
@@ -73,7 +61,7 @@ const CourseForm = () => {
       !form.courseDepartment ||
       !form.program ||
       !form.mappingDepartment ||
-      !form.semesters.length ||
+      !form.semester || // Check for single semester instead of array length
       !form.type
     ) {
       alert('Please fill all required fields.');
@@ -96,7 +84,7 @@ const CourseForm = () => {
         {
           program: form.program,
           department: form.mappingDepartment,
-          semesters: form.semesters,
+          semesters: [form.semester], // Convert single semester to array for API compatibility
           type: form.type
         }
       ]
@@ -119,7 +107,7 @@ const CourseForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
         <FaBook className="inline mr-2" />
         Course Registration
@@ -184,16 +172,18 @@ const CourseForm = () => {
             </div>
           </div>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">Semesters<span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-gray-700">Semester<span className="text-red-500">*</span></label>
             <div className="grid grid-cols-4 gap-2 mt-2">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
                 <label key={sem} className="flex items-center">
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="semester"
                     value={String(sem)}
-                    checked={form.semesters.includes(String(sem))}
-                    onChange={handleSemesterChange}
-                    className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                    checked={form.semester === String(sem)}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-blue-600 rounded-full border-gray-300"
+                    required
                   />
                   <span className="ml-2 text-sm">Semester {sem}</span>
                 </label>

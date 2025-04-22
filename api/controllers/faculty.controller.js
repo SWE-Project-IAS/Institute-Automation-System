@@ -64,7 +64,7 @@ try {
     }
    
     // Get the faculty courses with details
-    const facultyCourses = faculty.courses || [];
+    const facultyCourses = await FacultyCourse.find({ facultyId: faculty.userId, status: 'Ongoing' })
     // console.log("Faculty courses:", facultyCourses);
     // Get current semester status
     const currentDate = new Date();
@@ -91,7 +91,6 @@ try {
     const activeCourses = facultyCourses.filter(course => course.status === 'Ongoing');
     // console.log("Active courses:", activeCourses);
     // console.log("Active courses:", activeCourses);
-   
     // Get course details for each active course
     const coursesWithDetails = await Promise.all(
         activeCourses.map(async (course) => {
@@ -336,7 +335,7 @@ export const getPendingRequestsFaculty = async (req, res) => {
     const { id } = req.params;
     const { courseCode } = req.query; // Get courseCode from query parameters
     
-    //console.log("Fetching pending requests for faculty ID:", id);
+    // console.log("Fetching pending requests for faculty ID:", id);
     if (courseCode) {
       //console.log("Filtering by course code:", courseCode);
     }
@@ -495,7 +494,6 @@ export const getFacultyDashboardCourses = async (req, res) => {
     const usercourses = FacultyCourse.find({ facultyId: faculty.userId })
 
     const facultyCourses = await FacultyCourse.find({ facultyId: faculty.userId, status: 'Ongoing' });
-
     const formattedCourses = facultyCourses.map(course => ({
       code: course.courseCode,
       // name: course.courseCode // Assuming course name is not stored in FacultyCourse, you may need to populate it if required
