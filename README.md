@@ -162,7 +162,8 @@ src/
   App.jsx          - Main application component
   index.js         - React app entry point
 ```
-
+## Documentation
+[Institute Automation Technical and User Documentation](https://instituteautomation.netlify.app/)
 ## Contributing
 
 Contributions are welcome. Please fork the repository and submit a pull request with your proposed changes. Ensure your code is well-documented and tested.
