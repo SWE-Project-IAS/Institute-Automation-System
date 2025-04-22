@@ -17,6 +17,10 @@ import {
   addStudents,
   addFaculty,
   getAllDepartments,
+  getGlobalDrop,
+  setGlobalDrop,
+  getGlobalReg,
+  setGlobalReg,
 } from "../controllers/acadAdmin.controller.js";
 import { addAnnouncement, deleteAnnouncement, getAdminAnnouncements, updateAnnouncement } from "../controllers/announcements.controller.js";
 
@@ -60,4 +64,10 @@ router.delete("/announcements/:announcementId/delete", deleteAnnouncement);
 // get departments
 router.get("/departments", getAllDepartments);
 
+// global sets
+router.get("/course-drop/status", getGlobalDrop); // Get global drop status
+router.post("/course-drop/set", setGlobalDrop); // Set global drop status
+
+router.get("/course-registration/status", getGlobalReg);
+router.post("/course-registration/set", setGlobalReg); // Set global registration status
 export default router;

@@ -13,4 +13,10 @@ const courseDropRequestSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now }
 });
 
+const globalDropSchema = new mongoose.Schema({
+    isActive: { type: Boolean, default: false },
+    endDate: { type: Date, default: null },
+});
+
 export const CourseDropRequest = mongoose.model('CourseDropRequest', courseDropRequestSchema);
+export const GlobalDrop = mongoose.model('GlobalDrop', globalDropSchema);

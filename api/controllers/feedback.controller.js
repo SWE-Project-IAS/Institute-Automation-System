@@ -485,7 +485,8 @@ export const setGlobalstatus = async (req, res) => {
   try {
     const { active, endDate } = req.body;
     const config = await GlobalFeedbackConfig.getConfig();
-    
+    console.log("active ", active);
+    console.log("endDate ", endDate);
     if (typeof active !== 'boolean') {
       return res.status(400).json({ 
         message: 'Invalid request: active must be a boolean' 

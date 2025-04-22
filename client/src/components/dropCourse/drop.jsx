@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
   FaRegClock, FaBookOpen, FaExclamationTriangle, 
-  FaCheck, FaTimes, FaHistory 
+  FaCheck, FaTimes, FaHistory, FaLock 
 } from "react-icons/fa";
 import newRequest from '../../utils/newRequest';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -26,6 +26,19 @@ export default function DropCourse() {
   const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
   const {userId} = userData.user;
   const queryClient = useQueryClient();
+
+  // Fetch global drop status
+  const {
+    isLoading: globalStatusLoading,
+    error: globalStatusError,
+    data: globalDropStatus
+  } = useQuery({
+    queryKey: ["globalDropStatus"],
+    queryFn: () =>
+      newRequest.get("/acadadmin/course-drop/status").then((res) => {
+        return res.data;
+      }),
+  });
 
   // Fetch enrolled courses
   const { 
@@ -117,10 +130,19 @@ export default function DropCourse() {
   };
 
   // Determine if we're loading data
-  const isLoading = coursesLoading || requestsLoading;
+  const isLoading = coursesLoading || requestsLoading || globalStatusLoading;
   
   // Determine if there's an error
-  const error = coursesError || requestsError;
+  const error = coursesError || requestsError || globalStatusError;
+
+  // Check if global drop is active
+  console.log("Global Drop Status:", globalDropStatus.data);
+  const isDropActive = globalDropStatus.data?.isActive || false;
+  
+  // Format global drop end date if available
+  const dropEndDate = globalDropStatus.data?.endDate 
+    ? new Date(globalDropStatus.data.endDate).toLocaleDateString() 
+    : null;
 
   // Get pending drop requests
   const pendingRequests = dropRequests.filter(request => request.status === 'Pending');
@@ -131,6 +153,45 @@ export default function DropCourse() {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-2 text-gray-800">Drop Courses</h1>
       <p className="text-gray-600 mb-6">Request to drop courses from your current semester</p>
+      
+      {/* Global Drop Status Banner */}
+      {!globalStatusLoading && !globalStatusError && (
+        <div className={`mb-6 p-4 rounded-lg ${
+          isDropActive 
+            ? "bg-green-100 border border-green-200" 
+            : "bg-red-100 border border-red-200"
+        }`}>
+          <div className="flex items-center">
+            {isDropActive ? (
+              <>
+                <FaCheck className="text-green-600 mr-2 text-xl" />
+                <div>
+                  <p className="font-medium text-green-700">
+                    Course Drop Period is Active
+                  </p>
+                  {dropEndDate && (
+                    <p className="text-sm text-green-600">
+                      You can request to drop courses until {dropEndDate}
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <FaLock className="text-red-600 mr-2 text-xl" />
+                <div>
+                  <p className="font-medium text-red-700">
+                    Course Drop Period is Inactive
+                  </p>
+                  <p className="text-sm text-red-600">
+                    You cannot request to drop courses at this time
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
       
       {isLoading ? (
         <div className="bg-gray-100 p-8 rounded-lg text-center">
@@ -190,14 +251,18 @@ export default function DropCourse() {
                       
                       <button
                         onClick={() => handleRequestDropCourse(course.id, course.name)}
-                        disabled={createDropRequest.isPending}
+                        disabled={createDropRequest.isPending || !isDropActive}
                         className={`flex items-center justify-center gap-2 ${
-                          createDropRequest.isPending 
+                          createDropRequest.isPending || !isDropActive
                             ? "bg-gray-200 text-gray-500 cursor-not-allowed" 
                             : "bg-white text-red-500 border border-red-500 hover:bg-red-50"
                         } py-2 px-4 rounded-md font-medium transition duration-300`}
                       >
-                        {createDropRequest.isPending ? "Submitting..." : "Request Drop"}
+                        {createDropRequest.isPending 
+                          ? "Submitting..." 
+                          : !isDropActive 
+                            ? "Drop Period Closed" 
+                            : "Request Drop"}
                       </button>
                     </div>
                   </div>
@@ -333,6 +398,9 @@ export default function DropCourse() {
               <li>You may cancel a pending drop request at any time before it's approved.</li>
               <li>Once a course drop is approved, it cannot be reversed.</li>
               <li>Please check the academic calendar for the last date to drop courses without academic penalty.</li>
+              {dropEndDate && isDropActive && (
+                <li><strong>Current drop period ends on {dropEndDate}.</strong></li>
+              )}
             </ul>
           </div>
           

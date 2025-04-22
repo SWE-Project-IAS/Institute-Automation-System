@@ -2,11 +2,12 @@ import mongoose from "mongoose";
 import { ApplicationDocument, Bonafide, Passport } from '../models/documents.models.js';
 import { Student } from '../models/student.model.js';
 import { User } from '../models/user.model.js';
-import { CourseDropRequest } from '../models/courseDropRequest.model.js';
-import { Course, StudentCourse} from '../models/course.model.js';
+import { CourseDropRequest, GlobalDrop } from '../models/courseDropRequest.model.js';
+import { Course, GlobalReg, StudentCourse} from '../models/course.model.js';
 import { FeeBreakdown } from "../models/fees.model.js";
 import bcrypt from "bcrypt";
 import { Faculty } from "../models/faculty.model.js";
+import { AcadAdminAnnouncement } from "../models/acadAdminAnnouncements.model.js";
 
 // Add new faculty
 export const addFaculty = async (req, res) => {
@@ -594,6 +595,64 @@ export const updateFeeBreakdown = async (req, res) => {
   }
 };
 
+export const getGlobalReg = async (req, res) => {
+  try {
+    console.log("regegeggeg");
+    // Fetch the global registration status from the database
+    const globalReg = await GlobalReg.findOne({});
+
+    if (!globalReg) {
+      // make a new entry if it doesn't exist
+      const newGlobalReg = new GlobalReg({ isActive: false });
+      await newGlobalReg.save();
+    }
+
+    return res.status(200).json({
+      message: "Global registration status fetched successfully",
+      success: true,
+      data: globalReg,
+    });
+  } catch (error) {
+    console.error("Error fetching global registration status:", error);
+    return res.status(500).json({
+      message: "Failed to fetch global registration status",
+      success: false,
+      error: error.message,
+    });
+  }
+}
+
+export const setGlobalReg = async (req, res) => {
+  try {
+    const { active } = req.body;
+    // Check if a global drop entry already exists
+    let globalreg = await GlobalReg.findOne({});
+
+    if (globalreg) {
+      // Update existing entry
+      globalreg.isActive = active;
+      await globalreg.save();
+    } else {
+      // Create new entry
+      globalreg = new GlobalReg({ active });
+      await globalreg.save();
+    }
+
+    return res.status(200).json({
+      message: "Global registration status updated successfully",
+      success: true,
+      data: globalreg,
+    });
+  } catch (error) {
+    console.error("Error updating global registration status:", error);
+    return res.status(500).json({
+      message: "Failed to update global registration status",
+      success: false,
+      error: error.message,
+    });
+  }
+}
+
 
 export const getDropRequests = async (req, res) => {
     try {
@@ -901,5 +960,116 @@ export const getAllDepartments = async (req, res) => {
   } catch (error) {
     console.error("Error fetching departments:", error);
     res.status(500).json({ message: error.message });
+  }
+}
+
+export const getGlobalDrop = async (req, res) => {  
+  try {
+    console.log("regegeggeg");
+    // Fetch the global drop status from the database
+    const globalDrop = await GlobalDrop.findOne({});
+    console.log("Global Drop:", globalDrop);
+    if (!globalDrop) {
+      // make a new entry if it doesn't exist
+      const newGlobalDrop = new GlobalDrop({ isActive: false, endDate: null });
+    }
+
+    return res.status(200).json({
+      message: "Global drop status fetched successfully",
+      success: true,
+      data: globalDrop,
+    });
+  } catch (error) {
+    console.error("Error fetching global drop status:", error);
+    return res.status(500).json({
+      message: "Failed to fetch global drop status",
+      success: false,
+      error: error.message,
+    });
+  }
+}
+
+export const setGlobalDrop = async (req, res) => {
+  try {
+    const { active, endDate } = req.body;
+    // Check if a global drop entry already exists
+    let globalDrop = await GlobalDrop.findOne({});
+    // console.log("Global Drop:", active, endDate);
+    if (globalDrop) {
+      // Update existing entry
+      globalDrop.isActive = active;
+      globalDrop.endDate = endDate;
+      await globalDrop.save();
+    } else {
+      // Create new entry
+      globalDrop = new GlobalDrop({ active, endDate });
+      await globalDrop.save();
+    }
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+  
+    // Determine current session based on month
+    let currentSession;
+    if (currentMonth >= 0 && currentMonth <= 4) {
+      currentSession = 'Winter Semester';
+    } else if (currentMonth >= 5 && currentMonth <= 7) {
+      currentSession = 'Summer Course';
+    } else {
+      currentSession = 'Spring Semester';
+    }
+
+    const title = "Course Drop is " + (active ? "Open" : "Closed") + " for all courses";
+    
+    // Format the end date for the announcement
+    const formattedEndDate = new Date(endDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const content = active ? `This is to inform you that the course drop period for all registered courses of ${currentSession} is now open. Students can request to drop courses until ${formattedEndDate}. After this deadline, course drop requests will not be accepted. Please note that all drop requests are subject to approval by administration, and approved drops cannot be reversed. For any questions regarding the course drop process, please contact the Academic Affairs Office. Thank you for your attention to this important deadline.` :
+    `The course drop period for all registered courses is now closed. Thank you for your participation.`;
+
+    const importance = "High";
+    const targetEmails = []; // Add logic to fetch emails if needed
+    const targetGroups = {
+      allUniversity: true,
+      students: true,
+      faculty: true,
+      departments: [],
+      programs: [],
+      semester: "",
+      specificEmails: ""
+    };
+    const newAnnouncement = new AcadAdminAnnouncement({
+      title,
+      content,
+      importance,
+      targetEmails,
+      date: new Date(),
+      postedBy: "Admin",
+      targetGroups,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    //console.log("Announcement created:", newAnnouncement);
+    await newAnnouncement.save();
+
+    // console.log("Global Drop:", globalDrop);
+    return res.status(200).json({
+      message: "Global drop status updated successfully",
+      success: true,
+      data: globalDrop,
+    });
+  } catch (error) {
+    console.error("Error updating global drop status:", error);
+    return res.status(500).json({
+      message: "Failed to update global drop status",
+      success: false,
+      error: error.message,
+    });
   }
 }

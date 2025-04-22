@@ -78,7 +78,10 @@ const courseApprovalRequestSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
 });
     
-
+const globalRegSchema = new mongoose.Schema({
+    isActive: { type: Boolean, default: false },
+    endDate: { type: Date, default: null },
+});
 
 export const Course = mongoose.model('Course', courseSchema);
 export const StudentCourse = mongoose.model('StudentCourse', studentCourseSchema);
@@ -86,3 +89,4 @@ export const FacultyCourse = mongoose.model('FacultyCourse', facultyCourseSchema
 export const CourseRegistration = mongoose.model('CourseRegistration', courseRegistrationSchema);
 export const ProgramCourseMapping = mongoose.model('ProgramCourseMapping', programCourseMappingSchema);
 export const CourseApprovalRequest = mongoose.model('CourseApprovalRequest', courseApprovalRequestSchema);
+export const GlobalReg = mongoose.model('GlobalReg', globalRegSchema);
