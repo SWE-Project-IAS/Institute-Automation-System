@@ -49,7 +49,7 @@ export default function LoginPage() {
             }
         } catch (error) {
             console.error("Error logging in:", error);
-            alert("Failed to connect to the server.");
+            alert("Invalid Credentials.");
         }
     };
 
