@@ -25,7 +25,7 @@ export const getStudent = async (req, res) => {
     }
 
     res.status(200).json(user);
-    console.log("Student details fetched successfully", user);
+    //console.log("Student details fetched successfully", user);
   } catch (error) {
     console.error("Error fetching student details:", error);
     res.status(500).json({ message: "Error fetching student details" });
@@ -77,7 +77,7 @@ export const getStudent = async (req, res) => {
 
 export const getCompletedCourses = async (req, res) => {
   try {
-    console.log("Fetching completed courses for student ID:", req.params.id);
+    //console.log("Fetching completed courses for student ID:", req.params.id);
     const user = await Student.findOne({ userId: req.params.id }).populate(
       "userId"
     );
@@ -86,7 +86,7 @@ export const getCompletedCourses = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    console.log("User: ", user);
+    //console.log("User: ", user);
 
     // First, get all completed student courses
     const studentCourses = await StudentCourse.find({
@@ -123,7 +123,7 @@ export const getCompletedCourses = async (req, res) => {
       };
     });
 
-    console.log("Formatted courses:", formatted);
+    //console.log("Formatted courses:", formatted);
     res.status(200).json({ courses: formatted });
   } catch (error) {
     console.error("Error fetching completed courses:", error);
@@ -135,18 +135,18 @@ export const getCompletedCourses = async (req, res) => {
 export const getStudentCourses = async (req, res) => {
   try {
     const studentId = req.params.id;
-    console.log("Fetching courses for student ID:", studentId);
+    //console.log("Fetching courses for student ID:", studentId);
 
     // First get the student record to get the roll number
     const student = await Student.findOne({ userId: studentId });
-    console.log("fjshkjfhkjsfkjsdkjf", student);
+    //console.log("fjshkjfhkjsfkjsdkjf", student);
 
     if (!student) {
-        console.log("Student not found for ID:", studentId);
+        //console.log("Student not found for ID:", studentId);
         return res.status(404).json({ message: "Student not found" });
         }
 
-        console.log("Found student with roll number:", student.rollNo);
+        //console.log("Found student with roll number:", student.rollNo);
  
         // Get current academic session
         const now = new Date();
@@ -179,7 +179,7 @@ export const getStudentCourses = async (req, res) => {
         // // Get global feedback status
         const globalConfig = await GlobalFeedbackConfig.getConfig();
         const globalFeedbackActive = globalConfig.isActive;
-        console.log("Global feedback active status:", globalFeedbackActive);
+        //console.log("Global feedback active status:", globalFeedbackActive);
 
         // console.log(`Courses enrolled by student:`, studentCourses);
        
@@ -189,14 +189,14 @@ export const getStudentCourses = async (req, res) => {
                 const course = await Course.findOne({ courseCode: sc.courseId });
                 // console.log("Course details fetched:", course);
                 if (!course) {
-                    console.log(`Course not found for ID: ${sc.courseId}`);
+                    //console.log(`Course not found for ID: ${sc.courseId}`);
                     return null;
                 }
                 // console.log("Course details:", sc);
                 const facultyCourse = await FacultyCourse.findOne({
                     courseCode: sc.courseId
                 });
-                console.log("Faculty course details fetched:", facultyCourse);
+                //console.log("Faculty course details fetched:", facultyCourse);
                 // .populate('facultyId', 'name');
                 const facultyUser = await User.findById(facultyCourse.facultyId);
                                 // Added feedback active logic here
@@ -205,19 +205,19 @@ export const getStudentCourses = async (req, res) => {
                 if (globalFeedbackActive && facultyCourse && facultyCourse.facultyId) {
                     // Get the faculty document to use the correct ObjectId
                     const faculty = await Faculty.findOne({userId: facultyCourse.facultyId});
-                    console.log("Facccc", faculty);
-                    console.log("Coursss", course);
-                    console.log("Studd", student);
+                    //console.log("Facccc", faculty);
+                    //console.log("Coursss", course);
+                    //console.log("Studd", student);
                     if (faculty) {
                         const feedbackExists = await Feedback.exists({
                             student: student._id.toString(),
                             course: course._id.toString(),
                             faculty: faculty._id.toString()
                         });
-                        console.log("Feedback exists:", feedbackExists);
+                        //console.log("Feedback exists:", feedbackExists);
                         // Set feedbackOpen to true if feedback doesn't exist
                         feedbackOpen = !feedbackExists;
-                        console.log("already submitted",feedbackExists);
+                        //console.log("already submitted",feedbackExists);
                     }
                 }
 
@@ -253,12 +253,12 @@ export const getStudentCourses = async (req, res) => {
                 };
             })
         );
-        console.log("Hehehhe", courses);
+        //console.log("Hehehhe", courses);
         // console.log(`Fetched course details for ${courses.length} courses`);
         // console.log(courses);
         // Filter out null value    s (courses that weren't found)
         const validCourses = courses.filter(course => course !== null);
-        console.log(`Returning ${validCourses.length} valid courses`);
+        //console.log(`Returning ${validCourses.length} valid courses`);
        
         // Determine if feedback is available (implement your logic)
         const isFeedbackAvailable = false; // Placeholder
@@ -268,7 +268,7 @@ export const getStudentCourses = async (req, res) => {
         });
        
     } catch (error) {
-        console.log("Error fetching student courses:", error);
+        //console.log("Error fetching student courses:", error);
         res.status(500).json({ message: "Failed to fetch courses" });
     }
 };
@@ -298,20 +298,20 @@ export const getCourseAnnouncements = async (req, res) => {
       ),
     ];
     
-    console.log("Faculty IDs found:", facultyIds);
+    //console.log("Faculty IDs found:", facultyIds);
 
     // Find all faculty members who posted announcements
     const facultyMembers = await Faculty.find({
       userId: { $in: facultyIds },
     });
 
-    console.log("Faculty members found1:", facultyMembers);
+    //console.log("Faculty members found1:", facultyMembers);
     
     const facultyUsers = await User.find({
       _id: { $in: facultyMembers.map((faculty) => faculty.userId) },
     });
 
-    console.log("Faculty members found:", facultyUsers);  
+    //console.log("Faculty members found:", facultyUsers);  
 
     // Create a lookup object for faculty
     const facultyLookup = {};
@@ -324,7 +324,7 @@ export const getCourseAnnouncements = async (req, res) => {
       };
     });
 
-    console.log("Faculty lookup object:", facultyLookup);
+    //console.log("Faculty lookup object:", facultyLookup);
 
     // Add faculty details to each announcement
     const announcementsWithFaculty = course.announcements.map(
@@ -337,7 +337,7 @@ export const getCourseAnnouncements = async (req, res) => {
         };
       }
     );
-    console.log("Announcements with faculty details:", announcementsWithFaculty);
+    //console.log("Announcements with faculty details:", announcementsWithFaculty);
     // Sort announcements by date (most recent first)
     announcementsWithFaculty.sort(
       (a, b) => new Date(b.date) - new Date(a.date)
@@ -390,7 +390,7 @@ export const getFacultyByIds = async (req, res) => {
 // Drop a course for a student
 export const dropCourse = async (req, res, next) => {
   try {
-    console.log("I am here in drop course");
+    //console.log("I am here in drop course");
     const { studentId, courseId } = req.params;
 
     // Find the student
@@ -415,7 +415,7 @@ export const dropCourse = async (req, res, next) => {
 
     // Find the course and update its enrolled students
     const course = await Course.findById(courseId);
-    console.log("Course found:", course);
+    //console.log("Course found:", course);
     if (course) {
       const studentIndex = course.students.findIndex(
         (id) => id.toString() === studentId
@@ -1047,7 +1047,7 @@ export const recordFeePayment = async (req, res) => {
     } = req.body;
 
     // Debug logging
-    console.log("Request body:", req.body);
+    //console.log("Request body:", req.body);
 
     // Find student and validate rollNo
     const student = await Student.findOne({ userId: studentId });
@@ -1121,7 +1121,7 @@ export const recordFeePayment = async (req, res) => {
 
     // Save the document
     const savedFeeDetails = await feeDetails.save();
-    console.log("Successfully saved FeeDetails:", savedFeeDetails);
+    //console.log("Successfully saved FeeDetails:", savedFeeDetails);
 
     return res.status(200).json({
       message: "Fee payment recorded successfully",
@@ -1141,7 +1141,7 @@ export const recordFeePayment = async (req, res) => {
 export const getFeePaymentHistory = async (req, res) => {
   try {
     const studentId = req.params.id;
-    console.log("Fetching fee history for student ID:", studentId);
+    //console.log("Fetching fee history for student ID:", studentId);
 
     // Find student
     const student = await Student.findOne({ userId: studentId }).populate(
@@ -1153,7 +1153,7 @@ export const getFeePaymentHistory = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    console.log("Found student for fee history:", {
+    //console.log("Found student for fee history:", {
       rollNo: student.rollNo,
       name: student.userId?.name,
       program: student.program,
@@ -1165,7 +1165,7 @@ export const getFeePaymentHistory = async (req, res) => {
       isPaid: true, // Only get payments that are marked as paid
     }).sort({ semester: 1 });
 
-    console.log(
+    //console.log(
       `Found ${feePayments.length} fee payments for student ${student.rollNo}`
     );
 
@@ -1233,10 +1233,10 @@ export const getFeePaymentHistory = async (req, res) => {
 
 export const getAvailableCourses = async (req, res) => {
   try {
-    console.log("fetching available courses for student ID:", req.params.id);
+    //console.log("fetching available courses for student ID:", req.params.id);
     const { id } = req.params;
 
-    console.log("1", id);
+    //console.log("1", id);
     // Fetch student details
     const student = await Student.findOne({ userId: id });
     if (!student) {
@@ -1255,7 +1255,7 @@ export const getAvailableCourses = async (req, res) => {
       semester: student.semester,
     });
 
-    console.log("3", courses);
+    //console.log("3", courses);
 
     res.status(200).json(courses);
   } catch (error) {
@@ -1310,7 +1310,7 @@ export const submitCourseApprovalRequest = async (req, res) => {
 export const getPendingRequests = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Fetching pending requests for student ID:", id);
+    //console.log("Fetching pending requests for student ID:", id);
     const requests = await CourseApprovalRequest.find({
       studentId: id,
       // status: "Pending", // now we will receive all kinds of requests on the frontend
@@ -1345,17 +1345,17 @@ export const getStudentFromRollNumber = async (req, res) => {
 
 export const getPerformance = async (req, res) => {
   try {
-    console.log("====== CALCULATING SPI/CPI ======");
-    console.log("Student ID:", req.params.id);
+    //console.log("====== CALCULATING SPI/CPI ======");
+    //console.log("Student ID:", req.params.id);
 
     // Fetch student
     const user = await Student.findOne({ userId: req.params.id }).populate(
       "userId"
     );
-    console.log("Student found:", user ? "Yes" : "No", user?.rollNo);
+    //console.log("Student found:", user ? "Yes" : "No", user?.rollNo);
 
     if (!user) {
-      console.log("Student not found for ID:", req.params.id);
+      //console.log("Student not found for ID:", req.params.id);
       return res.status(404).json({ message: "Student not found" });
     }
 
@@ -1369,10 +1369,10 @@ export const getPerformance = async (req, res) => {
       creditOrAudit: "Credit",
     }).lean();
 
-    console.log("Found completed courses:", studentCourses.length);
+    //console.log("Found completed courses:", studentCourses.length);
 
     if (studentCourses.length === 0) {
-      console.log("No completed courses found for student");
+      //console.log("No completed courses found for student");
       return res.status(200).json({ performance: performanceResult });
     }
 
@@ -1382,7 +1382,7 @@ export const getPerformance = async (req, res) => {
       courseCode: { $in: courseIds },
     }).lean();
 
-    console.log("Found course details:", courseDetails.length);
+    //console.log("Found course details:", courseDetails.length);
 
     // Create course lookup map
     const courseMap = {};
@@ -1445,18 +1445,18 @@ export const getPerformance = async (req, res) => {
         : "0.00";
 
       // 🔍 Debug Logs
-      console.log(`\n🎓 Semester ${sem}`);
+      //console.log(`\n🎓 Semester ${sem}`);
       courses.forEach((c) =>
-        console.log(
+        //console.log(
           `  - ${c.courseCode}: grade=${c.grade}, pts=${
             c.gradePoint
           }, credits=${c.credits}, weighted=${c.gradePoint * c.credits}`
         )
       );
-      console.log(`  → Total Credits: ${totalCredits}`);
-      console.log(`  → Weighted Sum: ${weightedSum}`);
-      console.log(`  → SPI: ${spi}`);
-      console.log(`  → CPI: ${cpi}`);
+      //console.log(`  → Total Credits: ${totalCredits}`);
+      //console.log(`  → Weighted Sum: ${weightedSum}`);
+      //console.log(`  → SPI: ${spi}`);
+      //console.log(`  → CPI: ${cpi}`);
 
       performanceResult.push({
         semester: Number(sem),
@@ -1465,7 +1465,7 @@ export const getPerformance = async (req, res) => {
       });
     });
 
-    console.log("Final result:", performanceResult);
+    //console.log("Final result:", performanceResult);
     res.status(200).json({ performance: performanceResult });
   } catch (error) {
     console.error(" Error calculating performance:", error);

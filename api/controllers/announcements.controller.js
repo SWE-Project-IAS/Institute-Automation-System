@@ -8,7 +8,7 @@ import {AcadAdminAnnouncement} from '../models/acadAdminAnnouncements.model.js';
 export const getCourseAnnouncements = async (req, res) => {
     try {
         const { courseId } = req.params;
-        console.log("Fetching announcements for course ID:", courseId);
+        // console.log("Fetching announcements for course ID:", courseId);
       // Find course with announcements
       const course = await Course.findOne({ courseCode: courseId });
       
@@ -23,7 +23,7 @@ export const getCourseAnnouncements = async (req, res) => {
       
       // Get all faculty IDs from announcements
       const facultyIds = [...new Set(course.announcements.map(announcement => announcement.postedBy))];
-      console.log("Faculty IDs found:", facultyIds);
+    //   console.log("Faculty IDs found:", facultyIds);
       // Find all faculty members who posted announcements
       const facultyMembers = await Faculty.find({ userId: { $in: facultyIds } });
       const facultyUsers = await User.find({
@@ -77,8 +77,8 @@ export const getCourseAnnouncements = async (req, res) => {
       try {
         const { courseId } = req.params;
         const { title, content, importance, postedBy } = req.body;
-        console.log("Adding announcement to course ID:", postedBy);
-        console.log("Adding announcement to course ID:", courseId);
+        // console.log("Adding announcement to course ID:", postedBy);
+        // console.log("Adding announcement to course ID:", courseId);
         // Validate request
         if (!title || !content || !postedBy) {
           return res.status(400).json({ 
@@ -94,18 +94,18 @@ export const getCourseAnnouncements = async (req, res) => {
         }
         
         const faculty = await Faculty.findOne({ userId: postedBy });
-        console.log("Faculty:", faculty);
+        // console.log("Faculty:", faculty);
         if(!faculty) {
           return res.status(404).json({ success: false, message: 'Faculty not found' });
         } 
         const facultyUser = await User.findOne({ _id: postedBy });
-        console.log("Faculty User ID:", postedBy);
-        console.log("Faculty User:", facultyUser);
+        // console.log("Faculty User ID:", postedBy);
+        // console.log("Faculty User:", facultyUser);
         if(!facultyUser) {
           return res.status(404).json({ success: false, message: 'Faculty user not found' });
         }
 
-        console.log("Faculty User:", facultyUser);
+        // console.log("Faculty User:", facultyUser);
         // Create new announcement
         const newAnnouncement = {
           title,
@@ -114,7 +114,7 @@ export const getCourseAnnouncements = async (req, res) => {
           date: new Date(),
           postedBy
         };
-        console.log("New Announcement:", newAnnouncement);
+        // console.log("New Announcement:", newAnnouncement);
         // Add announcement to course
         course.announcements.push(newAnnouncement);
         await course.save();
@@ -196,7 +196,7 @@ export const getCourseAnnouncements = async (req, res) => {
     try {
   
       const { courseId, announcementId } = req.params;
-      console.log("Deleting announcement from course ID:", courseId);
+    //   console.log("Deleting announcement from course ID:", courseId);
       // Find course
       const course = await Course.findOne({ courseCode: courseId });
       
@@ -235,10 +235,10 @@ export const getCourseAnnouncements = async (req, res) => {
   
 export const getAllAnnouncements = async (req, res) => {
   try {
-    console.log("Fetching all announcements for user ID:", req.params);
+    // console.log("Fetching all announcements for user ID:", req.params);
     const userId = req.params.id;
     // const userId = "67fb82e1fd693835a24dd230";
-    console.log("Fetching all announcements for user ID:", userId);
+    // console.log("Fetching all announcements for user ID:", userId);
     // Find student to get enrolled courses
     const student = await Student.findOne({ userId });
     
@@ -283,14 +283,14 @@ export const getAllAnnouncements = async (req, res) => {
         allAnnouncements.map((announcement) => announcement.postedBy)
       ),
     ];
-    console.log("Faculty IDs found:", facultyIds);
+    // console.log("Faculty IDs found:", facultyIds);
 
     // Find all faculty members who posted announcements
     const facultyMembers = await Faculty.find({
       userId: { $in: facultyIds },
     });
 
-    console.log("Faculty members found1:", facultyMembers);
+    // console.log("Faculty members found1:", facultyMembers);
     
     const facultyUsers = await User.find({
       _id: { $in: facultyMembers.map((faculty) => faculty.userId) },
@@ -306,7 +306,7 @@ export const getAllAnnouncements = async (req, res) => {
     }
   );
   
-    console.log("All Course Announcements:", allAnnouncements);
+    // console.log("All Course Announcements:", allAnnouncements);
     // console.log("All Announcements:", allAnnouncements);
     // Get academic admin announcements
     const acadAdminAnnouncements = await AcadAdminAnnouncement.find({
@@ -340,12 +340,12 @@ export const getAllAnnouncements = async (req, res) => {
         }
       ]
     });
-    console.log("sdfs ", String(student.semester));
-    console.log("Academic Admin Announcements:", acadAdminAnnouncements);
+    // console.log("sdfs ", String(student.semester));
+    // console.log("Academic Admin Announcements:", acadAdminAnnouncements);
     const p = acadAdminAnnouncements.map(announcement => ({
         pp: announcement.targetGroups.semester })
     );
-    console.log("Academic Admin Announcements:", p);
+    // console.log("Academic Admin Announcements:", p);
     // // Process academic admin announcements
     const processedAdminAnnouncements = acadAdminAnnouncements.map(announcement => ({
       ...announcement.toObject(),
@@ -379,7 +379,7 @@ export const getAllAnnouncements = async (req, res) => {
 
 export const getAdminAnnouncements = async (req, res) => {
   try {
-    console.log("Fetching admin announcements for user ID:", req.params);
+    // console.log("Fetching admin announcements for user ID:", req.params);
     // const userId = req.user.userId;
     // console.log("Fetching admin announcements for user ID:", userId);
     // // Verify the user is an admin
@@ -390,7 +390,6 @@ export const getAdminAnnouncements = async (req, res) => {
     //     message: 'Access denied. Only academic administrators can access this resource'
     //   });
     // }
-    console.log("ehheere");
     // Get all announcements sorted by date (most recent first)
     const announcements = await AcadAdminAnnouncement.find({})
       .sort({ date: -1 });
@@ -414,9 +413,9 @@ export const getAdminAnnouncements = async (req, res) => {
 // Add new announcement
 export const addAnnouncement = async (req, res) => {
   try {
-    console.log("Adding new announcement", req.body);
+    // console.log("Adding new announcement", req.body);
     const { title, content, importance, targetGroups,targetEmails } = req.body;
-    console.log("Adding new announcement", title, content, importance, targetGroups, targetEmails);
+    // console.log("Adding new announcement", title, content, importance, targetGroups, targetEmails);
     // const userId = req.user.userId;
     
     // Verify the user is an admin
@@ -441,7 +440,7 @@ export const addAnnouncement = async (req, res) => {
       updatedAt: new Date()
     });
 
-    console.log("New Announcement:", newAnnouncement);
+    // console.log("New Announcement:", newAnnouncement);
     
     await newAnnouncement.save();
     
@@ -464,7 +463,7 @@ export const addAnnouncement = async (req, res) => {
 // Update announcement
 export const updateAnnouncement = async (req, res) => {
   try {
-    console.log("Updating announcement", req.body);
+    // console.log("Updating announcement", req.body);
     const { announcementId } = req.params;
     // const { title, content, importance, targetAudience } = req.body;
     const { title, content, importance, targetGroups,targetEmails } = req.body;
@@ -537,10 +536,10 @@ export const deleteAnnouncement = async (req, res) => {
 
 export const getFacultyAnnouncements = async (req, res) => {
   try {
-    console.log("Fetching all announcements for user ID:", req);
+    // console.log("Fetching all announcements for user ID:", req);
     const userId = req.params.id;
     // const userId = "67fb82e1fd693835a24dd230";
-    console.log("Fetching all announcements for user ID:", userId);
+    // console.log("Fetching all announcements for user ID:", userId);
     // Find student to get enrolled courses
     const faculty = await Faculty.findOne({ userId });
     
@@ -569,7 +568,7 @@ export const getFacultyAnnouncements = async (req, res) => {
         }
       ]
     });
-    console.log("Academic Admin Announcements:", acadAdminAnnouncements);
+    // console.log("Academic Admin Announcements:", acadAdminAnnouncements);
     // // Process academic admin announcements
     const processedAdminAnnouncements = acadAdminAnnouncements.map(announcement => ({
       ...announcement.toObject(),

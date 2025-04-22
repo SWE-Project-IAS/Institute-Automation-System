@@ -8,7 +8,7 @@ export const seedSupportStaff = async () => {
   try {
     // Delete existing support staff to ensure clean schema
     await SupportStaff.deleteMany({});
-    console.log('Cleared existing support staff data.');
+    //console.log('Cleared existing support staff data.');
 
     // Support staff data for Computer & Comm. Centre
     const computerStaff = [
@@ -358,7 +358,7 @@ export const seedSupportStaff = async () => {
     // Insert all staff data into the database
     await SupportStaff.insertMany(allStaffData);
 
-    console.log(`Successfully seeded ${allStaffData.length} support staff records with updated schema`);
+    //console.log(`Successfully seeded ${allStaffData.length} support staff records with updated schema`);
   } catch (error) {
     console.error('Error seeding support staff data:', error);
   }

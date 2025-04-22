@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import HostelTransferStudent from './student/HostelTransferStudent';
 import HostelTransferAdmin from './admin/HostelTransferAdmin';
 import { RoleContext } from '../../context/Rolecontext';
-import { FaUtensils } from 'react-icons/fa';
 
 function HostelTransfer() {
   const { role } = useContext(RoleContext);
