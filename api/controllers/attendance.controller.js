@@ -62,7 +62,7 @@ export const getPercentages = async (req, res) => {
           };
         }
       } catch (courseError) {
-        console.log(`Error fetching course ${courseId}: ${courseError.message}`);
+        console.error(`Error fetching course ${courseId}: ${courseError.message}`);
         // Still add entry with courseId as fallback
         courseDetailsMap[courseId] = {
           courseCode: courseId,

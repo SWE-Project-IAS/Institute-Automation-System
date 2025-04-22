@@ -1,6 +1,5 @@
 import Course from "./Course";
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import { RoleContext } from "../../../context/Rolecontext";
 import SearchableStudentDropdown from "./SearchableStudentDropdown";
 import AttendanceApprovalDashboard from "./AttendanceApprovalDashboard";
@@ -10,7 +9,7 @@ import newRequest from "../../../utils/newRequest";
 
 function MyCourses() {
     const {data:userData} = JSON.parse(localStorage.getItem("currentUser"));
-    const {email, userId} = userData.user;
+    const {userId} = userData.user;
 
     const { isLoading, error, data } = useQuery({
         queryKey: [`${userId}`],
@@ -19,7 +18,6 @@ function MyCourses() {
                 return res.data;
             }),
     });
-    const navigateTo = useNavigate();
     const { role } = useContext(RoleContext);
     
     const [courses, setCourses] = useState([]);

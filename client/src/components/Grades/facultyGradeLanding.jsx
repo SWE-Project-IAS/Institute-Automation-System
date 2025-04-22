@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RoleContext } from "../../context/Rolecontext";
-import { FaBookOpen, FaClipboardList, FaPlus } from "react-icons/fa";
+import { FaBookOpen } from "react-icons/fa";
 
 export default function FacultyGradeLanding() {
   const { role } = useContext(RoleContext); // Use role context

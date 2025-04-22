@@ -10,7 +10,7 @@ export const getFacultyCourses = async (req, res) => {
     const {userId} = req.params;
 
     try {
-        console.log("userId:",userId);
+        //console.log("userId:",userId);
         // Ensure userId is a string
         const faculty = await Faculty.findOne({ userId: userId });
 
@@ -34,7 +34,7 @@ export const getFacultyCourses = async (req, res) => {
         // Fetch full course details using courseCodes
         const courses = await Course.find({ courseCode: { $in: courseCodes } });
 
-        console.log("Courses:", courses);
+        //console.log("Courses:", courses);
 
         return res.status(200).json({ courses });
     } catch (err) {
@@ -47,8 +47,8 @@ export const getFacultyCourses = async (req, res) => {
 export const getStudentsinCourse = async (req, res) => {
     try {
       const { courseId } = req.params;
-      console.log("Course id")
-      console.log(courseId)
+      //console.log("Course id")
+      //console.log(courseId)
       if (!courseId) {
         return res.status(400).json({ message: 'Course ID is required' });
       }
@@ -99,11 +99,11 @@ export const submitGrades = async (req, res) => {
   const studentGrades = req.body.students;
   const { courseId } = req.params;
   const facultyId = req.body.faculty;
-  console.log(req.body);
+  //console.log(req.body);
   try {
     // Iterate through the list of students and update their grades
     for (const student of studentGrades) {
-      console.log("Student = ", student);
+      //console.log("Student = ", student);
       const { rollNumber, grade } = student;
 
       // Find the StudentCourse entry with the given courseId and rollNo
@@ -124,7 +124,7 @@ export const submitGrades = async (req, res) => {
       // Save the updated StudentCourse entry
       await studentCourse.save();
 
-      console.log(`Updated grade for rollNo: ${rollNumber} to ${grade}`);
+      //console.log(`Updated grade for rollNo: ${rollNumber} to ${grade}`);
     }
     
 
@@ -140,7 +140,7 @@ export const submitGrades = async (req, res) => {
       facultyCourse.updatedAt = new Date();
       await facultyCourse.save();
 
-      console.log(`Marked course with courseId: ${courseId} as Completed for facultyId: ${facultyId}`);
+      //console.log(`Marked course with courseId: ${courseId} as Completed for facultyId: ${facultyId}`);
     } else {
       console.warn(`No FacultyCourse entry found for courseId: ${courseId} and facultyId: ${facultyId}`);
     }
