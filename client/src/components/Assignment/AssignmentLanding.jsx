@@ -29,9 +29,10 @@ export default function AssignmentLanding() {
         const data = await response.json();
         if (response.ok) {
           setCourses(data.courses);
-        } else {
-          alert("Failed to fetch courses");
         }
+        // } else {
+        //   alert("Failed to fetch courses");
+        // }
       } catch (error) {
         console.error("Error fetching courses:", error);
         alert("Failed to connect to the server.");
