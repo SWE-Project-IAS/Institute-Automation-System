@@ -9,7 +9,7 @@ import { StudentCourse } from '../models/course.model.js';
 export const getFacultyCourses = async (req, res) => {    
   try {
     const {id}=req.params;
-    console.log(id);
+    // console.log(id);
     const userId=id;
 
     if (!userId) {
@@ -26,7 +26,7 @@ export const getFacultyCourses = async (req, res) => {
         message: 'Faculty not found for the given user ID'
       });
     }
-    console.log(faculty);
+    // console.log(faculty);
     // Step 2: Find all faculty-course mappings for this faculty
     const facultyCourses = await FacultyCourse.find({ facultyId: faculty.userId });
 

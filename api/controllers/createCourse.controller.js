@@ -49,10 +49,11 @@ export const createCourse = async (req, res) => {
       }
       
         // Find the faculty document
-        const facultyDoc = await Faculty.findOne({ userId: faculty });
+        const facultyDoc = await Faculty.findOne({ email: faculty });
         if (!facultyDoc) {
           return res.status(404).json({ message: "Faculty not found" });
         }
+        const facultyId = facultyDoc.userId; // Get the faculty ID from the document
 
         // console.log("fdkfhdjfhdhfkuhfkuh");
         // console.log("Faculty document found:", facultyDoc);
@@ -61,7 +62,7 @@ export const createCourse = async (req, res) => {
       for (const semester of semesters) {
         // Create faculty-course mapping
         const facultyCourse = new FacultyCourse({
-          facultyId: faculty,
+          facultyId: facultyId,
           courseCode,
           program,
           semester,

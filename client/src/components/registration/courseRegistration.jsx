@@ -65,6 +65,7 @@ function CourseRegistration() {
   //console.log all pending requests
   // console.log(courseRequests);
 
+  console.log(coursesData);
   if (isLoading) {
     return (
       <div className="bg-gray-100 p-8 rounded-lg text-center">
@@ -287,9 +288,9 @@ function CourseCard({ course, onRegister, requestStatus }) {
             <span className="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm">
               {course.credits} Credits
             </span>
-            <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
+            {/* <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
               {course.semester}
-            </span>
+            </span> */}
           </div>
         </div>
         <button
