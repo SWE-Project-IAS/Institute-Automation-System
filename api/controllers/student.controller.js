@@ -1153,11 +1153,11 @@ export const getFeePaymentHistory = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    //console.log("Found student for fee history:", {
-      rollNo: student.rollNo,
-      name: student.userId?.name,
-      program: student.program,
-    });
+    // console.log("Found student for fee history:", {
+    //   rollNo: student.rollNo,
+    //   name: student.userId?.name,
+    //   program: student.program,
+    // });
 
     // Get all fee payments for this student
     const feePayments = await FeeDetails.find({
@@ -1166,8 +1166,8 @@ export const getFeePaymentHistory = async (req, res) => {
     }).sort({ semester: 1 });
 
     //console.log(
-      `Found ${feePayments.length} fee payments for student ${student.rollNo}`
-    );
+    //   `Found ${feePayments.length} fee payments for student ${student.rollNo}`
+    // );
 
     // Transform payment data for the response, using only stored feeBreakdownData
     const payments = feePayments.map((payment) => {
@@ -1446,13 +1446,13 @@ export const getPerformance = async (req, res) => {
 
       // 🔍 Debug Logs
       //console.log(`\n🎓 Semester ${sem}`);
-      courses.forEach((c) =>
+    //   courses.forEach((c) =>
         //console.log(
-          `  - ${c.courseCode}: grade=${c.grade}, pts=${
-            c.gradePoint
-          }, credits=${c.credits}, weighted=${c.gradePoint * c.credits}`
-        )
-      );
+    //       `  - ${c.courseCode}: grade=${c.grade}, pts=${
+    //         c.gradePoint
+    //       }, credits=${c.credits}, weighted=${c.gradePoint * c.credits}`
+    //     )
+    //   );
       //console.log(`  → Total Credits: ${totalCredits}`);
       //console.log(`  → Weighted Sum: ${weightedSum}`);
       //console.log(`  → SPI: ${spi}`);
