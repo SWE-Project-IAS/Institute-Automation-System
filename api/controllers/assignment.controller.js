@@ -252,7 +252,7 @@ export const submitAssignment = async (req, res) => {
   try {
     const { courseCode, assignmentId } = req.params;
     const { studentRollNo, studentName, content } = req.body;
-    console.log("Uploaded file info:", req.file);
+    // console.log("Uploaded file info:", req.file);
     const assignment = await Assignment.findOne({
       assignmentNumber: assignmentId,
       courseCode: courseCode,
@@ -383,7 +383,7 @@ export const submitGrades = async (req, res) => {
     }
     const assignment = await Assignment.findOne({assignmentNumber : assignmentId,courseCode:courseId});
     if (!assignment) {
-      console.log("Assignment not found:", courseId); // Debugging line
+    //   console.log("Assignment not found:", courseId); // Debugging line
       return res.status(404).json({ success: false, message: "Assignment not found" });
     }
 
@@ -399,7 +399,7 @@ export const submitGrades = async (req, res) => {
     submission.marks = marks;
 
     await assignment.save();
-    console.log("Marks updated:", submission); // Debugging line
+    // console.log("Marks updated:", submission); // Debugging line
     return res.status(200).json({
       success: true,
       message: "Marks submitted successfully",

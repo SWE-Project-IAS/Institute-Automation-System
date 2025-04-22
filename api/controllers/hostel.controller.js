@@ -60,7 +60,7 @@ export const getStudentLeave = async (req, res) => {
       }
   
       const leaves = await HostelLeave.find({ rollNo: student.rollNo });
-      console.log(leaves)
+      //console.log(leaves)
       if (!leaves) {
         return res.status(404).json({ message: "No leaves found for this student" });
       }
@@ -107,7 +107,7 @@ export const updateAnyLeave = async (req, res) => {
 export const hostelTransfer = async (req, res) => {
   try {
     const { status, studentId, currentHostel, requestedHostel, reason } = req.body;
-    console.log(req);
+    //console.log(req);
 
     // Validate input
     if (!studentId || !currentHostel || !requestedHostel || !reason) {
@@ -186,7 +186,7 @@ export const updateTransferRequest = async (req, res) => {
     // Make a GET request to fetch the userId using the rollNo
     let userId;
     try {
-      const response = await axios.get(`${process.env.SERVER_URL}/student/${rollNo}/rollno`);
+      const response = await axios.get(`${process.env.SERVER_URL}/api/student/${rollNo}/rollno`);
       if (response.status === 200) {
         userId = response.data.userId;
       } else {
@@ -202,7 +202,7 @@ export const updateTransferRequest = async (req, res) => {
     if (status === 'Approved') {
       try {
         // Make a PUT request to update the student's profile
-        const response = await axios.put(`${process.env.SERVER_URL}/student/${userId}/profile`, {
+        const response = await axios.put(`${process.env.SERVER_URL}/api/student/${userId}/profile`, {
           hostel: newHostel
         });
 

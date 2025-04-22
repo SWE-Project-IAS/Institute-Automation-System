@@ -3,13 +3,10 @@ import mongoose from 'mongoose';
 // Get MongoDB URI from environment variables
 
 // MongoDB connection function
-const connectDB = async (uri) => {
+const connectDB = async () => {
     try {
-    //   console.log(process.env.MONGODB_URI);
-    // const conn = await mongoose.connect(process.env.MONGODB_URI);
-    const dbURI = uri || "mongodb+srv://divyansh:KrHRg7mgeh7tgNiU@cluster0.qhaz53w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-    const conn = await mongoose.connect(dbURI);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    //console.log(`MongoDB Connected: ${conn.connection.host}`);
     // mongoose.connection.
     return conn;
   } catch (error) {
@@ -22,7 +19,7 @@ const connectDB = async (uri) => {
 const closeDB = async () => {
   if (mongoose.connection.readyState!=0) {  // Check if connection is open
     await mongoose.connection.close();
-    console.log('MongoDB connection closed');
+    //console.log('MongoDB connection closed');
   }
 };
 

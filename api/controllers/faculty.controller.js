@@ -331,39 +331,59 @@ export const getCourseStudents = async (req, res) => {
   }
 };  
 
-
 export const getPendingRequestsFaculty = async (req, res) => {
   try {
     const { id } = req.params;
-
+    const { courseCode } = req.query; // Get courseCode from query parameters
+    
+    //console.log("Fetching pending requests for faculty ID:", id);
+    if (courseCode) {
+      //console.log("Filtering by course code:", courseCode);
+    }
+    
     // Check if the faculty exists
     const faculty = await Faculty.findOne({ userId: id });
-    if(!faculty){console.log("Faculty not found");}
+    if(!faculty) {
+      //console.log("Faculty not found");
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+    
     // Get pending requests for faculty's courses
-
     const facultyCourses = Array.isArray(faculty.courses) ? faculty.courses : [];
-    const requests = await CourseApprovalRequest.find({
+    
+    // Build the query
+    let query = {
       status: 'Pending',
       courseCode: { $in: facultyCourses.map(c => c.courseCode) }
-    });
+    };
+    
+    // If courseCode is provided, filter by that specific course
+    if (courseCode) {
+      // Make sure the faculty teaches this course
+      if (!facultyCourses.some(c => c.courseCode === courseCode)) {
+        return res.status(403).json({ message: "You don't teach this course" });
+      }
+      
+      query.courseCode = courseCode;
+    }
+    
+    const requests = await CourseApprovalRequest.find(query);
    
     // Fetch student details for each request
     const studentIds = requests.map(request => request.studentId);
     const students = await Student.find({ userId: { $in: studentIds } });
 
-    // console.log("Pending requests found:", requests);
-
     // Transform data for frontend
     const formattedRequests = requests.map(request => {
       const student = students.find(student => student.userId.toString() === request.studentId.toString());
       return {
-      id: request._id,
-      rollNo: student ? student.rollNo : 'Unknown',
-      program: student ? student.program : 'Unknown',
-      semester: student ? student.semester : 'Unknown',
-      courseCode: request.courseCode,
-      courseType: request.courseType,
-      createdAt: request.createdAt
+        id: request._id,
+        rollNo: student ? student.rollNo : 'Unknown',
+        program: student ? student.program : 'Unknown',
+        semester: student ? student.semester : 'Unknown',
+        courseCode: request.courseCode,
+        courseType: request.courseType,
+        createdAt: request.createdAt
       };
     });
 
@@ -373,6 +393,7 @@ export const getPendingRequestsFaculty = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch requests" });
   }
 };
+
 
 export const handleRequestApprovalFaculty = async (req, res) => {
   try {

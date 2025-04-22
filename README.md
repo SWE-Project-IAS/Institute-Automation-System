@@ -111,7 +111,7 @@ To execute the backend test suite:
 
 ```bash
 cd api
-npm run test
+npm run test/<file-name>
 ```
 
 ## Technologies Used

@@ -17,7 +17,7 @@ function FacultyDashboard(){
 
   return (
     <div className="p-5">
-      <h2 className="text-2xl font-bold mb-4">Your Courses</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Your Courses</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {courses?.data.map((course) => (
           <Link
