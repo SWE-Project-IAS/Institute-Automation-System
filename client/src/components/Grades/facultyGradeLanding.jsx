@@ -41,8 +41,8 @@ export default function FacultyGradeLanding() {
   }, [role, userId]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">
+    <div className="m-6">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
         {role === "faculty" ? "My Faculty Courses" : "My Courses"}
       </h1>
 

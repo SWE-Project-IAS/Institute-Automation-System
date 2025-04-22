@@ -183,9 +183,9 @@ function MyCourses() {
 
     return (
         <div className="courses" id="my_courses">
-            {role === "student" && <div className="text-wrapper-2">My Courses</div>}
+            {role === "student" && <div className="text-wrapper-2 text-center">My Courses</div>}
             {role === "student" && !overall && <SiteAlert />}
-            {role === "faculty" && <div className="text-wrapper-2">My Courses</div>}
+            {role === "faculty" && <div className="text-wrapper-2 text-center">My Courses</div>}
             {role === "acadAdmin" && <AttendanceApprovalDashboard />}
             {role === "acadAdmin" && <h1 className="text-2xl font-bold text-gray-800 ml-5">Search Student Attendance:</h1>}
             {role === "acadAdmin" && (
@@ -205,7 +205,7 @@ function MyCourses() {
                     <p>No courses available for your role.</p>
                 )
             ) : (
-                <p>No courses found.</p>
+                <p className="text-center">No courses found.</p>
             )}
         </div>
     );

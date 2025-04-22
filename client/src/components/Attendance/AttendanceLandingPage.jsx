@@ -8,7 +8,7 @@ import { RoleContext } from "../../context/Rolecontext";
 function AttendanceLandingPage (){
   const { role } = useContext(RoleContext);
   return (
-    <div className="landing-page">
+    <div className="landing-page mt-2 p-2">
       <div className="div">
         <div className="MyCourses"><MyCourses /></div>
         {/* <br/> */}
