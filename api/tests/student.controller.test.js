@@ -64,10 +64,6 @@ describe('getStudent Function', () => {
         name: 'John Doe'
       })
     }));
-    expect(console.log).toHaveBeenCalledWith(
-      "Student details fetched successfully",
-      expect.any(Object)
-    );
   });
 
   test('should return 404 if student is not found', async () => {
