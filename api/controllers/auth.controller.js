@@ -144,7 +144,7 @@ export const forgotPassword = async (req, res) => {
       
       // Save the token to the user document with expiration
       user.passwordResetToken = hashedToken;
-      user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+      user.passwordResetExpires = Date.now() + 600 * 60 * 1000; // 10 minutes
       await user.save({ validateBeforeSave: false });
       
       // Create reset URL

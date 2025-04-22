@@ -91,9 +91,9 @@ app.post("/api/payment/create-order", async (req, res) => {
   };
 
   try {
-    console.log("Creating Razorpay order with options:", options);
+    // console.log("Creating Razorpay order with options:", options);
     const order = await razorpay.orders.create(options);
-    console.log("Razorpay order created:", order);
+    // console.log("Razorpay order created:", order);
     // Send back essential order details to the frontend
     res.json({
       orderId: order.id,
@@ -116,14 +116,14 @@ app.post("/api/payment/verify", (req, res) => {
     req.body;
   const secret = process.env.RAZORPAY_KEY_SECRET;
 
-  console.log("Verification Request Body:", req.body);
+//   console.log("Verification Request Body:", req.body);
 
   const shasum = crypto.createHmac("sha256", secret);
   shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
   const digest = shasum.digest("hex");
 
   if (digest === razorpay_signature) {
-    console.log("Payment verification successful");
+    // console.log("Payment verification successful");
     // TODO: Update your database here - mark order as paid
     res.json({
       status: "success",

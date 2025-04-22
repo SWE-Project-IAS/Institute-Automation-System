@@ -74,7 +74,7 @@ const ComplaintsController = {
             .getPublicUrl(`complaints/${fileName}`);
 
           imageUrls.push(urlData.publicUrl);
-          console.log(`Uploaded image ${i} to Supabase: ${fileName}`);
+        //   console.log(`Uploaded image ${i} to Supabase: ${fileName}`);
         }
       }
 
@@ -94,14 +94,14 @@ const ComplaintsController = {
       });
 
       await complaint.save();
-      console.log(`Complaint created successfully: ${complaint._id}`);
+    //   console.log(`Complaint created successfully: ${complaint._id}`);
       res.status(201).json({
         message: "Successfully created the complaint",
         complaint: complaint,
       });
     } catch (e) {
-      console.log(`ERROR: Creating the complaint`);
-      console.log(e);
+    //   console.log(`ERROR: Creating the complaint`);
+    //   console.log(e);
       res.status(500).json({
         message: "Something went wrong!",
       });
@@ -140,8 +140,8 @@ const ComplaintsController = {
         },
       });
     } catch (e) {
-      console.log(`ERROR: Fetching user complaints : ${userId}`);
-      console.log(e);
+    //   console.log(`ERROR: Fetching user complaints : ${userId}`);
+    //   console.log(e);
       res.status(500).json({
         message: "Something went wrong!",
       });
@@ -163,7 +163,7 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorized access to fetch all complaints by user with email: ${req.user.email}`);
+        // console.log(`ERROR: Unauthorized access to fetch all complaints by user with email: ${req.user.email}`);
         return res.status(403).json({
           error: "User is not authorized for this action",
           message: "You are not authorized to view all complaints",
@@ -222,8 +222,8 @@ const ComplaintsController = {
         });
       }
       if (complaint.userId.toString() !== userId) {
-        console.log(`ERROR : User don't have access to this complaint`);
-        console.log(`UserId : ${userId}, ComplaintID: ${complaintId}`);
+        // console.log(`ERROR : User don't have access to this complaint`);
+        // console.log(`UserId : ${userId}, ComplaintID: ${complaintId}`);
         return res.status(403).json({
           message: "User don't have access to this complaint",
         });
@@ -248,25 +248,25 @@ const ComplaintsController = {
           if (error) {
             console.error(`Failed to delete image '${fileName}' from Supabase:`, error.message);
           } else {
-            console.log(`Deleted image from Supabase: ${fileName}`);
+            // console.log(`Deleted image from Supabase: ${fileName}`);
           }
         }
       }
       const deletedComplaint = await Complaint.findByIdAndDelete(complaintId);
       if (deletedComplaint) {
-        console.log(`ERROR: Deleting complaint '${complaintId}'`);
+        // console.log(`ERROR: Deleting complaint '${complaintId}'`);
         return res.send({
           message: "Complaint deleted successfully!",
         });
       }
-      console.log(`ERROR: Deleting complaint : '${complaintId}'`);
+    //   console.log(`ERROR: Deleting complaint : '${complaintId}'`);
       return res.status(404).json({
         error: `No matching complaint with id : ${complaintId}`,
         message: "Complaint not found!",
       });
     } catch (e) {
-      console.log(`ERROR: Deleting complaint : '${complaintId}'`);
-      console.log(e);
+    //   console.log(`ERROR: Deleting complaint : '${complaintId}'`);
+    //   console.log(e);
       return res.status(500).json({
         message: "Something went wrong!",
       });
@@ -296,7 +296,7 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorised access to update complaint status`);
+        // console.log(`ERROR: Unauthorised access to update complaint status`);
         return res.status(403).json({
           error: "User is not authorised for this action",
           message: "You are not authorised to update status",
@@ -336,8 +336,8 @@ const ComplaintsController = {
         complaint: updatedComplaint,
       });
     } catch (e) {
-      console.log(`ERROR: Updating status`);
-      console.log(e);
+    //   console.log(`ERROR: Updating status`);
+    //   console.log(e);
       return res.status(500).json({
         message: "Something went wrong!",
       });
@@ -359,7 +359,7 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorised access to assign complaint`);
+        // console.log(`ERROR: Unauthorised access to assign complaint`);
         return res.status(403).json({
           error: "User is not authorised for this action",
           message: "You are not authorised to assign complaints",
@@ -429,7 +429,7 @@ const ComplaintsController = {
         complaint: updatedComplaint,
       });
     } catch (e) {
-      console.log(`ERROR: Assigning complaint : ${e}`);
+      //console.log(`ERROR: Assigning complaint : ${e}`);
       return res.status(500).json({
         message: "Something went wrong!",
         error: e,
@@ -452,7 +452,7 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorised access to update complaint status`);
+        //console.log(`ERROR: Unauthorised access to update complaint status`);
         return res.status(403).json({
           error: "User is not authorised for this action",
           message: "You are not authorised to update status",
@@ -487,7 +487,7 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorised access to update complaint status`);
+        //console.log(`ERROR: Unauthorised access to update complaint status`);
         return res.status(403).json({
           error: "User is not authorised for this action",
           message: "You are not authorised to update status",
@@ -495,12 +495,12 @@ const ComplaintsController = {
       }
       const response = await SupportStaff.findByIdAndDelete(req.body.supportStaffId);
       if (response) {
-        console.log(`Support staff deleted successfully!: ${req.body.supportStaffId}`);
+        //console.log(`Support staff deleted successfully!: ${req.body.supportStaffId}`);
         return res.status(200).json({
           message: "Support staff deleted successfully!",
         });
       }
-      console.log(`Error: No support staff found with ID ${req.body.supportStaffId}`);
+      //console.log(`Error: No support staff found with ID ${req.body.supportStaffId}`);
       return res.status(404).json({
         message: "Support staff not found!",
         error: `No support staff found with ID ${req.body.supportStaffId}`,
@@ -527,7 +527,7 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorised access to update complaint status`);
+        //console.log(`ERROR: Unauthorised access to update complaint status`);
         return res.status(403).json({
           error: "User is not authorised for this action",
           message: "You are not authorised to update status",
@@ -561,13 +561,13 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorised access to fetch support staff`);
+        //console.log(`ERROR: Unauthorised access to fetch support staff`);
         return res.status(403).json({
           error: "User is not authorised for this action",
           message: "You are not authorised to fetch support staff",
         });
       }
-      console.log(`BODY: ${req.body}`);
+      //console.log(`BODY: ${req.body}`);
       const { category, subCategory } = req.body;
 
       if (!category || !subCategory) {
@@ -577,7 +577,7 @@ const ComplaintsController = {
         });
       }
 
-      console.log(`Searching for staff with category: "${category}" and subCategory: "${subCategory}"`);
+      //console.log(`Searching for staff with category: "${category}" and subCategory: "${subCategory}"`);
 
       // Find staff who:
       // 1. Match the specified category and subcategory
@@ -587,7 +587,7 @@ const ComplaintsController = {
         subCategories: { $in: [subCategory] },
       });
 
-      console.log(`Found ${supportStaff.length} matching staff members`);
+      //console.log(`Found ${supportStaff.length} matching staff members`);
 
       // Sort the results in memory by number of assigned complaints (ascending)
       const sortedStaff = supportStaff.sort((a, b) => {
@@ -601,7 +601,7 @@ const ComplaintsController = {
         supportStaff: sortedStaff,
       });
     } catch (e) {
-      console.log(`ERROR: Fetching filtered support staff: ${e}`);
+      //console.log(`ERROR: Fetching filtered support staff: ${e}`);
       return res.status(500).json({
         message: "Something went wrong!",
         error: e,
@@ -624,7 +624,7 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorized access to fetch complaints by status by user with email: ${req.user.email}`);
+        //console.log(`ERROR: Unauthorized access to fetch complaints by status by user with email: ${req.user.email}`);
         return res.status(403).json({
           error: "User is not authorized for this action",
           message: "You are not authorized to view these complaints",
@@ -725,7 +725,7 @@ const ComplaintsController = {
     try {
       const admin = await Admin.findOne({ email: req.user.email });
       if (!admin) {
-        console.log(`ERROR: Unauthorized access to fetch complaints by IDs by user with email: ${req.user.email}`);
+        //console.log(`ERROR: Unauthorized access to fetch complaints by IDs by user with email: ${req.user.email}`);
         return res.status(403).json({
           error: "User is not authorized for this action",
           message: "You are not authorized to view these complaints",

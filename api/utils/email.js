@@ -18,8 +18,8 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
 
     // Define email options
     const mailOptions = {
-      from: `"Institute Automation" <${process.env.EMAIL_USERNAME}>`, // Sender address
-      to: `6245mahek@gmail.com`, // List of receivers (can work with any domain, including Outlook)
+      from: `Institute Automation <${process.env.EMAIL_USERNAME}>`, // Sender address
+      to: email, // List of receivers (can work with any domain, including Outlook)
       subject: 'Password Reset Request (valid for 10 min)', // Subject line
       text: `Forgot your password? Submit a new password at: ${resetURL}\n\nIf you didn't forget your password, please ignore this email.`, // Plain text body
       html: `
@@ -39,7 +39,7 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
 
     // Send email
     const info = await transporter.sendMail(mailOptions);
-    console.log('Password reset email sent: %s', info.messageId);
+    //console.log('Password reset email sent: %s', info.messageId);
     return info;
   } catch (error) {
     console.error('Error sending email:', error);

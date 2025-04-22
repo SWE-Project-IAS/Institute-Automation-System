@@ -60,7 +60,7 @@ export const getStudentLeave = async (req, res) => {
       }
   
       const leaves = await HostelLeave.find({ rollNo: student.rollNo });
-      console.log(leaves)
+      //console.log(leaves)
       if (!leaves) {
         return res.status(404).json({ message: "No leaves found for this student" });
       }
@@ -107,7 +107,7 @@ export const updateAnyLeave = async (req, res) => {
 export const hostelTransfer = async (req, res) => {
   try {
     const { status, studentId, currentHostel, requestedHostel, reason } = req.body;
-    console.log(req);
+    //console.log(req);
 
     // Validate input
     if (!studentId || !currentHostel || !requestedHostel || !reason) {

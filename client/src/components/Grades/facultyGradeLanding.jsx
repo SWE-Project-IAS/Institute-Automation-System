@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RoleContext } from "../../context/Rolecontext";
-import { FaBookOpen, FaClipboardList, FaPlus } from "react-icons/fa";
+import { FaBookOpen } from "react-icons/fa";
 
 export default function FacultyGradeLanding() {
   const { role } = useContext(RoleContext); // Use role context
@@ -41,8 +41,8 @@ export default function FacultyGradeLanding() {
   }, [role, userId]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">
+    <div className="m-6">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
         {role === "faculty" ? "My Faculty Courses" : "My Courses"}
       </h1>
 
