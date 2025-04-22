@@ -337,13 +337,13 @@ export const getPendingRequestsFaculty = async (req, res) => {
     
     // console.log("Fetching pending requests for faculty ID:", id);
     if (courseCode) {
-      console.log("Filtering by course code:", courseCode);
+      //console.log("Filtering by course code:", courseCode);
     }
     
     // Check if the faculty exists
     const faculty = await Faculty.findOne({ userId: id });
     if(!faculty) {
-      console.log("Faculty not found");
+      //console.log("Faculty not found");
       return res.status(404).json({ message: "Faculty not found" });
     }
     

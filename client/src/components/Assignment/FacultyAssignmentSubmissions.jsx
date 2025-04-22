@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 
 export default function FacultyAssignmentSubmissions() {
+  const navigate = useNavigate();
   const { courseId, assignmentId } = useParams();
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,7 +76,7 @@ export default function FacultyAssignmentSubmissions() {
       }
 
       alert("Marks submitted successfully!");
-      window.location.reload(); // Reload the page to see updated marks
+      window.location.href=`/course/${courseId}/assignment/${assignmentId}/submissions`;
     } catch (error) {
       console.error("Error submitting marks:", error);
       alert("Failed to submit marks.");

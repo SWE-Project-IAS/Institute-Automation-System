@@ -292,7 +292,7 @@ const seedDatabase = async () => {
     // Connect to MongoDB
     await connectDB();
     
-    console.log("Connected to MongoDB, starting seed process...");
+    //console.log("Connected to MongoDB, starting seed process...");
     
     // Generate a salt
     const saltRounds = 10; // You can adjust this number for more or less security (higher is more secure but slower)
@@ -326,7 +326,7 @@ const seedDatabase = async () => {
             ...acadAdminData, // Spread the existing acadAdminData
             password: hashedPassword, // Override the plain text password with the hashed one
           });
-          console.log("User created:", createdAcadAdminUser.name, "with email:", createdAcadAdminUser.email);
+          //console.log("User created:", createdAcadAdminUser.name, "with email:", createdAcadAdminUser.email);
           
           // Create an academic admin with the same email
           const acadAdmin = await AcadAdmin.create({
@@ -338,8 +338,8 @@ const seedDatabase = async () => {
                   createdAt: new Date(),
                   updatedAt: new Date()
                 });
-                console.log("Academic Admin created with designation:", acadAdmin.designation);
-                console.log("Academic Admin is linked to user with email:", createdAcadAdminUser.email);
+                //console.log("Academic Admin created with designation:", acadAdmin.designation);
+                //console.log("Academic Admin is linked to user with email:", createdAcadAdminUser.email);
             
             // const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
             
@@ -387,7 +387,7 @@ const seedDatabase = async () => {
                 //     });
                 //     console.log("HostelAdmin created:", createdHab.email);
                     
-                    console.log("Database seeded successfully!");
+                    //console.log("Database seeded successfully!");
                     process.exit(0);
                   } catch (error) {
                     console.error("Error seeding database:", error);
@@ -399,25 +399,25 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting student courses seed process...");
+      //console.log("Connected to MongoDB, starting student courses seed process...");
       
       // Check if courses already exist for this student
       const existingCourses = await StudentCourse.find({ rollNo: "220101039" });
       
       if (existingCourses.length > 0) {
-        console.log(`Found ${existingCourses.length} existing courses for student 220101039. Deleting them before re-seeding.`);
+        //console.log(`Found ${existingCourses.length} existing courses for student 220101039. Deleting them before re-seeding.`);
         await StudentCourse.deleteMany({ rollNo: "220101039" });
       }
       
       // Insert the student courses
       const result = await StudentCourse.insertMany(studentCoursesData);
       
-      console.log(`Successfully added ${result.length} courses for student 220101039:`);
+      //console.log(`Successfully added ${result.length} courses for student 220101039:`);
       result.forEach(course => {
-        console.log(`- ${course.courseId} (${course.creditOrAudit}) - Status: ${course.status}, Grade: ${course.grade || 'Not graded yet'}`);
+        //console.log(`- ${course.courseId} (${course.creditOrAudit}) - Status: ${course.status}, Grade: ${course.grade || 'Not graded yet'}`);
       });
       
-      console.log("Student courses seeded successfully!");
+      //console.log("Student courses seeded successfully!");
       process.exit(0);
     } catch (error) {
       console.error("Error seeding student courses:", error);
@@ -429,7 +429,7 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting courses seed process...");
+      //console.log("Connected to MongoDB, starting courses seed process...");
       
       // Check if courses already exist
       // const existingCourses = await Course.find({
@@ -452,8 +452,8 @@ const seedStudentCourses = async () => {
         }
       );
       
-      console.log(`Operation completed. Modified ${result.modifiedCount} courses.`);
-      console.log(`Matched ${result.matchedCount} courses with Dr. Johnson's announcements.`);
+      //console.log(`Operation completed. Modified ${result.modifiedCount} courses.`);
+      //console.log(`Matched ${result.matchedCount} courses with Dr. Johnson's announcements.`);
       
       return result;
       // Insert the courses
@@ -464,7 +464,7 @@ const seedStudentCourses = async () => {
       //   console.log(`- ${course.courseCode}: ${course.courseName} (${course.credits} credits, Slot: ${course.slot})`);
       // });
       
-      console.log("Courses seeded successfully!");
+      //console.log("Courses seeded successfully!");
       
       // If you want to run both seed functions, you can call seedStudentCourses() here
       // or just exit
@@ -479,17 +479,17 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting student removal process...");
+      //console.log("Connected to MongoDB, starting student removal process...");
       
       // Find the course with code CS101
       const course = await Course.findOne({ courseCode: "CS101" });
       
       if (!course) {
-        console.log("Course CS101 not found!");
+        //console.log("Course CS101 not found!");
         process.exit(1);
       }
       
-      console.log(`Found course: ${course.courseName} with ${course.students.length} students enrolled`);
+      //console.log(`Found course: ${course.courseName} with ${course.students.length} students enrolled`);
       
       // Update the course to have an empty students array
       const updatedCourse = await Course.findByIdAndUpdate(
@@ -498,10 +498,10 @@ const seedStudentCourses = async () => {
         { new: true }
       );
       
-      console.log(`Successfully removed all students from ${updatedCourse.courseCode} - ${updatedCourse.courseName}`);
-      console.log(`Current student count: ${updatedCourse.students.length}`);
+      //console.log(`Successfully removed all students from ${updatedCourse.courseCode} - ${updatedCourse.courseName}`);
+      //console.log(`Current student count: ${updatedCourse.students.length}`);
       
-      console.log("Student removal completed successfully!");
+      //console.log("Student removal completed successfully!");
       process.exit(0);
     } catch (error) {
       console.error("Error removing students from course:", error);
@@ -513,7 +513,7 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting student course removal process...");
+      //console.log("Connected to MongoDB, starting student course removal process...");
       
       // Find the student course entry
       const studentCourse = await StudentCourse.findOne({
@@ -522,7 +522,7 @@ const seedStudentCourses = async () => {
       });
       
       if (!studentCourse) {
-        console.log(`Student course entry not found for rollNo: 220101039 and courseId: CS101`);
+        //console.log(`Student course entry not found for rollNo: 220101039 and courseId: CS101`);
         process.exit(1);
       }
       
@@ -532,7 +532,7 @@ const seedStudentCourses = async () => {
         courseId: "CS101"
       });
       
-      console.log(`Successfully removed student from course CS101`);
+      //console.log(`Successfully removed student from course CS101`);
       process.exit(0);
     } catch (error) {
       console.error("Error removing student from course:", error);
@@ -544,7 +544,7 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting faculty courses seed process...");
+      //console.log("Connected to MongoDB, starting faculty courses seed process...");
       
       // Check if faculty courses already exist
       // const existingFacultyCourses = await FacultyCourse.find({});
@@ -593,7 +593,7 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting faculty course filling process...");
+      //console.log("Connected to MongoDB, starting faculty course filling process...");
       // const result = await Faculty.updateMany(
       //   {}, // Empty filter means select all documents
       //   { $set: { courses: [] } } // Set courses to an empty array
@@ -633,7 +633,7 @@ const seedStudentCourses = async () => {
         { $push: { students: stud2Id } }
       );
 
-      console.log("Updated course students:", update);
+      //console.log("Updated course students:", update);
       // const insert = await StudentCourse.insertMany(studentCourseObj);
       // Create an array of documents to insert
       // const facultyCourseDocs = courses2.map(courseCode => {
@@ -711,12 +711,12 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting feedback deletion process...");
+      //console.log("Connected to MongoDB, starting feedback deletion process...");
       
       // Delete all feedback documents
       const result = await Feedback.deleteMany({});
       
-      console.log(`Successfully deleted ${result.deletedCount} feedback documents.`);
+      //console.log(`Successfully deleted ${result.deletedCount} feedback documents.`);
       process.exit(0);
     } catch (error) {
       console.error("Error deleting feedback:", error);
@@ -728,7 +728,7 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting announcement clearing process...");
+      //console.log("Connected to MongoDB, starting announcement clearing process...");
       
       // Update all course documents by setting their announcements array to empty
       const result = await Course.updateMany(
@@ -736,7 +736,7 @@ const seedStudentCourses = async () => {
         { $set: { announcements: [] } } // Set announcements to an empty array
       );
       
-      console.log(`Successfully cleared announcements for ${result.modifiedCount} course documents.`);
+      //console.log(`Successfully cleared announcements for ${result.modifiedCount} course documents.`);
       process.exit(0);
     } catch (error) {
       console.error("Error clearing course announcements:", error);
@@ -748,7 +748,7 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, checking feedback existence...");
+      //console.log("Connected to MongoDB, checking feedback existence...");
       
       // Check if feedback exists for the course CS101
       const feedbackExists = await Feedback.exists({ 
@@ -758,9 +758,9 @@ const seedStudentCourses = async () => {
        });
       
       if (feedbackExists) {
-        console.log("Feedback exists for course CS101.");
+        //console.log("Feedback exists for course CS101.");
       } else {
-        console.log("No feedback found for course CS101.");
+        //console.log("No feedback found for course CS101.");
       }
       
       process.exit(0);
@@ -774,13 +774,13 @@ const seedStudentCourses = async () => {
     try {
       // Connect to MongoDB
       await connectDB();
-      console.log("Connected to MongoDB, starting course completion process...");
+      //console.log("Connected to MongoDB, starting course completion process...");
       
       // Find the course with code CS101
       const course = await StudentCourse.findOne({ courseId: "CS101" });
-      console.log("Course found:", course);
+      //console.log("Course found:", course);
       if (!course) {
-        console.log("Course CS101 not found!");
+        //console.log("Course CS101 not found!");
         process.exit(1);
       }
       
@@ -793,9 +793,9 @@ const seedStudentCourses = async () => {
         { new: true }
       );
       
-      console.log(`Successfully marked ${updatedCourse.courseCode} - ${updatedCourse.courseName} as completed`);
+      //console.log(`Successfully marked ${updatedCourse.courseCode} - ${updatedCourse.courseName} as completed`);
       
-      console.log("Course completion process completed successfully!");
+      //console.log("Course completion process completed successfully!");
       process.exit(0);
     } catch (error) {
       console.error("Error completing course:", error);
@@ -807,15 +807,15 @@ const seedStudentCourses = async () => {
   try {
     // Connect to MongoDB
     await connectDB();
-    console.log("Connected to MongoDB, starting feedback index fix process...");
+    //console.log("Connected to MongoDB, starting feedback index fix process...");
     
     // Drop the problematic index
     await Feedback.collection.dropIndex("feedbackId_1");
-    console.log("Successfully dropped the feedbackId index");
+    //console.log("Successfully dropped the feedbackId index");
     
     // Verify indexes
     const indexes = await Feedback.collection.indexes();
-    console.log("Updated indexes:", indexes);
+    //console.log("Updated indexes:", indexes);
     
     process.exit(0);
   } catch (error) {

@@ -39,8 +39,8 @@ const initializeStatistics = () => ({
 export const getFeedback = async (req, res) => {
     try {
         const { facultyId,courseCode } = req.params;
-        // console.log("facultyId", facultyId);
-        // console.log("courseCode", courseCode);
+        //console.log("facultyId", facultyId);
+        //console.log("courseCode", courseCode);
         // Validate course using correct field name
         const course = await Course.findOne({ courseCode });
         if (!course) return res.status(404).json({ error: 'Course not found' });
@@ -49,15 +49,15 @@ export const getFeedback = async (req, res) => {
         const faculty = await Faculty.findOne({ userId: facultyId });
         if (!faculty) return res.status(404).json({ error: 'Faculty not found' });
         
-        // console.log("faculty", faculty);
-        // console.log("course", course);
+        //console.log("faculty", faculty);
+        //console.log("course", course);
         // Fetch feedback with proper population
         const feedbacks = await Feedback.find({
             faculty: faculty,
             course: course,
             isActive: true
         });
-        // console.log("feedbacks", feedbacks);
+        //console.log("feedbacks", feedbacks);
         // Calculate statistics
         const statistics = initializeStatistics();
         statistics.totalFeedbacks = feedbacks.length;
@@ -228,11 +228,11 @@ export const checkFeedbackStatus = async (req, res) => {
 //     }
 // };
 export const submitFeedback = async (req, res) => {
-    // console.log("submitFeedback", req.body);
+    //console.log("submitFeedback", req.body);
     try {
       // Add this temporary code to check all indexes
       const indexes = await Feedback.collection.indexes();
-      // console.log("All indexes:", indexes);
+      //console.log("All indexes:", indexes);
       const { student, faculty, course, ratings, comments } = req.body;
       
       // Validate course
@@ -316,7 +316,7 @@ export const submitFeedback = async (req, res) => {
         });
       }
       if (err.code === 11000) {
-        console.log('Duplicate feedback error:', err);
+        //console.log('Duplicate feedback error:', err);
         return res.status(409).json({
           error: 'Feedback already exists for this course and faculty'
         });
@@ -569,7 +569,7 @@ export const setGlobalstatus = async (req, res) => {
       updatedAt: new Date()
     });
 
-    // console.log("Announcement created:", newAnnouncement);
+    //console.log("Announcement created:", newAnnouncement);
     await newAnnouncement.save();
 
     config.isActive = active;

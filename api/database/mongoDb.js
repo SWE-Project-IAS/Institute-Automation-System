@@ -5,9 +5,8 @@ import mongoose from 'mongoose';
 // MongoDB connection function
 const connectDB = async () => {
     try {
-      console.log(process.env.MONGODB_URI);
     const conn = await mongoose.connect(process.env.MONGODB_URI);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    //console.log(`MongoDB Connected: ${conn.connection.host}`);
     // mongoose.connection.
     return conn;
   } catch (error) {
@@ -20,7 +19,7 @@ const connectDB = async () => {
 const closeDB = async () => {
   if (mongoose.connection.readyState!=0) {  // Check if connection is open
     await mongoose.connection.close();
-    console.log('MongoDB connection closed');
+    //console.log('MongoDB connection closed');
   }
 };
 

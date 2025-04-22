@@ -115,6 +115,9 @@ const ComplaintSection = () => {
     return (
         <div className="flex flex-col border-1 w-[98%] m-2">
             {/* Improved Navbar with better styling */}
+            <h1 className="text-4xl font-extrabold text-center text-blue-900 my-6">
+                Complaints Portal
+            </h1>
             <div className="bg-white p-2 rounded-lg shadow-md w-[98%] h-auto mb-4 m-auto">
                 <nav className="w-full p-4 h-auto">
                     <ul className="flex justify-start space-x-4">
