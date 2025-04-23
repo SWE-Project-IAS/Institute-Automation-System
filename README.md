@@ -87,13 +87,23 @@ PORT=8000 # Or any port you prefer for the backend
 ACCESS_TOKEN_SECRET=
 REFRESH_TOKEN_SECRET=
 MONGODB_URI=
+TEST_DB_URI=
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USERNAME=
+EMAIL_PASSWORD=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+SERVER_URL=https://ias-server-cpoh.onrender.com
+CLIENT_URL=https://ias-iitg.onrender.com
 ```
 
 ### Example: `client/.env`
 
 ```
 REACT_APP_RAZORPAY_KEY_ID = 
-GENERATE_SOURCEMAP=false
+REACT_APP_API_URL=https://ias-server-cpoh.onrender.com/api
 ```
 
 ## Seeding the Database
