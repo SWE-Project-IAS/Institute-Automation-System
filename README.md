@@ -2,6 +2,8 @@
 
 Institute Automation System is a full-stack web application designed to automate and streamline various institutional processes. The system consists of a backend server built with Node.js and Express, and a frontend client developed using React.js.
 
+Visit our website at [https://ias-iitg.onrender.com/](https://ias-iitg.onrender.com/)
+
 ## Table of Contents
 
 - [Project Structure](#project-structure)
@@ -11,10 +13,10 @@ Institute Automation System is a full-stack web application designed to automate
 - [Environment Variables](#environment-variables)
 - [Seeding the Database](#seeding-the-database)
 - [Running Tests](#running-tests)
+- [Demo Usage](#demo-usage)
 - [Technologies Used](#technologies-used)
 - [Folder Structure](#folder-structure)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Project Structure
 
@@ -123,6 +125,20 @@ To execute the backend test suite:
 cd api
 npm run test/<file-name>
 ```
+
+## Demo usage
+We have defined 4 roles: Student, Faculty, Academic Admin and Hostel Admin.
+You can login into the academic admin account using the credentials:
+```bash
+email: acadAdmin@iitg.ac.in
+password: admin123
+```
+After logging in, you can register new students as well as faculties in the student and faculty management section repectively. The new user will be created with the password being the email address by default.
+While importing the csv for student registration, the format should be like the one given below.
+![image](https://github.com/user-attachments/assets/fde7ad0c-67b4-4354-b1ac-e7a5b449b665)
+
+[Demo Video](https://iitgoffice-my.sharepoint.com/:v:/g/personal/c_divyansh_iitg_ac_in/EWkq4maSYMdKnj7lKlGiuI4B6Wom33fGb0Mzx2GvS8kPMg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=br8Ts5&referrer=Outlook.Desktop&referrerScenario=email-linkwithoutembed)
+
 
 ## Technologies Used
 
